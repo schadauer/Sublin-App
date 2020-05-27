@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -5,11 +7,12 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:sublin/models/user.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sublin/services/auth.dart';
-import 'package:sublin/widgets/trip.dart';
+import 'package:sublin/services/auth_service.dart';
+import 'package:sublin/widgets/address_search_widget.dart';
 
 import 'package:sublin/models/address.dart';
 import 'package:sublin/models/routing.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,9 +21,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AuthService _auth = AuthService();
+  Routing _routing = Routing();
   Address _startAddress = Address();
   Address _endAddress = Address();
-  Routing _routing = Routing();
   bool _geoLocationPermissionIsGranted = false;
   TextEditingController _startLocationController = TextEditingController();
   Position _currentLocationLatLng;
@@ -39,7 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    print(user.uid);
+    final routing = Provider.of<Routing>(context);
+
+    print(routing.startAddress);
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Deine Fahrt'),
@@ -89,16 +95,40 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           )
                         : Container(),
-                    Trip(
+                    AddressSearchWidget(
                       textInputFunction: textInputFunction,
                       startAddress: true,
                       address: _startAddress.address,
                     ),
-                    Trip(
+                    AddressSearchWidget(
                       textInputFunction: textInputFunction,
                       endAddress: true,
                       address: _endAddress.address,
                     ),
+                    RaisedButton(
+                      onPressed: () async {
+                        try {
+                          var snapy = Firestore.instance
+                              .collection('users')
+                              .document('eFAt4p0I31OjJJNtIyFM8dtY7jR2')
+                              .get();
+
+                          // Stream<QuerySnapshot> snapshot = Firestore.instance
+                          //     .collection('providers')
+                          //     .snapshots();
+
+                          // snapshot.listen((value) {
+                          //   value.documents.map((event) {
+                          //     print(event.data);
+                          //   });
+                          // }
+                          // );
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: Text('Get it'),
+                    )
                   ],
                 )),
           ],

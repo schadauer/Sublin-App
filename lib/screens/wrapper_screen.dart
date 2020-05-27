@@ -4,9 +4,13 @@ import 'package:sublin/screens/authenticate/authenticate.dart';
 
 import 'package:sublin/screens/home_screen.dart';
 
+import 'package:sublin/services/routing_service.dart';
 import '../models/user.dart';
+import '../models/routing.dart';
 
-class Wrapper extends StatelessWidget {
+class WrapperScreen extends StatelessWidget {
+  static const routeName = '/wrapper';
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -14,7 +18,10 @@ class Wrapper extends StatelessWidget {
       //return HomeScreen();
       return Authenticate();
     } else {
-      return HomeScreen();
+      return MultiProvider(providers: [
+        StreamProvider<Routing>.value(
+            value: RoutingService().streamRouting(user.uid)),
+      ], child: HomeScreen());
     }
   }
 }

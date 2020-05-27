@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sublin/screens/authenticate/register.dart';
 import 'package:sublin/screens/loading.dart';
-import 'package:sublin/services/auth.dart';
+import 'package:sublin/services/auth_service.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -15,6 +15,7 @@ class _SignInState extends State<SignIn> {
   String email = '';
   String password = '';
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return isLoading == true
@@ -38,9 +39,12 @@ class _SignInState extends State<SignIn> {
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
+                      SizedBox(
+                        height: 20,
+                      ),
                       TextFormField(
                           onChanged: (val) {
                             setState(() {
@@ -48,16 +52,11 @@ class _SignInState extends State<SignIn> {
                             });
                           },
                           decoration: InputDecoration(
-                            fillColor: Colors.black12,
-                            filled: true,
-                            border: InputBorder.none,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            hintText: 'Benutzername',
+                            hintText: 'Deine E-Mail',
                             prefixIcon: Icon(Icons.email),
                           )),
                       SizedBox(
-                        height: 10,
+                        height: 20,
                       ),
                       TextFormField(
                           onChanged: (val) {
@@ -65,29 +64,18 @@ class _SignInState extends State<SignIn> {
                               password = val;
                             });
                           },
-                          keyboardType: TextInputType.datetime,
+                          // keyboardType: TextInputType.datetime,
                           //obscureText: true,
                           decoration: InputDecoration(
-                              fillColor: Colors.black12,
-                              filled: true,
-                              border: InputBorder.none,
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.0)),
                               hintText: 'Passwort',
                               prefixIcon: Icon(Icons.lock))),
-                      Row(
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          FlatButton(
-                              onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Register())),
-                              child: Text('Du bist noch nicht registriert?')),
+                          SizedBox(
+                            height: 10,
+                          ),
                           RaisedButton(
-                            color: Theme.of(context).primaryColor,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
                             onPressed: () async {
                               setState(() {
                                 //isLoading = true;
@@ -97,13 +85,16 @@ class _SignInState extends State<SignIn> {
                               setState(() {
                                 //isLoading = false;
                               });
-                              print(email);
-                              print(password);
-                              print(user);
                             },
-                            padding: EdgeInsets.all(0.0),
                             child: Text('Einloggen'),
                           ),
+                          FlatButton(
+                              textColor: Theme.of(context).accentColor,
+                              onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Register())),
+                              child: Text('Du bist noch nicht registriert?')),
                         ],
                       )
                     ],

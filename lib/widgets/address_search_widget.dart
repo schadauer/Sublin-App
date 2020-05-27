@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sublin/screens/address_input_screen.dart';
 
-class Trip extends StatefulWidget {
+class AddressSearchWidget extends StatefulWidget {
   //The following types are possible: start, end, train, bus, sublin
   final bool startAddress;
   final bool endAddress;
@@ -10,7 +10,7 @@ class Trip extends StatefulWidget {
   final DateTime date;
   final Function textInputFunction;
 
-  Trip(
+  AddressSearchWidget(
       {this.startAddress = false,
       this.endAddress = false,
       this.address = '',
@@ -18,10 +18,10 @@ class Trip extends StatefulWidget {
       this.textInputFunction});
 
   @override
-  _TripState createState() => _TripState();
+  _AddressSearchWidgetState createState() => _AddressSearchWidgetState();
 }
 
-class _TripState extends State<Trip> {
+class _AddressSearchWidgetState extends State<AddressSearchWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(

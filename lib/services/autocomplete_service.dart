@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:math';
 import 'dart:convert';
 
-class Autocomplete {
+class AutocompleteService {
   final int sessionToken = new Random().hashCode;
   static const url =
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
