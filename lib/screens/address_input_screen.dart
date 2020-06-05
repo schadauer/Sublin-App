@@ -18,7 +18,7 @@ class AddressInputScreen extends StatefulWidget {
 }
 
 class _AddressInputScreenState extends State<AddressInputScreen> {
-  AutocompleteService _autocomplete = AutocompleteService();
+  Autocomplete _autocomplete = Autocomplete();
   FocusNode _focus = new FocusNode();
   TextEditingController _textFormFieldController = TextEditingController();
   List _autocompleteResults = [];
@@ -78,7 +78,8 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                             return GestureDetector(
                               onTap: () {
                                 widget.textInputFunction(
-                                    _autocompleteResults[index]['description'],
+                                    _autocompleteResults[index]['name'],
+                                    _autocompleteResults[index]['id'],
                                     widget.startAddress,
                                     widget.endAddress);
                                 Navigator.of(context).pop();
@@ -87,8 +88,8 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                   contentPadding:
                                       EdgeInsets.symmetric(horizontal: 20),
                                   leading: Icon(Icons.home),
-                                  title: Text(_autocompleteResults[index]
-                                      ['description'])),
+                                  title: Text(
+                                      _autocompleteResults[index]['name'])),
                             );
                           }),
                     ),

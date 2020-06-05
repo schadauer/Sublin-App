@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sublin/models/user.dart';
 import 'package:provider/provider.dart';
 
+import 'package:sublin/models/user.dart';
 import 'package:sublin/services/auth_service.dart';
+import 'package:sublin/services/routing_service.dart';
 import 'package:sublin/widgets/address_search_widget.dart';
 
-import 'package:sublin/models/address.dart';
 import 'package:sublin/models/routing.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -21,21 +20,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AuthService _auth = AuthService();
-  Routing _routing = Routing();
-  Address _startAddress = Address();
-  Address _endAddress = Address();
+  Routing _localRouting = Routing();
   bool _geoLocationPermissionIsGranted = false;
   TextEditingController _startLocationController = TextEditingController();
   Position _currentLocationLatLng;
   String _startLocation;
 
-  //static const kGoogleApiKey = "AIzaSyDNfEtREHF23tv-U8av9N2kDRDzEmCsAeM";
-
   @override
   void initState() {
     _isGeoLocationPermissionGranted();
-    _startAddress.address = '';
-    _endAddress.address = '';
+    _localRouting.startAddress = '';
+    _localRouting.startId = '';
+    _localRouting.endAddress = '';
+    _localRouting.endId = '';
     super.initState();
   }
 
@@ -43,8 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
     final routing = Provider.of<Routing>(context);
-
-    print(routing.startAddress);
 
     return Scaffold(
         appBar: AppBar(
@@ -98,31 +93,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     AddressSearchWidget(
                       textInputFunction: textInputFunction,
                       startAddress: true,
-                      address: _startAddress.address,
+                      address: _localRouting.startAddress,
                     ),
                     AddressSearchWidget(
                       textInputFunction: textInputFunction,
                       endAddress: true,
-                      address: _endAddress.address,
+                      address: _localRouting.endAddress,
                     ),
                     RaisedButton(
                       onPressed: () async {
                         try {
-                          var snapy = Firestore.instance
-                              .collection('users')
-                              .document('eFAt4p0I31OjJJNtIyFM8dtY7jR2')
-                              .get();
-
-                          // Stream<QuerySnapshot> snapshot = Firestore.instance
-                          //     .collection('providers')
-                          //     .snapshots();
-
-                          // snapshot.listen((value) {
-                          //   value.documents.map((event) {
-                          //     print(event.data);
-                          //   });
-                          // }
-                          // );
+                          RoutingService().requestRoute(
+                            uid: user.uid,
+                            startAddress: _localRouting.startAddress,
+                            startId: _localRouting.startId,
+                            endAddress: _localRouting.endAddress,
+                            endId: _localRouting.endId,
+                          );
                         } catch (e) {
                           print(e);
                         }
@@ -135,12 +122,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 
-  void textInputFunction(String input, bool startAddress, bool endAddress) {
+  void textInputFunction(
+      String input, String id, bool startAddress, bool endAddress) {
     setState(() {
-      print(input);
-      print(endAddress);
-      if (startAddress) _startAddress.address = input;
-      if (endAddress) _endAddress.address = input;
+      if (startAddress) _localRouting.startAddress = input;
+      if (startAddress) _localRouting.startId = id;
+      if (endAddress) _localRouting.endAddress = input;
+      if (endAddress) _localRouting.endId = id;
     });
   }
 
@@ -167,14 +155,13 @@ class _HomeScreenState extends State<HomeScreen> {
           .placemarkFromCoordinates(lat, lng, localeIdentifier: 'de_DE');
       placemark.map((e) {
         setState(() {
-          _startLocation =
+          _localRouting.startAddress =
               '${e.thoroughfare} ${e.subThoroughfare}, ${e.locality}';
         });
       }).toList();
       setState(() {
         _startLocationController.text = _startLocation;
-        _startAddress.address = _startLocation;
-        print(_startLocation);
+        _localRouting.startAddress = _startLocation;
       });
     } catch (e) {
       print('_getPlacemarkFromCoordinates: $e');
