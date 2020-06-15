@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:sublin/models/routing.dart';
-// import 'package:sublin/services/auth_service.dart';
 
 class RoutingService {
   final Firestore _database = Firestore.instance;
-  // final AuthService _auth = AuthService();
 
   Stream<Routing> streamRouting(uid) {
     try {
@@ -16,8 +14,7 @@ class RoutingService {
           .document(uid)
           .snapshots()
           .map((snap) {
-        print(snap.data);
-        return Routing(endAddress: 'Halllllooooo');
+        return Routing.fromMap(snap.data);
       });
     } catch (e) {
       print(e);
@@ -28,12 +25,21 @@ class RoutingService {
   Future<void> requestRoute(
       {uid, endAddress, endId, startAddress, startId}) async {
     try {
-      _database.collection('requests').document(uid).setData({
+      var data = await _database.collection('requests').document(uid).setData({
         'endAddress': endAddress,
         'endId': endId,
         'startAddress': startAddress,
         'startId': startId
       });
+      print('got it from the database');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> removeProviderFromRoute(uid) async {
+    try {
+      _database.collection('routings').document(uid).setData({'provider': ''});
     } catch (e) {
       print(e);
     }

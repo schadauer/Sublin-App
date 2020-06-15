@@ -4,14 +4,14 @@ import 'package:sublin/services/autocomplete_service.dart';
 class AddressInputScreen extends StatefulWidget {
   final Function textInputFunction;
   final String address;
-  final bool startAddress;
-  final bool endAddress;
+  final bool isStartAddress;
+  final bool isEndAddress;
 
   AddressInputScreen(
       {this.textInputFunction,
       this.address,
-      this.startAddress = false,
-      this.endAddress = false});
+      this.isStartAddress = false,
+      this.isEndAddress = false});
 
   @override
   _AddressInputScreenState createState() => _AddressInputScreenState();
@@ -80,8 +80,8 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                 widget.textInputFunction(
                                     _autocompleteResults[index]['name'],
                                     _autocompleteResults[index]['id'],
-                                    widget.startAddress,
-                                    widget.endAddress);
+                                    widget.isStartAddress,
+                                    widget.isEndAddress);
                                 Navigator.of(context).pop();
                               },
                               child: ListTile(

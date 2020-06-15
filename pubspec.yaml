@@ -33,6 +33,7 @@ dependencies:
   google_maps_flutter: ^0.5.27+3
   permission_handler: ^5.0.0+hotfix.6
   http: ^0.12.1
+  shared_preferences: ^0.5.7+3
 
 
 

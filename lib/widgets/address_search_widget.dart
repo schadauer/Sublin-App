@@ -3,18 +3,21 @@ import 'package:sublin/screens/address_input_screen.dart';
 
 class AddressSearchWidget extends StatefulWidget {
   //The following types are possible: start, end, train, bus, sublin
-  final bool startAddress;
-  final bool endAddress;
-
+  final bool isStartAddress;
+  final bool isEndAddress;
+  final String startAddress;
+  final String endAddress;
   final String address;
-  final DateTime date;
+  final int startTime;
   final Function textInputFunction;
 
   AddressSearchWidget(
-      {this.startAddress = false,
-      this.endAddress = false,
+      {this.isStartAddress = false,
+      this.isEndAddress = false,
+      this.startAddress = '',
+      this.endAddress = '',
       this.address = '',
-      this.date,
+      this.startTime,
       this.textInputFunction});
 
   @override
@@ -62,7 +65,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                             child: TextFormField(
                                               decoration: InputDecoration(
                                                 fillColor: Colors.black12,
-                                                hintText: widget.startAddress
+                                                hintText: widget.isStartAddress
                                                     ? 'Dein Standort'
                                                     : 'Deine Zieladresse',
                                                 filled: true,
@@ -88,30 +91,32 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                     style:
                                         Theme.of(context).textTheme.headline3,
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      InkWell(
-                                        onTap: () {
-                                          _pushNavigation(context);
-                                        },
-                                        child: Container(
-                                            child: Row(
-                                          children: <Widget>[
-                                            Icon(
-                                              Icons.edit_location,
-                                              color:
-                                                  Theme.of(context).accentColor,
-                                            ),
-                                            Text('Adresse ändern')
-                                          ],
-                                        )),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                    ],
-                                  )
+                                  if (widget.isEndAddress ||
+                                      widget.isStartAddress)
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        InkWell(
+                                          onTap: () {
+                                            _pushNavigation(context);
+                                          },
+                                          child: Container(
+                                              child: Row(
+                                            children: <Widget>[
+                                              Icon(
+                                                Icons.edit_location,
+                                                color: Theme.of(context)
+                                                    .accentColor,
+                                              ),
+                                              Text('Adresse ändern')
+                                            ],
+                                          )),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                      ],
+                                    )
                                 ]),
                     ),
                   ),
@@ -127,9 +132,10 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    margin:
-                        (widget.startAddress) ? EdgeInsets.only(top: 20) : null,
-                    height: (widget.endAddress) ? 30 : double.infinity,
+                    margin: (widget.isStartAddress)
+                        ? EdgeInsets.only(top: 20)
+                        : null,
+                    height: (widget.isEndAddress) ? 30 : double.infinity,
                     width: 5,
                     color: Theme.of(context).accentColor,
                   ),
@@ -147,7 +153,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      (widget.endAddress) ? Icons.flag : Icons.home,
+                      (widget.isEndAddress) ? Icons.flag : Icons.home,
                       color: Colors.white,
                       size: 25,
                     ),
@@ -167,8 +173,8 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
         MaterialPageRoute(
             builder: (context) => AddressInputScreen(
                   textInputFunction: widget.textInputFunction,
-                  endAddress: widget.endAddress,
-                  startAddress: widget.startAddress,
+                  isEndAddress: widget.isEndAddress,
+                  isStartAddress: widget.isStartAddress,
                 )));
   }
 }

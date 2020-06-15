@@ -1,35 +1,47 @@
+import 'package:sublin/models/step.dart';
+
 class Routing {
-  String startAddress = '';
-  String startName = '';
-  String startId = '';
-  String endAddress = '';
-  String endName = '';
-  String endId = '';
-  String stationAddress = '';
-  String stationName = '';
+  String provider;
+  String user;
+  String startAddress;
+  String startId;
+  String endAddress;
+  String endId;
+  List<Step> steps;
 
   Routing({
-    this.startAddress,
-    this.startName,
-    this.startId,
-    this.endAddress,
-    this.endName,
-    this.endId,
-    this.stationAddress,
-    this.stationName,
+    this.provider = '',
+    this.user = '',
+    this.startAddress = '',
+    this.startId = '',
+    this.endAddress = '',
+    this.endId = '',
+    this.steps,
   });
 
   factory Routing.fromMap(Map data) {
     data = data ?? {};
     return Routing(
-      startAddress: data['startAddress'] ?? '',
-      startName: data['startName'] ?? '',
-      startId: data['startId'] ?? '',
-      endAddress: data['endAddress'] ?? '',
-      endName: data['endName'] ?? '',
-      endId: data['endId'] ?? '',
-      stationAddress: data['stationAddress'] ?? '',
-      stationName: data['stationName'] ?? '',
+      provider: data['provider'] ?? '',
+      user: data['user'] ?? '',
+      steps: (data['route'] == null)
+          ? []
+          : data['route'].map<Step>((step) {
+              return Step(
+                  endAddress: step['endAddress'] ?? '',
+                  startAddress: step['startAddress'] ?? '',
+                  startTime: step['startTime'] ?? 0,
+                  endTime: step['endTime'] ?? 0,
+                  provider: step['provider'] ?? '',
+                  distance: step['distance'] ?? 0,
+                  duration: step['duration'] ?? 0);
+            }).toList(),
+    );
+  }
+
+  factory Routing.initialData() {
+    return Routing(
+      provider: '',
     );
   }
 }
