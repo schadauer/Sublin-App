@@ -1,32 +1,49 @@
 import 'package:sublin/models/step.dart';
 
 class Routing {
-  String provider;
+  String id;
+  bool booked;
+  bool confirmed;
+  Map<dynamic, dynamic> provider;
   String user;
   String startAddress;
   String startId;
   String endAddress;
   String endId;
-  List<Step> steps;
+  List<Step> publicSteps;
+  Map<dynamic, dynamic> unavailableAddress;
+  Map<dynamic, dynamic> sublinEndStep;
 
   Routing({
-    this.provider = '',
+    this.id = '',
+    this.booked = false,
+    this.confirmed = false,
+    this.provider,
     this.user = '',
     this.startAddress = '',
     this.startId = '',
     this.endAddress = '',
     this.endId = '',
-    this.steps,
+    this.publicSteps,
+    this.unavailableAddress,
+    this.sublinEndStep,
   });
 
   factory Routing.fromMap(Map data) {
     data = data ?? {};
     return Routing(
-      provider: data['provider'] ?? '',
+      id: data['id'] ?? '',
+      booked: data['booked'] ?? false,
+      confirmed: data['confirmed'] ?? false,
+      provider: data['provider'] ?? null,
+      sublinEndStep: data['sublinEndStep'] ?? null,
       user: data['user'] ?? '',
-      steps: (data['route'] == null)
-          ? []
-          : data['route'].map<Step>((step) {
+      endId: data['endId'] ?? '',
+      startId: data['startId'] ?? '',
+      unavailableAddress: data['unavailableAddress'] ?? null,
+      publicSteps: (data['publicSteps'] == null)
+          ? null
+          : data['publicSteps'].map<Step>((step) {
               return Step(
                   endAddress: step['endAddress'] ?? '',
                   startAddress: step['startAddress'] ?? '',
@@ -41,7 +58,7 @@ class Routing {
 
   factory Routing.initialData() {
     return Routing(
-      provider: '',
+      provider: {},
     );
   }
 }

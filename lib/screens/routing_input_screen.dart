@@ -1,20 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sublin/models/address_id_arguments.dart';
 
 import 'package:sublin/models/user.dart';
 import 'package:sublin/screens/routing_screen.dart';
 import 'package:sublin/services/auth_service.dart';
+import 'package:sublin/services/google_map_service.dart';
 import 'package:sublin/services/routing_service.dart';
 
 import 'package:sublin/models/routing.dart';
 import 'package:sublin/widgets/address_search_widget.dart';
-//import 'package:sublin/widgets/sublin_bottom_sheet_widget.dart';
 
 class RoutingInputScreen extends StatefulWidget {
   static const routeName = '/routingInputScreen';
@@ -29,24 +29,22 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
   bool _geoLocationPermissionIsGranted = false;
   TextEditingController _startLocationController = TextEditingController();
   Position _currentLocationLatLng;
+  List _currentLocationAutocompleteResults;
   String _startLocation;
 
   @override
   void initState() {
     super.initState();
-    _isGeoLocationPermissionGranted();
     _localRouting.startAddress = '';
     _localRouting.startId = '';
     _localRouting.endAddress = '';
     _localRouting.endId = '';
+    _isGeoLocationPermissionGranted();
   }
 
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
-    final Routing routingService = Provider.of(context);
-
-    print(routingService);
 
     return Scaffold(
       appBar: AppBar(
@@ -63,13 +61,6 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
       ),
       body: Stack(
         children: <Widget>[
-          if (_currentLocationLatLng != null && false) // remove false
-            GoogleMap(
-              initialCameraPosition: CameraPosition(
-                  target: LatLng(_currentLocationLatLng.latitude,
-                      _currentLocationLatLng.longitude),
-                  zoom: 1),
-            ),
           SizedBox(
               height: MediaQuery.of(context).size.height -
                   AppBar().preferredSize.height -
@@ -121,7 +112,13 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
                                 endId: _localRouting.endId,
                               );
                               await Navigator.pushNamed(
-                                  context, RoutingScreen.routeName);
+                                context,
+                                RoutingScreen.routeName,
+                                arguments: AddressIdArguments(
+                                  _localRouting.startId,
+                                  _localRouting.endId,
+                                ),
+                              );
                             } catch (e) {
                               print(e);
                             }
@@ -157,9 +154,9 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
         });
   }
 
-  void _setLocalInputAddresses(Map addresses) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-  }
+  // void _setLocalInputAddresses(Map addresses) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  // }
 
   void textInputFunction(
       String input, String id, bool startAddress, bool endAddress) {
@@ -180,28 +177,32 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
         setState(() {
           _currentLocationLatLng = position;
         });
-        await _getPlacemarkFromCoordinates(
+        String address = await _getPlacemarkFromCoordinates(
             _currentLocationLatLng.latitude, _currentLocationLatLng.longitude);
+        _currentLocationAutocompleteResults =
+            await GoogleMapService().getGoogleAddressAutocomplete(address);
+        setState(() {
+          _localRouting.startAddress =
+              _currentLocationAutocompleteResults[0]['name'];
+          _localRouting.startId = _currentLocationAutocompleteResults[0]['id'];
+        });
+
+        print(_currentLocationAutocompleteResults);
       } catch (e) {
         print('_getCurrentCoordinates: $e');
       }
     }
   }
 
-  Future<void> _getPlacemarkFromCoordinates(double lat, double lng) async {
+  Future<String> _getPlacemarkFromCoordinates(double lat, double lng) async {
     try {
+      String address;
       List<Placemark> placemark = await Geolocator()
           .placemarkFromCoordinates(lat, lng, localeIdentifier: 'de_DE');
       placemark.map((e) {
-        setState(() {
-          _localRouting.startAddress =
-              '${e.thoroughfare} ${e.subThoroughfare}, ${e.locality}';
-        });
+        address = '${e.thoroughfare} ${e.subThoroughfare}, ${e.locality}';
       }).toList();
-      setState(() {
-        _startLocationController.text = _startLocation;
-        _localRouting.startAddress = _startLocation;
-      });
+      return address;
     } catch (e) {
       print('_getPlacemarkFromCoordinates: $e');
     }
@@ -210,6 +211,7 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
   Future<void> _isGeoLocationPermissionGranted() async {
     GeolocationStatus geolocationStatus =
         await Geolocator().checkGeolocationPermissionStatus();
+    // if (geolocationStatus == GeolocationStatus.unknown) {}
     if (geolocationStatus == GeolocationStatus.granted) {
       setState(() {
         _geoLocationPermissionIsGranted = true;

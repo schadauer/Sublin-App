@@ -25,13 +25,12 @@ class RoutingService {
   Future<void> requestRoute(
       {uid, endAddress, endId, startAddress, startId}) async {
     try {
-      var data = await _database.collection('requests').document(uid).setData({
+      await _database.collection('requests').document(uid).setData({
         'endAddress': endAddress,
         'endId': endId,
         'startAddress': startAddress,
         'startId': startId
       });
-      print('got it from the database');
     } catch (e) {
       print(e);
     }

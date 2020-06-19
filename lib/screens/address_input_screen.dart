@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sublin/services/autocomplete_service.dart';
+import 'package:sublin/services/google_map_service.dart';
 
 class AddressInputScreen extends StatefulWidget {
   final Function textInputFunction;
@@ -18,7 +18,7 @@ class AddressInputScreen extends StatefulWidget {
 }
 
 class _AddressInputScreenState extends State<AddressInputScreen> {
-  Autocomplete _autocomplete = Autocomplete();
+  GoogleMapService _autocomplete = GoogleMapService();
   FocusNode _focus = new FocusNode();
   TextEditingController _textFormFieldController = TextEditingController();
   List _autocompleteResults = [];

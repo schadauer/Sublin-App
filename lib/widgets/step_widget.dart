@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sublin/screens/address_input_screen.dart';
+import 'package:sublin/widgets/step_icon_widget.dart';
+import 'package:sublin/utils/getTimeFormat.dart';
 
 class StepWidget extends StatefulWidget {
   //The following types are possible: start, end, train, bus, sublin
@@ -61,12 +63,16 @@ class _StepWidgetState extends State<StepWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              '${widget.startAddress}',
-                              style: Theme.of(context).textTheme.headline3,
+                              '${getTimeFormat(widget.startTime)} ${widget.startAddress}',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                            Icon(
+                              Icons.more_vert,
+                              size: 20,
                             ),
                             Text(
-                              '${widget.endAddress}',
-                              style: Theme.of(context).textTheme.headline3,
+                              '${getTimeFormat(widget.endTime)} ${widget.endAddress}',
+                              style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ]),
                     ),
@@ -75,44 +81,9 @@ class _StepWidgetState extends State<StepWidget> {
               ),
             ),
           ),
-          Container(
-            width: 80,
-            height: double.infinity,
-            child: Stack(children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    margin: (widget.isStartAddress)
-                        ? EdgeInsets.only(top: 20)
-                        : null,
-                    height: (widget.isEndAddress) ? 30 : double.infinity,
-                    width: 5,
-                    color: Theme.of(context).accentColor,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 20),
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).accentColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      (widget.isEndAddress) ? Icons.flag : Icons.home,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                  ),
-                ],
-              ),
-            ]),
-          ),
+          StepIconWidget(
+              isStartAddress: widget.isStartAddress,
+              isEndAddress: widget.isEndAddress),
         ]),
       ),
     );

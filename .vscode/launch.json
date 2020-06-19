@@ -27,12 +27,12 @@
       "type": "dart",
       "deviceId": "iPhone 11"
     },
-    // {
-    //   "name": "iPhone AS",
-    //   "request": "launch",
-    //   "type": "dart",
-    //   "deviceId": "AS"
-    // },
+    {
+      "name": "iPhone AS",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "AS"
+    },
     {
       "name": "Samsung A10",
       "request": "launch",

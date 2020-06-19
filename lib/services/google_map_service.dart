@@ -2,9 +2,9 @@ import 'package:http/http.dart' as http;
 import 'dart:math';
 import 'dart:convert';
 
-class Autocomplete {
+class GoogleMapService {
   final int sessionToken = new Random().hashCode;
-  static const url =
+  static const autocompleteUrl =
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
   static const key = 'AIzaSyDIq5WwJZUG-b_UKlOGaLl4532A9XxY8Lw';
   String input = '';
@@ -15,7 +15,7 @@ class Autocomplete {
     var client = http.Client();
     try {
       var response = await client.get(
-          '$url?key=$key&sessiontoken=$sessionToken&input=$input&types=address&components=country:at&language=de');
+          '$autocompleteUrl?key=$key&sessiontoken=$sessionToken&input=$input&types=address&components=country:at&language=de');
       output = jsonDecode(response.body)['predictions'];
       strippedOutput = output.map((val) {
         return {
