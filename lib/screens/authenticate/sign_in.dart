@@ -23,13 +23,13 @@ class _SignInState extends State<SignIn> {
         : Scaffold(
             appBar: AppBar(
               title: Text('Login'),
-              actions: <Widget>[
-                FlatButton.icon(
-                  onPressed: (null),
-                  icon: Icon(Icons.person),
-                  label: Text(''),
-                )
-              ],
+              // actions: <Widget>[
+              //   FlatButton.icon(
+              //     onPressed: (null),
+              //     icon: Icon(Icons.person),
+              //     label: Text(''),
+              //   )
+              // ],
             ),
             body: GestureDetector(
               behavior: HitTestBehavior.opaque,

@@ -19,7 +19,10 @@ class WrapperScreen extends StatelessWidget {
 
     if (user == null) {
       // If user is not logged in show Authentication screen
-      return AuthenticateScreen();
+      return MaterialApp(
+        theme: themeData(context),
+        home: AuthenticateScreen(),
+      );
     } else {
       return MultiProvider(
           providers: [

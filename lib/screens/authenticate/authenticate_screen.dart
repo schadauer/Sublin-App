@@ -9,6 +9,6 @@ class AuthenticateScreen extends StatefulWidget {
 class _AuthenticateScreenState extends State<AuthenticateScreen> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SignIn());
+    return SignIn();
   }
 }

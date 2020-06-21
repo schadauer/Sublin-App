@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sublin/models/address_id_arguments.dart';
 
 import 'package:sublin/models/user.dart';
@@ -134,7 +133,7 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Container(
-                child: Text('adfsdf'),
+                child: Text(''),
                 color: Colors.white,
                 height: 100,
                 width: MediaQuery.of(context).size.width,
@@ -205,6 +204,7 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
       return address;
     } catch (e) {
       print('_getPlacemarkFromCoordinates: $e');
+      return '';
     }
   }
 
