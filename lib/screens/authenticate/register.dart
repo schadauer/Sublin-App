@@ -1,5 +1,3 @@
-import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sublin/services/auth_service.dart';
 
@@ -15,8 +13,10 @@ class _RegisterState extends State<Register> {
   String password = '';
   String type = 'private';
   String companyName = '';
-  String dropdownValue = 'Taxigewerbe';
+  String dropdownValue = 'Taxi- oder Mietwagenunternehmen';
   final _formKey = GlobalKey<FormState>();
+  TextEditingController _textFormFieldController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,9 +63,23 @@ class _RegisterState extends State<Register> {
                           });
                         },
                         decoration: InputDecoration(
-                          hintText: 'E-Mail',
-                          prefixIcon: Icon(Icons.email),
-                        )),
+                            hintText: 'Email',
+                            filled:
+                                Theme.of(context).inputDecorationTheme.filled,
+                            border:
+                                Theme.of(context).inputDecorationTheme.border,
+                            focusedBorder: Theme.of(context)
+                                .inputDecorationTheme
+                                .focusedBorder,
+                            fillColor: Theme.of(context)
+                                .inputDecorationTheme
+                                .fillColor,
+                            prefixIcon: Icon(Icons.email),
+                            suffixIcon: IconButton(
+                                icon: Icon(Icons.highlight_off),
+                                onPressed: () {
+                                  _textFormFieldController.text = '';
+                                }))),
                     SizedBox(
                       height: 20,
                     ),
@@ -100,7 +114,7 @@ class _RegisterState extends State<Register> {
                             child: Container(
                               padding: EdgeInsets.all(12),
                               margin: EdgeInsets.only(right: 10),
-                              color: Colors.black12,
+                              color: Color.fromRGBO(245, 245, 245, 1),
                               child: Row(
                                 children: <Widget>[
                                   (type == 'private')
@@ -111,9 +125,6 @@ class _RegisterState extends State<Register> {
                                   ),
                                   Text(
                                     'Privat',
-                                    style: TextStyle(
-                                      color: Theme.of(context).accentColor,
-                                    ),
                                   ),
                                 ],
                               ),
@@ -131,7 +142,7 @@ class _RegisterState extends State<Register> {
                             child: Container(
                               padding: EdgeInsets.all(12),
                               margin: EdgeInsets.only(left: 10),
-                              color: Colors.black12,
+                              color: Color.fromRGBO(245, 245, 245, 1),
                               child: Row(
                                 children: <Widget>[
                                   (type == 'business')
@@ -156,6 +167,7 @@ class _RegisterState extends State<Register> {
                     ),
                     if (type == 'business')
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           TextFormField(
                               validator: (val) => val.length < 6
@@ -166,39 +178,66 @@ class _RegisterState extends State<Register> {
                                   companyName = val;
                                 });
                               },
-                              obscureText: true,
                               decoration: InputDecoration(
                                 hintText: 'Dein Firmenname',
                                 prefixIcon: Icon(Icons.business),
                               )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            color: Color.fromRGBO(230, 230, 230, 1),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 0),
+                            child: DropdownButton<String>(
+                              value: dropdownValue,
+                              icon: Icon(Icons.arrow_downward),
+                              iconSize: 24,
+                              elevation: 16,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  dropdownValue = newValue;
+                                });
+                              },
+                              items: <String>[
+                                'Taxi- oder Mietwagenunternehmen',
+                                'Regionales Mobilitätsprojekt',
+                                'Unternehmen für Mitarbeiter',
+                                'Tourismusbetrieb für Gäste'
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          TextFormField(
+                              controller: _textFormFieldController,
+                              validator: (val) => val.length < 6
+                                  ? 'Bitte gib einen gültigen Firmennamen ein'
+                                  : null,
+                              onChanged: (val) {
+                                setState(() {
+                                  companyName = val;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                  hintText: 'Dein Firmenstandort',
+                                  prefixIcon: Icon(Icons.map),
+                                  suffixIcon: IconButton(
+                                      icon: Icon(Icons.highlight_off),
+                                      onPressed: () {
+                                        _textFormFieldController.text = '';
+                                      }))),
+                          SizedBox(
+                            height: 20,
+                          ),
                         ],
                       ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    DropdownButton<String>(
-                      value: dropdownValue,
-                      icon: Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      // style: TextStyle(color: Colors.deepPurple),
-                      // underline: Container(
-                      //   height: 2,
-                      //   color: Colors.deepPurpleAccent,
-                      // ),
-                      onChanged: (String newValue) {
-                        setState(() {
-                          dropdownValue = newValue;
-                        });
-                      },
-                      items: <String>['Taxigewerbe', 'Two', 'Free', 'Four']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[

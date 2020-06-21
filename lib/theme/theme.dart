@@ -12,13 +12,15 @@ ThemeData themeData(context) {
       textTheme: ButtonTextTheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     ),
+    canvasColor: Colors.white,
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: Colors.black12,
+      fillColor: Color.fromRGBO(245, 245, 245, 1),
       filled: true,
       contentPadding: EdgeInsets.symmetric(vertical: 15),
       border: InputBorder.none,
+      focusColor: Color.fromRGBO(230, 230, 230, 1),
       focusedBorder:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(0.0)),
+          OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
     ),
     backgroundColor: Color.fromRGBO(201, 228, 202, 1),
     visualDensity: VisualDensity.adaptivePlatformDensity,
