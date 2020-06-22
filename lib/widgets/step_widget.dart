@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sublin/screens/address_input_screen.dart';
 import 'package:sublin/widgets/step_icon_widget.dart';
-import 'package:sublin/utils/getTimeFormat.dart';
+import 'package:sublin/utils/get_time_format.dart';
 
 class StepWidget extends StatefulWidget {
   //The following types are possible: start, end, train, bus, sublin

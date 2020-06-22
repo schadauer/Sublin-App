@@ -13,6 +13,7 @@ import 'package:sublin/services/google_map_service.dart';
 import 'package:sublin/services/routing_service.dart';
 
 import 'package:sublin/models/routing.dart';
+import 'package:sublin/utils/is_geolocation_permission_granted.dart';
 import 'package:sublin/widgets/address_search_widget.dart';
 
 class RoutingInputScreen extends StatefulWidget {
@@ -26,10 +27,8 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
   final AuthService _auth = AuthService();
   Routing _localRouting = Routing();
   bool _geoLocationPermissionIsGranted = false;
-  TextEditingController _startLocationController = TextEditingController();
   Position _currentLocationLatLng;
   List _currentLocationAutocompleteResults;
-  String _startLocation;
 
   @override
   void initState() {
@@ -101,7 +100,7 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         RaisedButton(
-                          onPressed: () async {
+                          onPressed: (_localRouting.endAddress != '' && _localRouting.startAddress != '') ? () async {
                             try {
                               await RoutingService().requestRoute(
                                 uid: user.uid,
@@ -121,7 +120,7 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
                             } catch (e) {
                               print(e);
                             }
-                          },
+                          } : null,
                           child: Text('Deine Verbindung finden'),
                         ),
                       ],
@@ -145,18 +144,6 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
     );
   }
 
-  void _showBottomSheet() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Text('adfdsf');
-        });
-  }
-
-  // void _setLocalInputAddresses(Map addresses) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  // }
-
   void textInputFunction(
       String input, String id, bool startAddress, bool endAddress) {
     setState(() {
@@ -172,7 +159,7 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
       try {
         final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
         Position position = await geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.bestForNavigation);
+            desiredAccuracy: LocationAccuracy.bestForNavigation); 
         setState(() {
           _currentLocationLatLng = position;
         });
@@ -185,8 +172,6 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
               _currentLocationAutocompleteResults[0]['name'];
           _localRouting.startId = _currentLocationAutocompleteResults[0]['id'];
         });
-
-        print(_currentLocationAutocompleteResults);
       } catch (e) {
         print('_getCurrentCoordinates: $e');
       }
@@ -211,7 +196,7 @@ class _RoutingInputScreenState extends State<RoutingInputScreen> {
   Future<void> _isGeoLocationPermissionGranted() async {
     GeolocationStatus geolocationStatus =
         await Geolocator().checkGeolocationPermissionStatus();
-    // if (geolocationStatus == GeolocationStatus.unknown) {}
+        
     if (geolocationStatus == GeolocationStatus.granted) {
       setState(() {
         _geoLocationPermissionIsGranted = true;

@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sublin/screens/authenticate/register.dart';
 import 'package:sublin/screens/loading.dart';
 import 'package:sublin/services/auth_service.dart';
 
 class SignIn extends StatefulWidget {
+  static const routeName = '/signIn';
   @override
   _SignInState createState() => _SignInState();
 }
@@ -90,10 +90,7 @@ class _SignInState extends State<SignIn> {
                           ),
                           FlatButton(
                               textColor: Theme.of(context).accentColor,
-                              onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Register())),
+                              onPressed: () => Navigator.pop(context),
                               child: Text('Du bist noch nicht registriert?')),
                         ],
                       )

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sublin/models/address_id_arguments.dart';
 import 'package:sublin/models/routing.dart';
-import 'package:sublin/utils/getTimeFormat.dart';
+import 'package:sublin/utils/get_time_format.dart';
 import 'package:sublin/widgets/step_icon_widget.dart';
 import 'package:sublin/widgets/step_widget.dart';
 
@@ -42,7 +42,6 @@ class _RoutingScreenState extends State<RoutingScreen> {
         child: Text('Deine Route wird neu berechnet'),
       ));
     }
-
     if (routingService.provider == null &&
         routingService.unavailableAddress != null) {
       return Scaffold(
@@ -86,6 +85,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
                         endAddress:
                             routingService.publicSteps[index].endAddress,
                         startTime: routingService.publicSteps[index].startTime,
+                        endTime: routingService.publicSteps[index].endTime,
                         provider: routingService.publicSteps[index].provider,
                         distance: routingService.publicSteps[index].distance,
                         duration: routingService.publicSteps[index].duration,

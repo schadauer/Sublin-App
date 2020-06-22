@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sublin/models/routing.dart';
 import 'package:sublin/screens/authenticate/authenticate_screen.dart';
+import 'package:sublin/screens/authenticate/sign_in.dart';
 
 import 'package:sublin/screens/routing_input_screen.dart';
 import 'package:sublin/screens/routing_screen.dart';

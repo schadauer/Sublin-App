@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:sublin/screens/authenticate/sign_in.dart';
 import 'package:sublin/services/auth_service.dart';
+import 'package:sublin/utils/is_geolocation_permission_granted.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -16,6 +19,12 @@ class _RegisterState extends State<Register> {
   String dropdownValue = 'Taxi- oder Mietwagenunternehmen';
   final _formKey = GlobalKey<FormState>();
   TextEditingController _textFormFieldController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentCoordinates();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,28 +44,10 @@ class _RegisterState extends State<Register> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    // TextFormField(
-                    //   onChanged: (val) {
-                    //     setState(() {
-                    //       firstName = val;
-                    //     });
-                    //   },
-                    //   decoration: InputDecoration(
-                    //       hintText: 'Vorname',
-                    //       fillColor: Colors.black12,
-                    //       filled: true,
-                    //       border: InputBorder.none,
-                    //       focusedBorder: OutlineInputBorder(
-                    //           borderRadius: BorderRadius.circular(5.0)),
-                    //       prefixIcon: Icon(Icons.person)),
-                    // ),
                     SizedBox(
                       height: 20,
                     ),
                     TextFormField(
-                        // validator: (val) => !EmailValidator.validate(val)
-                        //     ? 'Bitte gib eine gültige E-Mailadresse an'
-                        //     : null,
                         onChanged: (val) {
                           setState(() {
                             email = val;
@@ -258,7 +249,10 @@ class _RegisterState extends State<Register> {
                         ),
                         FlatButton(
                             textColor: Theme.of(context).accentColor,
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SignIn())),
                             child: Text('Die bist schon registriert?')),
                       ],
                     )
@@ -282,5 +276,16 @@ class _RegisterState extends State<Register> {
       Icons.radio_button_unchecked,
       color: Colors.black12,
     );
+  }
+
+  Future<void> _getCurrentCoordinates() async {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    try {
+      print(await isLocationPermissionGranted());
+      await geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.bestForNavigation);
+    } catch (e) {
+      print('_getCurrentCoordinates: $e');
+    }
   }
 }

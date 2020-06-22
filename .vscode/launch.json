@@ -44,6 +44,12 @@
       "request": "launch",
       "type": "dart",
       "deviceId": "bixiPhone"
+    },
+    {
+      "name": "Pixel 2 API 30",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "Pixel 2 API 30"
     }
   ],
   "compounds": [
