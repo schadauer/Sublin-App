@@ -9,7 +9,7 @@ class AddressInputScreen extends StatefulWidget {
 
   AddressInputScreen(
       {this.textInputFunction,
-      this.address,
+      this.address = '',
       this.isStartAddress = false,
       this.isEndAddress = false});
 
@@ -45,7 +45,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                     var result =
                         await _autocomplete.getGoogleAddressAutocomplete(input);
                     setState(() {
-                      _autocompleteResults = result;
+                      _autocompleteResults = result ?? [];
                     });
                   },
                   controller: _textFormFieldController,

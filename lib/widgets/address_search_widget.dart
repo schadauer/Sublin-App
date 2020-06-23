@@ -62,18 +62,16 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                     child: AbsorbPointer(
                                         child: Container(
                                             height: 50,
-                                            
                                             child: TextFormField(
-                                              
                                               decoration: InputDecoration(
-                                                contentPadding: EdgeInsets.all(10),
+                                                contentPadding:
+                                                    EdgeInsets.all(10),
                                                 fillColor: Colors.black12,
                                                 hintText: widget.isStartAddress
-                                                    ? 'Dein Standort'
-                                                    : 'Deine Zieladresse',
+                                                    ? 'Dein Standort finden'
+                                                    : 'Deine Zieladresse finden',
                                                 filled: true,
                                                 border: InputBorder.none,
-                                              
                                               ),
                                             ))),
                                   ),

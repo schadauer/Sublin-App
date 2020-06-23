@@ -16,7 +16,7 @@ ThemeData themeData(context) {
     inputDecorationTheme: InputDecorationTheme(
       fillColor: Color.fromRGBO(245, 245, 245, 1),
       filled: true,
-      contentPadding: EdgeInsets.symmetric(vertical: 15),
+      contentPadding: EdgeInsets.symmetric(vertical: 10),
       border: InputBorder.none,
       focusColor: Color.fromRGBO(230, 230, 230, 1),
       focusedBorder:
@@ -26,12 +26,21 @@ ThemeData themeData(context) {
     visualDensity: VisualDensity.adaptivePlatformDensity,
     textTheme: TextTheme(
       button: TextStyle(fontSize: 16),
-      bodyText1: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+      bodyText1: TextStyle(
+        fontSize: 16,
+        color: Colors.black,
+        fontWeight: FontWeight.normal,
+      ),
+      bodyText2: TextStyle(
+        fontSize: 16,
+        color: Colors.black,
+        fontWeight: FontWeight.normal,
+      ),
       headline1: TextStyle(
-        fontSize: 10,
-        color: Colors.white,
+        fontSize: 30,
+        color: Colors.black,
         fontFamily: 'Open Sans',
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
       headline2: TextStyle(
         fontSize: 18,

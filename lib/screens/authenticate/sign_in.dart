@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sublin/screens/loading.dart';
+import 'package:sublin/widgets/loading_widget.dart';
 import 'package:sublin/services/auth_service.dart';
 
 class SignIn extends StatefulWidget {
@@ -18,22 +18,42 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading == true
-        ? Loading()
-        : Scaffold(
-            appBar: AppBar(
-              title: Text('Login'),
-              // actions: <Widget>[
-              //   FlatButton.icon(
-              //     onPressed: (null),
-              //     icon: Icon(Icons.person),
-              //     label: Text(''),
-              //   )
-              // ],
+    if (isLoading == true) {
+      return Loading();
+    } else {
+      return Scaffold(
+          body: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            padding: EdgeInsets.all(15),
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.38,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  'Willkommen zurück',
+                  style: Theme.of(context).textTheme.headline1,
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  '',
+                  style: Theme.of(context).textTheme.bodyText1,
+                  textAlign: TextAlign.left,
+                ),
+              ],
             ),
-            body: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => FocusScope.of(context).unfocus(),
+          ),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Form(
@@ -64,6 +84,7 @@ class _SignInState extends State<SignIn> {
                               password = val;
                             });
                           },
+                          obscureText: true,
                           // keyboardType: TextInputType.datetime,
                           //obscureText: true,
                           decoration: InputDecoration(
@@ -98,6 +119,10 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
               ),
-            ));
+            ),
+          ),
+        ],
+      ));
+    }
   }
 }

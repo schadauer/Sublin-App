@@ -25,7 +25,7 @@ class RoutingService {
   Future<void> requestRoute(
       {uid, endAddress, endId, startAddress, startId}) async {
     try {
-      await _database.collection('requests').document(uid).setData({
+      _database.collection('requests').document(uid).setData({
         'endAddress': endAddress,
         'endId': endId,
         'startAddress': startAddress,
