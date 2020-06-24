@@ -14,12 +14,21 @@ class UserService {
           .document(uid)
           .snapshots()
           .map((snap) {
-        print(snap.data);
         return User.fromMap(snap.data);
       });
     } catch (e) {
       print(e);
       return null;
+    }
+  }
+
+  Future<void> writeUserData({String uid, User data}) async {
+    try {
+      await _database.collection('users').document(uid).setData(
+            User().toMap(data),
+          );
+    } catch (e) {
+      print(e);
     }
   }
 }

@@ -1,11 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sublin/models/auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sublin/models/provider_user.dart';
+import 'package:sublin/models/user.dart';
+import 'package:sublin/services/provider_service.dart';
+import 'package:sublin/services/user_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Stream<Auth> get user {
+  final ProviderUser providerUser = ProviderUser();
+
+  Stream<Auth> get userStream {
     return _auth.onAuthStateChanged
         .map((FirebaseUser user) => _userfromFirebseUser(user));
   }
@@ -20,24 +25,24 @@ class AuthService {
     String providerType,
   }) async {
     try {
+      final User user = User(
+        email: email,
+        firstName: firstName,
+      );
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser user = result.user;
-      await Firestore.instance.collection('users').document(user.uid).setData({
-        // 'firstName': firstName,
-        'email': email,
-      });
-      await user.sendEmailVerification();
+      FirebaseUser authUser = result.user;
+      // await Firestore.instance.collection('users').document(user.uid).setData({
+      //   // 'firstName': firstName,
+      //   'email': email,
+      // });
+      await UserService().writeUserData(uid: authUser.uid, data: user);
+      await authUser.sendEmailVerification();
       if (type == 'provider') {
-        await Firestore.instance
-            .collection('providers')
-            .document(user.uid)
-            .setData({
-          'requestOperation': true,
-        });
+        await ProviderService()
+            .writeProviderUserData(uid: authUser.uid, data: providerUser);
       }
-
-      return _userfromFirebseUser(user);
+      return _userfromFirebseUser(authUser);
     } catch (e) {
       return null;
     }

@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      StreamProvider<Auth>.value(value: AuthService().user),
+      StreamProvider<Auth>.value(value: AuthService().userStream),
     ], child: AuthScreen());
   }
 }

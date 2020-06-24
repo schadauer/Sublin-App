@@ -3,7 +3,7 @@ class Address {
   final String id;
 
   Address({
-    this.name,
-    this.id,
+    this.name = '',
+    this.id = '',
   });
 }

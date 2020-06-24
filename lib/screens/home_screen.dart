@@ -6,6 +6,7 @@ import 'package:sublin/models/user.dart';
 import 'package:sublin/screens/provider/provider_home_screen.dart';
 import 'package:sublin/screens/user/user_home_screen.dart';
 import 'package:sublin/widgets/loading_widget.dart';
+import 'package:sublin/widgets/provider_bottom_navigation_bar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/homeScreen';
@@ -21,62 +22,20 @@ class _HomeScreenState extends State<HomeScreen> {
     final providerUser = Provider.of<ProviderUser>(context);
 
     print(auth.uid);
-    print(user.requestedAddresses);
 
     if (user.streamingOn == false && providerUser.streamingOn == false)
       return Loading();
 
-    if (providerUser.operationRequested) return ProviderHomeScreen();
+    if (providerUser.isProvider) return ProviderHomeScreen();
 
     return Scaffold(
+        // bottomNavigationBar: providerUser.isProvider
+        //     ? ProviderBottomNavigationBarWidget()
+        //     : null,
         body: Stack(
       children: <Widget>[
         UserHomeScreen(),
-        Text('adsfasdf'),
       ],
     ));
-
-    // Scaffold(
-    //   body: UserHomeScreen(),
-    //   bottomNavigationBar: SizedBox(
-    //     height: 80,
-    //     child: BottomNavigationBar(items: [
-    //       BottomNavigationBarItem(
-    //         icon: Stack(
-    //           children: <Widget>[
-    //             Icon(Icons.sentiment_dissatisfied),
-    //             Positioned(
-    //               right: 0,
-    //               child: Container(
-    //                 padding: EdgeInsets.all(1),
-    //                 decoration: BoxDecoration(
-    //                   color: Colors.red,
-    //                   borderRadius: BorderRadius.circular(6),
-    //                 ),
-    //                 constraints: BoxConstraints(
-    //                   minWidth: 15,
-    //                   minHeight: 15,
-    //                 ),
-    //                 child: Text(
-    //                   '7',
-    //                   style: TextStyle(
-    //                     color: Colors.white,
-    //                     fontSize: 10,
-    //                   ),
-    //                   textAlign: TextAlign.center,
-    //                 ),
-    //               ),
-    //             )
-    //           ],
-    //         ),
-    //         title: Text('Suchen'),
-    //       ),
-    //       BottomNavigationBarItem(
-    //         icon: Icon(Icons.search),
-    //         title: Text('Usch'),
-    //       ),
-    //     ]),
-    //   ),
-    // );
   }
 }
