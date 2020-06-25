@@ -13,7 +13,6 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
   String firstName = '';
-
   String email = '';
   String password = '';
   String type = 'user';
@@ -22,34 +21,20 @@ class _RegisterState extends State<Register> {
   bool firstNameProvided = false;
   bool emailProvided = false;
   bool providerChecked = false;
-  // String providerAddress = '';
-  // String providerType = 'Taxi- oder Mietwagenunternehmen';
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _providerAddressFieldController =
-      TextEditingController();
-  TextEditingController _emailFieldController = TextEditingController();
   RegExp regExpEmail = RegExp(
     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
   );
 
   @override
   void initState() {
-    super.initState();
     _getCurrentCoordinates();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.width);
     return Scaffold(
-        // appBar: PreferredSize(
-        //     preferredSize: Size.fromHeight(100.0), // here the desired height
-        //     child: AppBar(
-        //       title: Text('Registrierung',
-        //           style: Theme.of(context).textTheme.headline1),
-        //       backgroundColor: Colors.black12,
-        //       elevation: 0,
-        //     )),
         body: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
@@ -91,8 +76,8 @@ class _RegisterState extends State<Register> {
                       SizedBox(
                         height: 10,
                       ),
-                      Text(
-                        'Wir sind in der Testphase. Bitte hilf uns, dieses Service auch in deinen Regionen verfügbar zu machen. Melde dich an und gib deine Plätze bekannt, die du ohne eigenes Auto erreichen willst. Damit können wir gezielter dort beginnen, wo die Nachfrage am größten ist.',
+                      SelectableText(
+                        'Diese App soll es dir in der Zukunft ermöglichen, ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase. Melde dich an und gib deine Plätze bekannt, die du ohne eigenes Auto erreichen willst. Damit können wir gezielter dort nach Anbietern suchen, wo du sie benötigst.',
                         style: Theme.of(context).textTheme.bodyText1,
                         textAlign: TextAlign.left,
                       ),
@@ -206,7 +191,7 @@ class _RegisterState extends State<Register> {
                                         width: 13,
                                       ),
                                       Text(
-                                        'Ich biete Fahrtendienste an',
+                                        'Ich bin lizenzierter Anbieter',
                                       ),
                                     ],
                                   ),
