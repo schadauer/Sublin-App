@@ -9,6 +9,7 @@ import 'package:sublin/services/provider_service.dart';
 import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:sublin/widgets/input/time_input_widget.dart';
 import 'package:sublin/widgets/provider_bottom_navigation_bar_widget.dart';
+import 'package:sublin/widgets/time_field_widget.dart';
 
 class ProviderHomeScreen extends StatefulWidget {
   static const routeName = '/providerHomeScreen';
@@ -46,7 +47,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
-              title: Text('sdfdf'),
+              title: Text('sdfdfdf'),
             ),
             SliverList(
                 delegate: SliverChildListDelegate([
@@ -68,10 +69,8 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                             onTap: () => null, // _pickTime(),
                             child: Row(
                               children: <Widget>[
-                                Flexible(
-                                    flex: 1,
-                                    child:
-                                        TimeInputWidget(icon: Icon(Icons.map)))
+                                Flexible(flex: 1, child: TimeFildWidget()),
+                                Flexible(flex: 1, child: TimeFildWidget())
                               ],
                             ),
                           ),
@@ -86,22 +85,8 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         ));
   }
 
-  _pickTime(time) async {
-    TimeOfDay time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay(hour: 10, minute: 47),
-      builder: (BuildContext context, Widget child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child,
-        );
-      },
-    );
-    if (time != null) {}
-  }
-}
+  // _timeInputFunction () {
 
-enum Time {
-  start,
-  end,
+  // }
+
 }

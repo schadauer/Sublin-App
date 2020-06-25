@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 ThemeData themeData(context) {
   return ThemeData(
+    primarySwatch: Colors.grey,
+    primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
     primaryColor: Color.fromRGBO(54, 73, 88, 1),
     //primarySwatch: MaterialColor(),
     accentColor: Color.fromRGBO(59, 96, 100, 1),
+
     accentColorBrightness: Brightness.dark,
     splashColor: Color.fromRGBO(54, 73, 88, 1),
     buttonTheme: ButtonTheme.of(context).copyWith(

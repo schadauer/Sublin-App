@@ -13,7 +13,7 @@
       "name": "Android",
       "request": "launch",
       "type": "dart",
-      "deviceId": "android"
+      "deviceId": "emulator-5554"
     },
     {
       "name": "iPhone 8",
