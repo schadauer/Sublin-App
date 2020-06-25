@@ -1,0 +1,4 @@
+enum Timespan {
+  start,
+  end,
+}

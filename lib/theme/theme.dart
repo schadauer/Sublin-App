@@ -5,15 +5,20 @@ ThemeData themeData(context) {
     primarySwatch: Colors.grey,
     primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
     primaryColor: Color.fromRGBO(54, 73, 88, 1),
-    //primarySwatch: MaterialColor(),
     accentColor: Color.fromRGBO(59, 96, 100, 1),
-
     accentColorBrightness: Brightness.dark,
     splashColor: Color.fromRGBO(54, 73, 88, 1),
     buttonTheme: ButtonTheme.of(context).copyWith(
       buttonColor: Color.fromRGBO(59, 96, 100, 1),
       textTheme: ButtonTextTheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+    ),
+    dividerTheme: DividerThemeData(
+      space: 50,
+      thickness: 1,
+      color: Theme.of(context).accentColor,
+      indent: 20,
+      endIndent: 20,
     ),
     canvasColor: Colors.white,
     inputDecorationTheme: InputDecorationTheme(
