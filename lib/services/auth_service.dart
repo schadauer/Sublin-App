@@ -40,7 +40,7 @@ class AuthService {
       await authUser.sendEmailVerification();
       if (type == 'provider') {
         await ProviderService()
-            .writeProviderUserData(uid: authUser.uid, data: providerUser);
+            .updateProviderUserData(uid: authUser.uid, data: providerUser);
       }
       return _userfromFirebseUser(authUser);
     } catch (e) {

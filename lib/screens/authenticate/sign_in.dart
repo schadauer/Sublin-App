@@ -11,6 +11,7 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   bool isLoading = false;
+  bool textFocus = false;
   final AuthService _auth = AuthService();
   String email = '';
   String password = '';
@@ -23,28 +24,22 @@ class _SignInState extends State<SignIn> {
     } else {
       return Scaffold(
           body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           SizedBox(
-            height: 20,
+            height: 40,
           ),
           Container(
             padding: EdgeInsets.all(15),
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height * 0.38,
+            height: 80,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Text(
                   'Willkommen zurück',
                   style: Theme.of(context).textTheme.headline1,
-                  textAlign: TextAlign.left,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  '',
-                  style: Theme.of(context).textTheme.bodyText1,
                   textAlign: TextAlign.left,
                 ),
               ],

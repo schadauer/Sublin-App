@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 ThemeData themeData(context) {
   return ThemeData(
-    primarySwatch: Colors.grey,
+    primarySwatch: Colors.blueGrey,
     primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
     primaryColor: Color.fromRGBO(54, 73, 88, 1),
-    accentColor: Color.fromRGBO(59, 96, 100, 1),
+    brightness: Brightness.light,
+    accentColor: Colors.blueGrey[100],
     accentColorBrightness: Brightness.dark,
     splashColor: Color.fromRGBO(54, 73, 88, 1),
     buttonTheme: ButtonTheme.of(context).copyWith(
@@ -14,9 +15,9 @@ ThemeData themeData(context) {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     ),
     dividerTheme: DividerThemeData(
-      space: 50,
+      space: 70,
       thickness: 1,
-      color: Theme.of(context).accentColor,
+      color: Theme.of(context).splashColor,
       indent: 20,
       endIndent: 20,
     ),
@@ -45,25 +46,25 @@ ThemeData themeData(context) {
         fontWeight: FontWeight.normal,
       ),
       headline1: TextStyle(
-        fontSize: 30,
+        fontSize: 32,
         color: Colors.black,
         fontFamily: 'Open Sans',
         fontWeight: FontWeight.normal,
       ),
       headline2: TextStyle(
-        fontSize: 18,
+        fontSize: 28,
         color: Colors.black,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
         fontFamily: 'Open Sans',
       ),
       headline3: TextStyle(
-        fontSize: 16,
+        fontSize: 24,
         color: Colors.black,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
         fontFamily: 'Open Sans',
       ),
       headline4: TextStyle(
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     ),

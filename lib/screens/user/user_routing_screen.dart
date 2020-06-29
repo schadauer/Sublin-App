@@ -33,8 +33,6 @@ class _RoutingScreenState extends State<RoutingScreen> {
     final AddressIdArguments args = ModalRoute.of(context).settings.arguments;
     final Routing routingService = Provider.of<Routing>(context);
 
-    print(routingService.startId);
-
     if (args.startId != routingService.startId ||
         args.endId != routingService.endId) {
       return Scaffold(

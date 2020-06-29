@@ -3,36 +3,44 @@ class ProviderUser {
   final bool isProvider;
   final bool operationRequested;
   final bool inOperation;
-  final bool outOfWork;
-  final String providerName;
-  final List<dynamic> postcodes;
-  final List<dynamic> stations;
-  final int timeStart;
-  final int timeEnd;
+  bool outOfWork;
+  String providerName;
+  List<String> postcodes;
+  List<String> stations;
+  int timeStart;
+  int timeEnd;
 
-  ProviderUser(
-      {this.streamingOn,
-      this.isProvider = true,
-      this.operationRequested = true,
-      this.inOperation = false,
-      this.outOfWork = true,
-      this.providerName = '',
-      this.postcodes = const [],
-      this.stations = const [],
-      this.timeStart = 0,
-      this.timeEnd = 2400});
+  ProviderUser({
+    this.streamingOn,
+    this.isProvider,
+    this.operationRequested,
+    this.inOperation,
+    this.outOfWork,
+    this.providerName,
+    this.postcodes,
+    this.stations,
+    this.timeStart,
+    this.timeEnd,
+  });
 
   factory ProviderUser.initialData() {
     return ProviderUser(
       streamingOn: false,
+      isProvider: true,
+      operationRequested: true,
+      inOperation: false,
+      outOfWork: true,
+      providerName: '',
+      postcodes: [],
+      stations: [],
+      timeStart: 0,
+      timeEnd: 2300,
     );
   }
 
   factory ProviderUser.fromMap(Map data) {
-    ProviderUser defaultValues = ProviderUser();
+    ProviderUser defaultValues = ProviderUser.initialData();
     data = data ?? {};
-    print('check');
-
     return ProviderUser(
       streamingOn: true,
       isProvider: data['isProvider'] ?? defaultValues.isProvider,
@@ -40,16 +48,16 @@ class ProviderUser {
           data['operationRequested'] ?? defaultValues.operationRequested,
       inOperation: data['inOperation'] ?? defaultValues.inOperation,
       outOfWork: data['outOfWork'] ?? defaultValues.inOperation,
-      providerName: data['name'] ?? defaultValues.providerName,
-      postcodes: (data['postcode'] == [])
+      providerName: data['providerName'] ?? defaultValues.providerName,
+      postcodes: (data['postcodes'] == [])
           ? defaultValues.postcodes
-          : data['postcode'].map((postcode) {
-              return postcode;
+          : data['postcodes'].map<String>((postcode) {
+              return postcode.toString();
             }).toList(),
       stations: (data['stations'] == [])
           ? defaultValues.stations
-          : data['stations'].map<dynamic>((station) {
-              return station;
+          : data['stations'].map<String>((station) {
+              return station.toString();
             }).toList(),
       timeStart: data['timeStart'] ?? defaultValues.timeStart,
       timeEnd: data['timeEnd'] ?? defaultValues.timeEnd,
@@ -57,18 +65,18 @@ class ProviderUser {
   }
 
   Map<String, dynamic> toMap(ProviderUser data) {
-    ProviderUser defaultValues = ProviderUser();
+    print(data.providerName);
     return {
-      'isProvider': data.isProvider ?? defaultValues.isProvider,
-      'operationRequested':
-          data.operationRequested ?? defaultValues.operationRequested,
-      'inOperation': data.inOperation ?? defaultValues.inOperation,
-      'outOfWork': data.outOfWork ?? defaultValues.outOfWork,
-      'providerName': data.providerName ?? defaultValues.providerName,
-      'postcode': data.postcodes ?? defaultValues.postcodes,
-      'stations': data.stations ?? defaultValues.stations,
-      'timeStart': data.timeStart ?? defaultValues.timeStart,
-      'timeEnd': data.timeEnd ?? defaultValues.timeEnd,
+      data.outOfWork ?? 'outOfWork': data.outOfWork,
+      data.providerName ?? 'providerName': data.providerName,
+      data.postcodes ?? 'postcodes': data.postcodes,
+      data.stations ?? 'stations': data.stations,
+      data.timeStart ?? 'timeStart': data.timeStart,
+      data.timeEnd ?? 'timeEnd': data.timeEnd,
     };
   }
+
+  // set provider_name(String name) {
+  //   this.providerName = name;
+  // }
 }

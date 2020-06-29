@@ -38,11 +38,13 @@ class ProviderService {
     }
   }
 
-  Future<void> writeProviderUserData({String uid, ProviderUser data}) async {
+  Future<void> updateProviderUserData({String uid, ProviderUser data}) async {
+    print(uid);
     try {
-      await _database.collection('providers').document(uid).setData(
-            ProviderUser().toMap(data),
-          );
+      await _database
+          .collection('providers')
+          .document(uid)
+          .setData(ProviderUser().toMap(data), merge: true);
     } catch (e) {
       print(e);
     }

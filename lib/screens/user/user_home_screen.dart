@@ -15,6 +15,7 @@ import 'package:sublin/services/routing_service.dart';
 
 import 'package:sublin/models/routing.dart';
 import 'package:sublin/widgets/address_search_widget.dart';
+import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = '/userHomeScreen';
@@ -49,36 +50,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       appBar: AppBar(
         title: Text('Deine Fahrt'),
       ),
-      endDrawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            // DrawerHeader(child: Text('Navigation')),
-            SizedBox(
-              height: 30,
-            ),
-            ListTile(
-              leading: Icon(Icons.person_outline),
-              title: Text('Persönliche Einstellungen'),
-              onTap: null,
-            ),
-            ListTile(
-              leading: Icon(Icons.person_outline),
-              title: Text('Durchgeführte Fahrten'),
-              onTap: null,
-            ),
-            ListTile(
-              leading: Icon(Icons.person_outline),
-              title: Text('Als Anbieter starten'),
-              onTap: null,
-            ),
-            ListTile(
-              leading: Icon(Icons.power_settings_new),
-              title: Text('Ausloggen'),
-              onTap: () => _auth.signOut(),
-            ),
-          ],
-        ),
-      ),
+      endDrawer: DrawerSideNavigationWidget(authService: _auth),
       body: SizedBox(
           height: MediaQuery.of(context).size.height -
               AppBar().preferredSize.height -
@@ -189,7 +161,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         String address = await _getPlacemarkFromCoordinates(
             _currentLocationLatLng.latitude, _currentLocationLatLng.longitude);
         _currentLocationAutocompleteResults =
-            await GoogleMapService().getGoogleAddressAutocomplete(address);
+            await GoogleMapService().getGoogleAddressAutocomplete(address, '');
         setState(() {
           _localRouting.startAddress =
               _currentLocationAutocompleteResults[0]['name'];

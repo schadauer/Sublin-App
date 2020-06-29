@@ -176,7 +176,6 @@ class _RegisterState extends State<Register> {
                                     } else {
                                       type = 'user';
                                     }
-                                    print(type);
                                   });
                                 },
                                 child: Container(
@@ -260,7 +259,7 @@ class _RegisterState extends State<Register> {
   Future<void> _getCurrentCoordinates() async {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
     try {
-      print(await isLocationPermissionGranted());
+      // print(await isLocationPermissionGranted());
       await geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.bestForNavigation);
     } catch (e) {

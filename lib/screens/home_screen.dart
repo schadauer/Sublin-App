@@ -21,8 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = Provider.of<User>(context);
     final providerUser = Provider.of<ProviderUser>(context);
 
-    print(auth.uid);
-
     if (user.streamingOn == false && providerUser.streamingOn == false)
       return Loading();
 

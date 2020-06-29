@@ -6,12 +6,17 @@ class AddressInputScreen extends StatefulWidget {
   final String address;
   final bool isStartAddress;
   final bool isEndAddress;
+  final String title;
+  final String restrictions;
 
-  AddressInputScreen(
-      {this.textInputFunction,
-      this.address = '',
-      this.isStartAddress = false,
-      this.isEndAddress = false});
+  AddressInputScreen({
+    this.textInputFunction,
+    this.address = '',
+    this.isStartAddress = false,
+    this.isEndAddress = false,
+    this.title = 'Addresse suchen',
+    this.restrictions = '',
+  });
 
   @override
   _AddressInputScreenState createState() => _AddressInputScreenState();
@@ -24,10 +29,19 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
   List _autocompleteResults = [];
 
   @override
+  void initState() {
+    // if (widget.restrictions != '') {
+    //   _textFormFieldController.text = widget.restrictions + ' ';
+    // }
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meine Zieladresse'),
+        title: Text(widget.title),
       ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height -
@@ -43,7 +57,8 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                   autofocus: true,
                   onChanged: (input) async {
                     var result =
-                        await _autocomplete.getGoogleAddressAutocomplete(input);
+                        await _autocomplete.getGoogleAddressAutocomplete(
+                            input, widget.restrictions);
                     setState(() {
                       _autocompleteResults = result ?? [];
                     });
@@ -75,22 +90,25 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                       child: ListView.builder(
                           itemCount: _autocompleteResults.length,
                           itemBuilder: (_, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                widget.textInputFunction(
-                                    _autocompleteResults[index]['name'],
-                                    _autocompleteResults[index]['id'],
-                                    widget.isStartAddress,
-                                    widget.isEndAddress);
-                                Navigator.of(context).pop();
-                              },
-                              child: ListTile(
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 20),
-                                  leading: Icon(Icons.home),
-                                  title: Text(
-                                      _autocompleteResults[index]['name'])),
-                            );
+                            if (_autocompleteResults[index]['name']
+                                .toString()
+                                .contains(widget.restrictions))
+                              return GestureDetector(
+                                onTap: () {
+                                  widget.textInputFunction(
+                                      _autocompleteResults[index]['name'],
+                                      _autocompleteResults[index]['id'],
+                                      widget.isStartAddress,
+                                      widget.isEndAddress);
+                                  Navigator.of(context).pop();
+                                },
+                                child: ListTile(
+                                    contentPadding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    leading: Icon(Icons.home),
+                                    title: Text(
+                                        _autocompleteResults[index]['name'])),
+                              );
                           }),
                     ),
                   )
