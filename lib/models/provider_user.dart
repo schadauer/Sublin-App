@@ -34,7 +34,7 @@ class ProviderUser {
       postcodes: [],
       stations: [],
       timeStart: 0,
-      timeEnd: 2300,
+      timeEnd: 2400,
     );
   }
 
@@ -65,18 +65,45 @@ class ProviderUser {
   }
 
   Map<String, dynamic> toMap(ProviderUser data) {
-    print(data.providerName);
     return {
-      data.outOfWork ?? 'outOfWork': data.outOfWork,
-      data.providerName ?? 'providerName': data.providerName,
-      data.postcodes ?? 'postcodes': data.postcodes,
-      data.stations ?? 'stations': data.stations,
-      data.timeStart ?? 'timeStart': data.timeStart,
-      data.timeEnd ?? 'timeEnd': data.timeEnd,
+      if (data.outOfWork != null) 'outOfWork': data.outOfWork,
+      if (data.providerName != null) 'providerName': data.providerName,
+      if (data.postcodes != null) 'postcodes': data.postcodes,
+      if (data.stations != null) 'stations': data.stations,
+      if (data.timeStart != null) 'timeStart': data.timeStart,
+      if (data.timeEnd != null) 'timeEnd': data.timeEnd,
     };
   }
 
-  // set provider_name(String name) {
-  //   this.providerName = name;
-  // }
+  get getTimeStart {}
+
+  set setProviderName(String name) {
+    providerName = name;
+  }
+
+  set setPostCodes(List<String> postcodes) {
+    postcodes = postcodes;
+  }
+
+  set setStations(List<String> stations) {
+    stations = stations;
+  }
+
+  set setTimeStart(DateTime time) {
+    timeStart = _dateTimeToInt(time);
+  }
+
+  set setEndStart(DateTime time) {
+    timeEnd = _dateTimeToInt(time);
+  }
+
+  int _dateTimeToInt(DateTime time) {
+    // Todo
+    return 0;
+  }
+
+  DateTime _intToDateTime(int time) {
+    // Todo
+    return DateTime.now();
+  }
 }

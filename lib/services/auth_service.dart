@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sublin/models/auth.dart';
 import 'package:sublin/models/provider_user.dart';
 import 'package:sublin/models/user.dart';
-import 'package:sublin/services/provider_service.dart';
+import 'package:sublin/services/provider_user_service.dart';
 import 'package:sublin/services/user_service.dart';
 
 class AuthService {

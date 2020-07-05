@@ -7,7 +7,7 @@ import 'package:sublin/models/provider_user.dart';
 class ProviderService {
   final Firestore _database = Firestore.instance;
 
-  Stream<ProviderUser> streamProvider(String uid) {
+  Stream<ProviderUser> streamProviderUserData(String uid) {
     try {
       return _database
           .collection('providers')
@@ -22,7 +22,7 @@ class ProviderService {
     }
   }
 
-  Future<ProviderUser> getAllProviderData(String uid) async {
+  Future<ProviderUser> getProviderUserData(String uid) async {
     try {
       final data = await _database
           .collection('providers')
@@ -39,14 +39,14 @@ class ProviderService {
   }
 
   Future<void> updateProviderUserData({String uid, ProviderUser data}) async {
-    print(uid);
+    print(ProviderUser().toMap(data));
     try {
       await _database
           .collection('providers')
           .document(uid)
           .setData(ProviderUser().toMap(data), merge: true);
     } catch (e) {
-      print(e);
+      print('updateProviderUser: $e');
     }
   }
 }

@@ -8,7 +8,7 @@ import 'package:sublin/screens/home_screen.dart';
 import 'package:sublin/screens/user/user_home_screen.dart';
 import 'package:sublin/screens/provider/provider_home_screen.dart';
 import 'package:sublin/screens/user/user_routing_screen.dart';
-import 'package:sublin/services/provider_service.dart';
+import 'package:sublin/services/provider_user_service.dart';
 import 'package:sublin/services/routing_service.dart';
 import 'package:sublin/services/user_service.dart';
 import 'package:sublin/theme/theme.dart';
@@ -43,7 +43,7 @@ class AuthScreen extends StatelessWidget {
             ),
             StreamProvider<ProviderUser>.value(
               initialData: ProviderUser.initialData(),
-              value: ProviderService().streamProvider(user.uid),
+              value: ProviderService().streamProviderUserData(user.uid),
               lazy: true,
             )
           ],

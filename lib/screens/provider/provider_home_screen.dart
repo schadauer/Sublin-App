@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,7 @@ import 'package:sublin/models/provider_user.dart';
 import 'package:sublin/models/time.dart';
 import 'package:sublin/screens/address_input_screen.dart';
 import 'package:sublin/services/auth_service.dart';
-import 'package:sublin/services/provider_service.dart';
+import 'package:sublin/services/provider_user_service.dart';
 import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:sublin/widgets/header_widget.dart';
 
@@ -22,18 +23,28 @@ class ProviderHomeScreen extends StatefulWidget {
 
 class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   final AuthService authService = AuthService();
-  ProviderService providerService = ProviderService();
   final _formKey = GlobalKey<FormState>();
+  ProviderService providerService = ProviderService();
   TextEditingController _stationFormFieldController = TextEditingController();
   TextEditingController _postcodeFormFieldController = TextEditingController();
-  DateTime _timeEnd;
-  DateTime _timeStart;
+  TextEditingController _timeStartFormFieldController = TextEditingController();
+  ProviderUser _providerUser = ProviderUser();
+  DateFormat format = DateFormat('HHmm');
+
+  DateTime _timeEndDateTime;
+  DateTime _timeStartDateTime;
+
+  int _timeEnd;
+  int _timeStart;
   String _providerName = '';
   String _station = '';
   List<String> _postcodes = [];
   List<String> _stations = [];
+
+  bool changeProviderUser = false;
+  bool changeStations = false;
+  bool changeTime = false;
 
   @override
   void initState() {
@@ -48,10 +59,11 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     final auth = Provider.of<Auth>(context);
     // final user = Provider.of<User>(context);
     final providerUser = Provider.of<ProviderUser>(context);
+    final _providerUser = Provider.of<ProviderUser>(context, listen: false);
+    ProviderUser _providerUserLocal = ProviderUser();
 
-    print(_providerName);
-
-    // print(auth.uid);
+    print(auth.uid);
+    // _providerUser.setProviderName = 'asdfasdfasdfafsadsf';
 
     return Scaffold(
         bottomNavigationBar: providerUser.isProvider
@@ -60,7 +72,8 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         endDrawer: DrawerSideNavigationWidget(authService: authService),
         body: CustomScrollView(
           slivers: <Widget>[
-            SliverPersistentHeader(delegate: HeaderWidget(name: _providerName)),
+            SliverPersistentHeader(
+                delegate: HeaderWidget(name: providerUser.providerName)),
             SliverList(
                 delegate: SliverChildListDelegate([
               Container(
@@ -106,6 +119,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
                                   Flexible(flex: 1, child: Text('Von')),
+                                  // Flexible(
+                                  //     flex: 2,
+                                  //     child: CupertinoDatePicker(
+                                  //         onDateTimeChanged: (dataTime) {})),
                                   Flexible(
                                       flex: 2,
                                       child: TimeFildWidget(
@@ -289,6 +306,8 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                                                           _providerName,
                                                       stations: _stations,
                                                       postcodes: _postcodes,
+                                                      timeStart: _timeStart,
+                                                      timeEnd: _timeEnd,
                                                     ));
                                           }
                                         } catch (e) {
@@ -345,7 +364,6 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
           _stations.add(input + '_' + _station);
         }
       }
-
       setState(() {
         _postcodes = _postcodes;
       });
@@ -364,11 +382,13 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     setState(() {
       if (timespan == Timespan.start) {
         setState(() {
-          _timeStart = time;
+          _timeStartDateTime = time;
+          _timeStart = int.parse(format.format(time));
         });
       } else if (timespan == Timespan.end) {
         setState(() {
-          _timeEnd = time;
+          _timeEndDateTime = time;
+          _timeEnd = int.parse(format.format(time));
         });
       }
     });
