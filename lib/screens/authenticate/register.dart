@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -20,6 +21,7 @@ class _RegisterState extends State<Register> {
   bool textFocus = false;
   bool firstNameProvided = false;
   bool emailProvided = false;
+  bool passwordProvided = false;
   bool providerChecked = false;
   final _formKey = GlobalKey<FormState>();
   RegExp regExpEmail = RegExp(
@@ -76,10 +78,10 @@ class _RegisterState extends State<Register> {
                       SizedBox(
                         height: 10,
                       ),
-                      SelectableText(
+                      AutoSizeText(
                         'Diese App soll es dir in der Zukunft ermöglichen, ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase. Melde dich an und gib deine Plätze bekannt, die du ohne eigenes Auto erreichen willst. Damit können wir gezielter dort nach Anbietern suchen, wo du sie benötigst.',
                         style: Theme.of(context).textTheme.bodyText1,
-                        textAlign: TextAlign.left,
+                        maxLines: 8,
                       ),
                     ],
                   ),
@@ -166,6 +168,41 @@ class _RegisterState extends State<Register> {
                             SizedBox(
                               height: 10,
                             ),
+                            TextFormField(
+                                onTap: () {
+                                  setState(() {
+                                    textFocus = true;
+                                  });
+                                },
+                                onChanged: (val) {
+                                  setState(() {
+                                    password = val;
+                                  });
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Passwort',
+                                  filled: Theme.of(context)
+                                      .inputDecorationTheme
+                                      .filled,
+                                  border: Theme.of(context)
+                                      .inputDecorationTheme
+                                      .border,
+                                  focusedBorder: Theme.of(context)
+                                      .inputDecorationTheme
+                                      .focusedBorder,
+                                  fillColor: Theme.of(context)
+                                      .inputDecorationTheme
+                                      .fillColor,
+                                  prefixIcon: Icon(
+                                    Icons.lock,
+                                    color: emailProvided
+                                        ? Theme.of(context).accentColor
+                                        : null,
+                                  ),
+                                )),
+                            SizedBox(
+                              height: 10,
+                            ),
                             Container(
                               child: InkWell(
                                 onTap: () {
@@ -209,12 +246,9 @@ class _RegisterState extends State<Register> {
                                       if (_formKey.currentState.validate()) {
                                         await _auth.register(
                                           email: email,
-                                          password: 'asdfasdflköasdfkajflkj',
+                                          password: password,
                                           firstName: firstName,
                                           type: type,
-                                          // providerName: providerName,
-                                          // providerAddress: providerAddress,
-                                          // providerType: providerType,
                                         );
                                       }
                                     } catch (e) {

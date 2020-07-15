@@ -29,35 +29,23 @@ class AuthScreen extends StatelessWidget {
         home: AuthenticateScreen(),
       );
     } else {
-      return MultiProvider(
-          providers: [
-            StreamProvider<Routing>.value(
-              initialData: Routing.initialData(),
-              value: RoutingService().streamRouting(user.uid),
-              lazy: true,
-            ),
-            StreamProvider<User>.value(
-              initialData: User.initialData(),
-              value: UserService().streamUser(user.uid),
-              lazy: true,
-            ),
-            StreamProvider<ProviderUser>.value(
-              initialData: ProviderUser.initialData(),
-              value: ProviderService().streamProviderUserData(user.uid),
-              lazy: true,
-            )
-          ],
-          child: MaterialApp(
-            title: 'Sublin',
-            theme: themeData(context),
-            home: HomeScreen(),
-            routes: {
-              HomeScreen.routeName: (context) => HomeScreen(),
-              UserHomeScreen.routeName: (context) => UserHomeScreen(),
-              RoutingScreen.routeName: (context) => RoutingScreen(),
-              ProviderHomeScreen.routeName: (context) => ProviderHomeScreen()
-            },
-          ));
+      return MultiProvider(providers: [
+        StreamProvider<Routing>.value(
+          initialData: Routing.initialData(),
+          value: RoutingService().streamRouting(user.uid),
+          lazy: true,
+        ),
+        StreamProvider<User>.value(
+          initialData: User.initialData(),
+          value: UserService().streamUser(user.uid),
+          lazy: true,
+        ),
+        StreamProvider<ProviderUser>.value(
+          initialData: ProviderUser(isProvider: false),
+          value: ProviderService().streamProviderUserData(user.uid),
+          lazy: true,
+        )
+      ], child: HomeScreen());
     }
   }
 }

@@ -66,6 +66,10 @@ class ProviderUser {
 
   Map<String, dynamic> toMap(ProviderUser data) {
     return {
+      if (data.isProvider != null) 'isProvider': data.isProvider,
+      if (data.operationRequested != null)
+        'operationRequested': data.operationRequested,
+      if (data.inOperation != null) 'inOperation': data.inOperation,
       if (data.outOfWork != null) 'outOfWork': data.outOfWork,
       if (data.providerName != null) 'providerName': data.providerName,
       if (data.postcodes != null) 'postcodes': data.postcodes,

@@ -8,7 +8,7 @@ import 'package:sublin/services/user_service.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final ProviderUser providerUser = ProviderUser();
+  ProviderUser providerUser = ProviderUser.initialData();
 
   Stream<Auth> get userStream {
     return _auth.onAuthStateChanged
@@ -20,14 +20,15 @@ class AuthService {
     String password,
     String firstName,
     String type,
-    String providerName,
-    String providerAddress,
-    String providerType,
+    // String providerName,
+    // String providerAddress,
+    // String providerType,
   }) async {
     try {
       final User user = User(
         email: email,
         firstName: firstName,
+        isProvider: type == 'user' ? false : true,
       );
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -38,12 +39,14 @@ class AuthService {
       // });
       await UserService().writeUserData(uid: authUser.uid, data: user);
       await authUser.sendEmailVerification();
+
       if (type == 'provider') {
         await ProviderService()
             .updateProviderUserData(uid: authUser.uid, data: providerUser);
       }
       return _userfromFirebseUser(authUser);
     } catch (e) {
+      print(e);
       return null;
     }
   }

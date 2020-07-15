@@ -6,6 +6,8 @@ class User {
   final String firstName;
   final String secondName;
   final String homeAddress;
+  final bool isProvider;
+  final bool isProviderCompleted;
   final List<Address> requestedAddresses;
 
   User({
@@ -14,6 +16,8 @@ class User {
     this.firstName = '',
     this.secondName = '',
     this.homeAddress = '',
+    this.isProvider = false,
+    this.isProviderCompleted = false,
     this.requestedAddresses = const [],
   });
 
@@ -33,6 +37,9 @@ class User {
         firstName: data['firstName'] ?? defaultValues.firstName,
         secondName: data['secondName'] ?? defaultValues.secondName,
         homeAddress: data['homeAddress'] ?? defaultValues.homeAddress,
+        isProvider: data['isProvider'] ?? defaultValues.isProvider,
+        isProviderCompleted:
+            data['isProviderCompleted'] ?? defaultValues.isProviderCompleted,
         requestedAddresses: (data['requestedAddresses'] == null)
             ? defaultValues.requestedAddresses
             : data['requestedAddresses'].map<Address>((address) {
@@ -50,6 +57,7 @@ class User {
       'firstName': data.firstName ?? defaultValues.firstName,
       'secondName': data.secondName ?? defaultValues.secondName,
       'homeAddress': data.homeAddress ?? defaultValues.homeAddress,
+      'isProvider': data.isProvider ?? defaultValues.isProvider,
       'requestAddresses':
           data.requestedAddresses ?? defaultValues.requestedAddresses
     };

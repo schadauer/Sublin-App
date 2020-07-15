@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HeaderWidget extends SliverPersistentHeaderDelegate {
   int index = 0;
-  final String name;
+  final String providerName;
+  final DateTime timeStart;
+  final DateTime timeEnd;
+  final List<String> stations;
+  final List<String> postcodes;
+  final Function editProfile;
 
   HeaderWidget({
-    this.name = 'Ihr Betriebsname',
+    this.providerName = 'Ihr Betriebsname',
+    this.timeStart,
+    this.timeEnd,
+    this.stations,
+    this.postcodes,
+    this.editProfile,
   });
+
+  DateFormat formattedDate = DateFormat('HH:mm');
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate _) => true;
@@ -47,7 +60,7 @@ class HeaderWidget extends SliverPersistentHeaderDelegate {
                         shape: BoxShape.circle, color: Colors.white),
                     child: Center(
                         child: Text(
-                      _getInitials(name),
+                      _getInitials(providerName),
                       style: Theme.of(context).textTheme.headline1,
                     )),
                   ),
@@ -60,17 +73,23 @@ class HeaderWidget extends SliverPersistentHeaderDelegate {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          name,
+                          providerName,
                           style: Theme.of(context).textTheme.headline3,
                         ),
-                        // Row(
-                        //   children: <Widget>[
-                        //     Text(
-                        //       'Waidhofner Straß ',
-                        //       style: Theme.of(context).textTheme.bodyText1,
-                        //     )
-                        //   ],
-                        // )
+                        Text(
+                          formattedDate.format(timeStart) +
+                              '  - ' +
+                              formattedDate.format(timeEnd) +
+                              ' Uhr',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+
+                        // Text(stations[0].substring(
+                        //     stations[0].indexOf('_') + 1,
+                        //     stations[0].length)),
+                        FlatButton(
+                            onPressed: () => editProfile(),
+                            child: Text('Profil ändern'))
                       ],
                     ),
                   )

@@ -39,7 +39,6 @@ class ProviderService {
   }
 
   Future<void> updateProviderUserData({String uid, ProviderUser data}) async {
-    print(ProviderUser().toMap(data));
     try {
       await _database
           .collection('providers')

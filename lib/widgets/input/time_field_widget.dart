@@ -5,19 +5,23 @@ import 'package:sublin/models/time.dart';
 
 class TimeFildWidget extends StatelessWidget {
   final format = DateFormat("HH:mm");
-
   final Timespan timespan;
   final Function timeInputFunction;
+  final DateTime initalTime;
 
   TimeFildWidget({
     this.timespan,
     this.timeInputFunction,
+    this.initalTime,
   });
+
+  // TextEditingController _timeFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       DateTimeField(
+        initialValue: initalTime,
         format: format,
         decoration: InputDecoration(contentPadding: EdgeInsets.all(10)),
         onChanged: (time) {

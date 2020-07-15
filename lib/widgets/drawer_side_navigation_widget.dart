@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sublin/screens/provider/provider_home_screen.dart';
+import 'package:sublin/screens/provider/provider_registration.dart';
+import 'package:sublin/screens/user/user_home_screen.dart';
 import 'package:sublin/services/auth_service.dart';
 
 class DrawerSideNavigationWidget extends StatelessWidget {
@@ -25,13 +28,14 @@ class DrawerSideNavigationWidget extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.person_outline),
-            title: Text('Durchgeführte Fahrten'),
-            onTap: null,
+            title: Text('Fahrt suchen'),
+            onTap: () => Navigator.pushNamed(context, UserHomeScreen.routeName),
           ),
           ListTile(
             leading: Icon(Icons.person_outline),
             title: Text('Als Anbieter starten'),
-            onTap: null,
+            onTap: () =>
+                Navigator.pushNamed(context, ProviderHomeScreen.routeName),
           ),
           ListTile(
             leading: Icon(Icons.power_settings_new),

@@ -16,6 +16,8 @@ import 'package:sublin/services/routing_service.dart';
 import 'package:sublin/models/routing.dart';
 import 'package:sublin/widgets/address_search_widget.dart';
 import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
+// import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
+// import 'package:sublin/widgets/provider_bottom_navigation_bar_widget.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = '/userHomeScreen';
@@ -44,13 +46,16 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
-    final ProviderUser providerUser = Provider.of<ProviderUser>(context);
+    // final ProviderUser providerUser = Provider.of<ProviderUser>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Deine Fahrt'),
+        title: Text('Sublin'),
+        backgroundColor: Colors.black12,
       ),
-      endDrawer: DrawerSideNavigationWidget(authService: _auth),
+      drawer: DrawerSideNavigationWidget(
+        authService: AuthService(),
+      ),
       body: SizedBox(
           height: MediaQuery.of(context).size.height -
               AppBar().preferredSize.height -
@@ -58,10 +63,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           child: Column(
             children: <Widget>[
               Container(
-                height: 200,
+                height: 30,
               ),
               SizedBox(
-                height: 240,
+                height: 440,
                 child: ListView(
                   children: <Widget>[
                     (_geoLocationPermissionIsGranted == false)
