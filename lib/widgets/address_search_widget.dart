@@ -6,19 +6,26 @@ class AddressSearchWidget extends StatefulWidget {
   final bool isStartAddress;
   final bool isEndAddress;
   final String startAddress;
+  final String startHintText;
   final String endAddress;
+  final String endHintText;
   final String address;
   final int startTime;
-  final Function textInputFunction;
+  final Function addressInputFunction;
+  final bool isCheckOnly;
 
-  AddressSearchWidget(
-      {this.isStartAddress = false,
-      this.isEndAddress = false,
-      this.startAddress = '',
-      this.endAddress = '',
-      this.address = '',
-      this.startTime,
-      this.textInputFunction});
+  AddressSearchWidget({
+    this.isStartAddress = false,
+    this.isEndAddress = false,
+    this.startAddress = '',
+    this.startHintText = 'Deinen Standort finden',
+    this.endAddress = '',
+    this.endHintText = 'Deine Zieladresse finden',
+    this.address = '',
+    this.startTime,
+    this.addressInputFunction,
+    this.isCheckOnly = false,
+  });
 
   @override
   _AddressSearchWidgetState createState() => _AddressSearchWidgetState();
@@ -27,138 +34,164 @@ class AddressSearchWidget extends StatefulWidget {
 class _AddressSearchWidgetState extends State<AddressSearchWidget> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 120,
-      child: Container(
-        child: Stack(children: <Widget>[
-          SizedBox(
-            height: double.infinity,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              margin: EdgeInsets.all(5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.all(0),
-                    width: 60,
-                    height: 100,
-                    color: Colors.white54,
-                  ),
-                  Expanded(
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      child: (widget.address == '')
-                          ? Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      _pushNavigation(context);
-                                    },
-                                    child: AbsorbPointer(
-                                        child: Container(
+    return Material(
+      child: SizedBox(
+        height: 120,
+        child: Container(
+          child: Stack(children: <Widget>[
+            SizedBox(
+              height: double.infinity,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                margin: EdgeInsets.all(5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    if (!widget.isCheckOnly)
+                      Container(
+                        padding: EdgeInsets.all(0),
+                        width: 60,
+                        height: 100,
+                        color: Colors.white54,
+                      ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        child: (widget.address == '')
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        _pushNavigation(context);
+                                      },
+                                      child: AbsorbPointer(
+                                          child: Container(
+                                              child: Hero(
+                                        tag: 'addressField',
+                                        child: Material(
+                                          child: SizedBox(
                                             height: 50,
                                             child: TextFormField(
                                               decoration: InputDecoration(
                                                 contentPadding:
-                                                    EdgeInsets.all(10),
-                                                fillColor: Colors.black12,
+                                                    Theme.of(context)
+                                                        .inputDecorationTheme
+                                                        .contentPadding,
+                                                fillColor: Theme.of(context)
+                                                    .inputDecorationTheme
+                                                    .fillColor,
                                                 hintText: widget.isStartAddress
-                                                    ? 'Dein Standort finden'
-                                                    : 'Deine Zieladresse finden',
-                                                filled: true,
-                                                border: InputBorder.none,
+                                                    ? widget.startHintText
+                                                    : widget.endHintText,
+                                                filled: Theme.of(context)
+                                                    .inputDecorationTheme
+                                                    .filled,
+                                                border: Theme.of(context)
+                                                    .inputDecorationTheme
+                                                    .border,
                                               ),
-                                            ))),
-                                  ),
-                                )
-                              ],
-                            )
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                  Text(
-                                    widget.address,
-                                    style:
-                                        Theme.of(context).textTheme.headline3,
-                                  ),
-                                  if (widget.isEndAddress ||
-                                      widget.isStartAddress)
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        InkWell(
-                                          onTap: () {
-                                            _pushNavigation(context);
-                                          },
-                                          child: Container(
-                                              child: Row(
-                                            children: <Widget>[
-                                              Icon(
-                                                Icons.edit_location,
-                                                color: Theme.of(context)
-                                                    .accentColor,
-                                              ),
-                                              Text('Adresse ändern')
-                                            ],
-                                          )),
+                                            ),
+                                          ),
                                         ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                      ],
-                                    )
-                                ]),
+                                      ))),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                    Text(
+                                      widget.address,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
+                                    if (widget.isEndAddress ||
+                                        widget.isStartAddress)
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: <Widget>[
+                                          InkWell(
+                                            onTap: () {
+                                              _pushNavigation(context);
+                                            },
+                                            child: Container(
+                                                child: Row(
+                                              children: <Widget>[
+                                                Icon(
+                                                  Icons.edit_location,
+                                                  color: Theme.of(context)
+                                                      .accentColor,
+                                                ),
+                                                Text(
+                                                  'Adresse ändern',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .caption,
+                                                )
+                                              ],
+                                            )),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                        ],
+                                      )
+                                  ]),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Container(
-            width: 80,
-            height: double.infinity,
-            child: Stack(children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    margin: (widget.isStartAddress)
-                        ? EdgeInsets.only(top: 20)
-                        : null,
-                    height: (widget.isEndAddress) ? 30 : double.infinity,
-                    width: 5,
-                    color: Theme.of(context).accentColor,
+            if (!widget.isCheckOnly)
+              Container(
+                width: 80,
+                height: double.infinity,
+                child: Stack(children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: (widget.isStartAddress)
+                            ? EdgeInsets.only(top: 20)
+                            : null,
+                        height: (widget.isEndAddress) ? 30 : double.infinity,
+                        width: 5,
+                        color: Theme.of(context).accentColor,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: 20),
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).accentColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      (widget.isEndAddress) ? Icons.flag : Icons.home,
-                      color: Colors.white,
-                      size: 25,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).accentColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          (widget.isEndAddress) ? Icons.flag : Icons.home,
+                          color: Colors.white,
+                          size: 25,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ]),
               ),
-            ]),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }
@@ -168,9 +201,12 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
         context,
         MaterialPageRoute(
             builder: (context) => AddressInputScreen(
-                  textInputFunction: widget.textInputFunction,
+                  addressInputFunction: widget.addressInputFunction,
                   isEndAddress: widget.isEndAddress,
                   isStartAddress: widget.isStartAddress,
+                  title: widget.isEndAddress
+                      ? widget.endHintText
+                      : widget.startHintText,
                 )));
   }
 }

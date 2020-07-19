@@ -14,7 +14,7 @@ class StepWidget extends StatefulWidget {
   final String provider;
   final int distance;
   final int duration;
-  final Function textInputFunction;
+  final Function addressInputFunction;
 
   StepWidget(
       {this.isStartAddress = false,
@@ -26,7 +26,7 @@ class StepWidget extends StatefulWidget {
       this.provider = '',
       this.distance = 0,
       this.duration = 0,
-      this.textInputFunction});
+      this.addressInputFunction});
 
   @override
   _StepWidgetState createState() => _StepWidgetState();
@@ -94,7 +94,7 @@ class _StepWidgetState extends State<StepWidget> {
         context,
         MaterialPageRoute(
             builder: (context) => AddressInputScreen(
-                  textInputFunction: widget.textInputFunction,
+                  addressInputFunction: widget.addressInputFunction,
                   isEndAddress: widget.isEndAddress,
                   isStartAddress: widget.isStartAddress,
                 )));

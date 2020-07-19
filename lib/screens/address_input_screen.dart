@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sublin/services/google_map_service.dart';
 
 class AddressInputScreen extends StatefulWidget {
-  final Function textInputFunction;
+  final Function addressInputFunction;
   final String address;
   final bool isStartAddress;
   final bool isEndAddress;
@@ -10,7 +10,7 @@ class AddressInputScreen extends StatefulWidget {
   final String restrictions;
 
   AddressInputScreen({
-    this.textInputFunction,
+    this.addressInputFunction,
     this.address = '',
     this.isStartAddress = false,
     this.isEndAddress = false,
@@ -28,14 +28,14 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
   TextEditingController _textFormFieldController = TextEditingController();
   List _autocompleteResults = [];
 
-  @override
-  void initState() {
-    // if (widget.restrictions != '') {
-    //   _textFormFieldController.text = widget.restrictions + ' ';
-    // }
-    // TODO: implement initState
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   // if (widget.restrictions != '') {
+  //   //   _textFormFieldController.text = widget.restrictions + ' ';
+  //   // }
+  //   // TODO: implement initState
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -50,35 +50,42 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
         child: Column(
           children: <Widget>[
             Container(
-                height: 75,
                 padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  focusNode: _focus,
-                  autofocus: true,
-                  onChanged: (input) async {
-                    var result =
-                        await _autocomplete.getGoogleAddressAutocomplete(
-                            input, widget.restrictions);
-                    setState(() {
-                      _autocompleteResults = result ?? [];
-                    });
-                  },
-                  controller: _textFormFieldController,
-                  decoration: InputDecoration(
-                      fillColor: Colors.black12,
-                      filled: true,
-                      border: InputBorder.none,
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0)),
-                      prefixIcon: Icon(Icons.home),
-                      suffixIcon: IconButton(
-                          icon: Icon(Icons.highlight_off),
-                          onPressed: () {
-                            setState(() {
-                              _autocompleteResults = [];
-                              _textFormFieldController.text = '';
-                            });
-                          })),
+                child: Hero(
+                  tag: 'addressField',
+                  child: Material(
+                    child: SizedBox(
+                      height: 75,
+                      child: TextFormField(
+                        focusNode: _focus,
+                        autofocus: true,
+                        onChanged: (input) async {
+                          var result =
+                              await _autocomplete.getGoogleAddressAutocomplete(
+                                  input, widget.restrictions);
+                          setState(() {
+                            _autocompleteResults = result ?? [];
+                          });
+                        },
+                        controller: _textFormFieldController,
+                        decoration: InputDecoration(
+                            fillColor: Colors.black12,
+                            filled: true,
+                            border: InputBorder.none,
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0)),
+                            prefixIcon: Icon(Icons.home),
+                            suffixIcon: IconButton(
+                                icon: Icon(Icons.highlight_off),
+                                onPressed: () {
+                                  setState(() {
+                                    _autocompleteResults = [];
+                                    _textFormFieldController.text = '';
+                                  });
+                                })),
+                      ),
+                    ),
+                  ),
                 )),
             (_autocompleteResults.isNotEmpty)
                 ? Expanded(
@@ -95,7 +102,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                 .contains(widget.restrictions))
                               return GestureDetector(
                                 onTap: () {
-                                  widget.textInputFunction(
+                                  widget.addressInputFunction(
                                       _autocompleteResults[index]['name'],
                                       _autocompleteResults[index]['id'],
                                       widget.isStartAddress,

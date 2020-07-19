@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sublin/models/address_id_arguments.dart';
 import 'package:sublin/models/routing.dart';
 import 'package:sublin/utils/get_time_format.dart';
 import 'package:sublin/widgets/step_icon_widget.dart';
@@ -30,7 +29,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AddressIdArguments args = ModalRoute.of(context).settings.arguments;
+    final Routing args = ModalRoute.of(context).settings.arguments;
     final Routing routingService = Provider.of<Routing>(context);
 
     if (args.startId != routingService.startId ||
@@ -41,7 +40,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
       ));
     }
     if (routingService.provider == null &&
-        routingService.unavailableAddress != null) {
+        routingService.endAddressAvailable != false) {
       return Scaffold(
           body: Center(
         child: Container(

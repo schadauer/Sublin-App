@@ -8,7 +8,7 @@ import 'package:sublin/services/user_service.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  ProviderUser providerUser = ProviderUser.initialData();
+  ProviderUser providerUser = ProviderUser();
 
   Stream<Auth> get userStream {
     return _auth.onAuthStateChanged

@@ -5,9 +5,6 @@ import 'package:sublin/models/routing.dart';
 import 'package:sublin/models/user.dart';
 import 'package:sublin/screens/authenticate/authenticate_screen.dart';
 import 'package:sublin/screens/home_screen.dart';
-import 'package:sublin/screens/user/user_home_screen.dart';
-import 'package:sublin/screens/provider/provider_home_screen.dart';
-import 'package:sublin/screens/user/user_routing_screen.dart';
 import 'package:sublin/services/provider_user_service.dart';
 import 'package:sublin/services/routing_service.dart';
 import 'package:sublin/services/user_service.dart';
@@ -31,7 +28,7 @@ class AuthScreen extends StatelessWidget {
     } else {
       return MultiProvider(providers: [
         StreamProvider<Routing>.value(
-          initialData: Routing.initialData(),
+          initialData: Routing(),
           value: RoutingService().streamRouting(user.uid),
           lazy: true,
         ),
@@ -41,7 +38,7 @@ class AuthScreen extends StatelessWidget {
           lazy: true,
         ),
         StreamProvider<ProviderUser>.value(
-          initialData: ProviderUser(isProvider: false),
+          initialData: ProviderUser(),
           value: ProviderService().streamProviderUserData(user.uid),
           lazy: true,
         )

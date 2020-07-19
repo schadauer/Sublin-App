@@ -44,7 +44,8 @@ class User {
             ? defaultValues.requestedAddresses
             : data['requestedAddresses'].map<Address>((address) {
                 return Address(
-                  name: address['name'] ?? defaultValuesAddress.name,
+                  formattedAddress: address['formattedAddress'] ??
+                      defaultValuesAddress.formattedAddress,
                   id: address['id'] ?? defaultValuesAddress.id,
                 );
               }).toList());

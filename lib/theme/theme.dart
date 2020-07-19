@@ -25,8 +25,8 @@ ThemeData themeData(context) {
     inputDecorationTheme: InputDecorationTheme(
       fillColor: Color.fromRGBO(245, 245, 245, 1),
       filled: true,
-      contentPadding: EdgeInsets.symmetric(vertical: 10),
-      border: InputBorder.none,
+      contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      border: OutlineInputBorder(),
       focusColor: Color.fromRGBO(230, 230, 230, 1),
       focusedBorder:
           OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
@@ -34,6 +34,7 @@ ThemeData themeData(context) {
     backgroundColor: Color.fromRGBO(201, 228, 202, 1),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     textTheme: TextTheme(
+      caption: TextStyle(fontSize: 13),
       button: TextStyle(fontSize: 16),
       bodyText1: TextStyle(
         fontSize: 16,
@@ -46,25 +47,25 @@ ThemeData themeData(context) {
         fontWeight: FontWeight.normal,
       ),
       headline1: TextStyle(
-        fontSize: 32,
+        fontSize: 28,
         color: Colors.black,
         fontFamily: 'Open Sans',
         fontWeight: FontWeight.normal,
       ),
       headline2: TextStyle(
-        fontSize: 28,
-        color: Colors.black,
-        fontWeight: FontWeight.normal,
-        fontFamily: 'Open Sans',
-      ),
-      headline3: TextStyle(
         fontSize: 24,
         color: Colors.black,
         fontWeight: FontWeight.normal,
         fontFamily: 'Open Sans',
       ),
-      headline4: TextStyle(
+      headline3: TextStyle(
         fontSize: 20,
+        color: Colors.black,
+        fontWeight: FontWeight.normal,
+        fontFamily: 'Open Sans',
+      ),
+      headline4: TextStyle(
+        fontSize: 16,
         fontWeight: FontWeight.bold,
       ),
     ),

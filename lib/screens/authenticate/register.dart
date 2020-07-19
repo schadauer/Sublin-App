@@ -30,7 +30,7 @@ class _RegisterState extends State<Register> {
 
   @override
   void initState() {
-    _getCurrentCoordinates();
+    // _getCurrentCoordinates();
     super.initState();
   }
 

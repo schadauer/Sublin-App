@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sublin/models/auth.dart';
 import 'package:sublin/models/provider_user.dart';
-import 'package:sublin/models/time.dart';
+import 'package:sublin/models/routing.dart';
+import 'package:sublin/models/timespan.dart';
 import 'package:sublin/screens/address_input_screen.dart';
 import 'package:sublin/services/auth_service.dart';
 import 'package:sublin/services/provider_user_service.dart';
@@ -46,17 +47,18 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
 
   @override
   Widget build(BuildContext context) {
+    final Routing args = ModalRoute.of(context).settings.arguments;
     final auth = Provider.of<Auth>(context);
     final providerUser = Provider.of<ProviderUser>(context);
 
     void editProfile() {
       setState(() {
         showEditProfile = !showEditProfile;
-        _providerName = providerUser.providerName ?? '';
+        _providerName = providerUser.name ?? '';
         _stations = providerUser.stations ?? [];
         _postcodes = providerUser.postcodes ?? [];
       });
-      _providerNameFormFieldController.text = providerUser.providerName ?? '';
+      _providerNameFormFieldController.text = providerUser.name ?? '';
       _stationFormFieldController.text = providerUser.stations[0].substring(
               providerUser.stations[0].indexOf('_') + 1,
               providerUser.stations[0].length) ??
@@ -170,7 +172,7 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => AddressInputScreen(
-                                            textInputFunction:
+                                            addressInputFunction:
                                                 _stationInputFunction,
                                             isEndAddress: false,
                                             isStartAddress: false,
@@ -314,7 +316,7 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
                                       ProviderService().updateProviderUserData(
                                           uid: auth.uid,
                                           data: ProviderUser(
-                                            providerName: _providerName,
+                                            name: _providerName,
                                             stations: _stations,
                                             postcodes: _postcodes,
                                             timeStart: _timeStart,

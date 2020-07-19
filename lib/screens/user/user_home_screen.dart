@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sublin/models/address_id_arguments.dart';
 
 import 'package:sublin/models/auth.dart';
-import 'package:sublin/models/provider_user.dart';
+import 'package:sublin/models/request.dart';
 import 'package:sublin/screens/user/user_routing_screen.dart';
 import 'package:sublin/services/auth_service.dart';
 import 'package:sublin/services/google_map_service.dart';
@@ -16,31 +15,28 @@ import 'package:sublin/services/routing_service.dart';
 import 'package:sublin/models/routing.dart';
 import 'package:sublin/widgets/address_search_widget.dart';
 import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
-// import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
-// import 'package:sublin/widgets/provider_bottom_navigation_bar_widget.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = '/userHomeScreen';
-
   @override
   _UserHomeScreenState createState() => _UserHomeScreenState();
 }
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   final AuthService _auth = AuthService();
-  Routing _localRouting = Routing();
+  Request _localRequest = Request();
   bool _geoLocationPermissionIsGranted = false;
   Position _currentLocationLatLng;
   List _currentLocationAutocompleteResults;
 
   @override
   void initState() {
-    super.initState();
-    _localRouting.startAddress = '';
-    _localRouting.startId = '';
-    _localRouting.endAddress = '';
-    _localRouting.endId = '';
+    _localRequest.startAddress = '';
+    _localRequest.startId = '';
+    _localRequest.endAddress = '';
+    _localRequest.endId = '';
     _isGeoLocationPermissionGranted();
+    super.initState();
   }
 
   @override
@@ -91,14 +87,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           )
                         : Container(),
                     AddressSearchWidget(
-                      textInputFunction: textInputFunction,
+                      addressInputFunction: addressInputFunction,
                       isStartAddress: true,
-                      address: _localRouting.startAddress,
+                      address: _localRequest.startAddress,
                     ),
                     AddressSearchWidget(
-                      textInputFunction: textInputFunction,
+                      addressInputFunction: addressInputFunction,
                       isEndAddress: true,
-                      address: _localRouting.endAddress,
+                      address: _localRequest.endAddress,
                     ),
                     Container(
                       padding: EdgeInsets.all(5),
@@ -106,24 +102,24 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           RaisedButton(
-                            onPressed: (_localRouting.endAddress != '' &&
-                                    _localRouting.startAddress != '')
+                            onPressed: (_localRequest.endAddress != '' &&
+                                    _localRequest.startAddress != '')
                                 ? () async {
                                     try {
                                       await RoutingService().requestRoute(
                                         uid: auth.uid,
                                         startAddress:
-                                            _localRouting.startAddress,
-                                        startId: _localRouting.startId,
-                                        endAddress: _localRouting.endAddress,
-                                        endId: _localRouting.endId,
+                                            _localRequest.startAddress,
+                                        startId: _localRequest.startId,
+                                        endAddress: _localRequest.endAddress,
+                                        endId: _localRequest.endId,
                                       );
                                       await Navigator.pushNamed(
                                         context,
                                         RoutingScreen.routeName,
-                                        arguments: AddressIdArguments(
-                                          _localRouting.startId,
-                                          _localRouting.endId,
+                                        arguments: Routing(
+                                          startId: _localRequest.startId,
+                                          endId: _localRequest.endId,
                                         ),
                                       );
                                     } catch (e) {
@@ -144,13 +140,13 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     );
   }
 
-  void textInputFunction(
+  void addressInputFunction(
       String input, String id, bool startAddress, bool endAddress) {
     setState(() {
-      if (startAddress) _localRouting.startAddress = input;
-      if (startAddress) _localRouting.startId = id;
-      if (endAddress) _localRouting.endAddress = input;
-      if (endAddress) _localRouting.endId = id;
+      if (startAddress) _localRequest.startAddress = input;
+      if (startAddress) _localRequest.startId = id;
+      if (endAddress) _localRequest.endAddress = input;
+      if (endAddress) _localRequest.endId = id;
     });
   }
 
@@ -168,9 +164,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         _currentLocationAutocompleteResults =
             await GoogleMapService().getGoogleAddressAutocomplete(address, '');
         setState(() {
-          _localRouting.startAddress =
+          _localRequest.startAddress =
               _currentLocationAutocompleteResults[0]['name'];
-          _localRouting.startId = _currentLocationAutocompleteResults[0]['id'];
+          _localRequest.startId = _currentLocationAutocompleteResults[0]['id'];
         });
       } catch (e) {
         print('_getCurrentCoordinates: $e');
