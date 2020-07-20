@@ -1,9 +1,12 @@
+import 'package:sublin/models/provider_selection.dart';
+
 class ProviderUser {
   final bool streamingOn;
   final bool isProvider;
-  final bool isTaxi;
   final bool operationRequested;
   final bool inOperation;
+  bool isTaxi;
+  ProviderType providerType;
   bool outOfWork;
   String name;
   List<String> addresses;
@@ -16,6 +19,7 @@ class ProviderUser {
     this.streamingOn: false,
     this.isProvider: true,
     this.isTaxi: false,
+    this.providerType,
     this.operationRequested: true,
     this.inOperation: false,
     this.outOfWork: false,
@@ -45,11 +49,15 @@ class ProviderUser {
 
   factory ProviderUser.fromMap(Map data) {
     ProviderUser defaultValues = ProviderUser();
+
     data = data ?? {};
     return ProviderUser(
       streamingOn: true,
       isProvider: data['isProvider'] ?? defaultValues.isProvider,
       isTaxi: data['isTaxi'] ?? defaultValues.isTaxi,
+      providerType: ProviderType.values.firstWhere(
+              (e) => e.toString() == 'ProviderType.' + data['providerType']) ??
+          defaultValues.providerType,
       operationRequested:
           data['operationRequested'] ?? defaultValues.operationRequested,
       inOperation: data['inOperation'] ?? defaultValues.inOperation,
@@ -76,9 +84,12 @@ class ProviderUser {
   }
 
   Map<String, dynamic> toMap(ProviderUser data) {
+    String providerType = data.providerType.toString();
     return {
       if (data.isProvider != null) 'isProvider': data.isProvider,
       if (data.isTaxi != null) 'isTaxi': data.isTaxi,
+      if (data.providerType != null)
+        'providerType': providerType.substring(providerType.indexOf('.') + 1),
       if (data.operationRequested != null)
         'operationRequested': data.operationRequested,
       if (data.inOperation != null) 'inOperation': data.inOperation,
@@ -90,37 +101,6 @@ class ProviderUser {
       if (data.timeStart != null) 'timeStart': data.timeStart,
       if (data.timeEnd != null) 'timeEnd': data.timeEnd,
     };
-  }
-
-  get getTimeStart {}
-
-  set setProviderName(String name) {
-    name = name;
-  }
-
-  set setPostCodes(List<String> postcodes) {
-    postcodes = postcodes;
-  }
-
-  set setStations(List<String> stations) {
-    stations = stations;
-  }
-
-  set setAddresses(List<String> stations) {
-    addresses = addresses;
-  }
-
-  set setTimeStart(DateTime time) {
-    timeStart = _dateTimeToInt(time);
-  }
-
-  set setEndStart(DateTime time) {
-    timeEnd = _dateTimeToInt(time);
-  }
-
-  int _dateTimeToInt(DateTime time) {
-    // Todo
-    return 0;
   }
 
   DateTime _intToDateTime(int time) {

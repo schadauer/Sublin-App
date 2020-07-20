@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:sublin/models/auth.dart';
 import 'package:sublin/models/provider_user.dart';
 import 'package:sublin/models/user.dart';
-import 'package:sublin/screens/provider/provider_home_screen.dart';
-import 'package:sublin/screens/provider/provider_registration.dart';
+import 'package:sublin/screens/provider/provider_registration_screen.dart';
+import 'package:sublin/screens/provider/provider_registration_obsolete.dart';
 import 'package:sublin/screens/user/user_home_screen.dart';
 import 'package:sublin/screens/user/user_routing_screen.dart';
 import 'package:sublin/theme/theme.dart';
@@ -98,14 +98,16 @@ class _HomeScreenState extends State<HomeScreen> {
       routes: {
         HomeScreen.routeName: (context) => HomeScreen(),
         UserHomeScreen.routeName: (context) => UserHomeScreen(),
-        ProviderRegistration.routeName: (context) => ProviderRegistration(),
-        ProviderHomeScreen.routeName: (context) => ProviderHomeScreen(),
+        ProviderRegistrationScreen.routeName: (context) =>
+            ProviderRegistrationScreen(),
         RoutingScreen.routeName: (context) => RoutingScreen(),
       },
       title: 'Sublin',
       theme: themeData(context),
 
-      home: (user.isProvider) ? ProviderHomeScreen() : UserHomeScreen(),
+      home: (user.isProvider && providerUser.operationRequested)
+          ? ProviderRegistrationScreen()
+          : UserHomeScreen(),
 
       // Scaffold(
       //     appBar: AppBar(

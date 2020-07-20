@@ -70,30 +70,26 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                       },
                                       child: AbsorbPointer(
                                           child: Container(
-                                              child: Hero(
-                                        tag: 'addressField',
-                                        child: Material(
-                                          child: SizedBox(
-                                            height: 50,
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                contentPadding:
-                                                    Theme.of(context)
-                                                        .inputDecorationTheme
-                                                        .contentPadding,
-                                                fillColor: Theme.of(context)
-                                                    .inputDecorationTheme
-                                                    .fillColor,
-                                                hintText: widget.isStartAddress
-                                                    ? widget.startHintText
-                                                    : widget.endHintText,
-                                                filled: Theme.of(context)
-                                                    .inputDecorationTheme
-                                                    .filled,
-                                                border: Theme.of(context)
-                                                    .inputDecorationTheme
-                                                    .border,
-                                              ),
+                                              child: Material(
+                                        child: SizedBox(
+                                          height: 50,
+                                          child: TextFormField(
+                                            decoration: InputDecoration(
+                                              contentPadding: Theme.of(context)
+                                                  .inputDecorationTheme
+                                                  .contentPadding,
+                                              fillColor: Theme.of(context)
+                                                  .inputDecorationTheme
+                                                  .fillColor,
+                                              hintText: widget.isStartAddress
+                                                  ? widget.startHintText
+                                                  : widget.endHintText,
+                                              filled: Theme.of(context)
+                                                  .inputDecorationTheme
+                                                  .filled,
+                                              border: Theme.of(context)
+                                                  .inputDecorationTheme
+                                                  .border,
                                             ),
                                           ),
                                         ),

@@ -51,39 +51,36 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
           children: <Widget>[
             Container(
                 padding: const EdgeInsets.all(10.0),
-                child: Hero(
-                  tag: 'addressField',
-                  child: Material(
-                    child: SizedBox(
-                      height: 75,
-                      child: TextFormField(
-                        focusNode: _focus,
-                        autofocus: true,
-                        onChanged: (input) async {
-                          var result =
-                              await _autocomplete.getGoogleAddressAutocomplete(
-                                  input, widget.restrictions);
-                          setState(() {
-                            _autocompleteResults = result ?? [];
-                          });
-                        },
-                        controller: _textFormFieldController,
-                        decoration: InputDecoration(
-                            fillColor: Colors.black12,
-                            filled: true,
-                            border: InputBorder.none,
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                            prefixIcon: Icon(Icons.home),
-                            suffixIcon: IconButton(
-                                icon: Icon(Icons.highlight_off),
-                                onPressed: () {
-                                  setState(() {
-                                    _autocompleteResults = [];
-                                    _textFormFieldController.text = '';
-                                  });
-                                })),
-                      ),
+                child: Material(
+                  child: SizedBox(
+                    height: 75,
+                    child: TextFormField(
+                      focusNode: _focus,
+                      autofocus: true,
+                      onChanged: (input) async {
+                        var result =
+                            await _autocomplete.getGoogleAddressAutocomplete(
+                                input, widget.restrictions);
+                        setState(() {
+                          _autocompleteResults = result ?? [];
+                        });
+                      },
+                      controller: _textFormFieldController,
+                      decoration: InputDecoration(
+                          fillColor: Colors.black12,
+                          filled: true,
+                          border: InputBorder.none,
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0)),
+                          prefixIcon: Icon(Icons.home),
+                          suffixIcon: IconButton(
+                              icon: Icon(Icons.highlight_off),
+                              onPressed: () {
+                                setState(() {
+                                  _autocompleteResults = [];
+                                  _textFormFieldController.text = '';
+                                });
+                              })),
                     ),
                   ),
                 )),

@@ -47,7 +47,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Sublin'),
-        backgroundColor: Colors.black12,
       ),
       drawer: DrawerSideNavigationWidget(
         authService: AuthService(),

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 
 class ProgressIndicatorWidget extends StatelessWidget {
-  int index;
-  int elements;
-  bool showProgressIndicator;
+  final int index;
+  final int elements;
+  final bool showProgressIndicator;
 
-  ProgressIndicatorWidget({
+  const ProgressIndicatorWidget({
     this.index = 1,
     this.elements = 4,
     this.showProgressIndicator = false,
-  });
-
-  // const ProgressIndicatorWidget({
-  //   Key key,
-  // }) : super(key: key);
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +32,7 @@ class ProgressIndicatorWidget extends StatelessWidget {
                   child: Container(
                     color: Colors.white,
                   ),
-                  flex: elements,
+                  flex: elements - index,
                 )
               ],
             ),

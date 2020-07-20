@@ -7,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:sublin/models/auth.dart';
 import 'package:sublin/models/request.dart';
-import 'package:sublin/screens/provider/provider_registration.dart';
+import 'package:sublin/screens/provider/provider_registration_obsolete.dart';
 import 'package:sublin/screens/user/user_routing_screen.dart';
 import 'package:sublin/services/auth_service.dart';
 import 'package:sublin/services/google_map_service.dart';

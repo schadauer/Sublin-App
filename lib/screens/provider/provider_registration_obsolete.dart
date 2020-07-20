@@ -10,9 +10,9 @@ import 'package:sublin/models/timespan.dart';
 import 'package:sublin/screens/address_input_screen.dart';
 import 'package:sublin/services/auth_service.dart';
 import 'package:sublin/services/provider_user_service.dart';
-import 'package:sublin/utils/get_time_format.dart';
+// import 'package:sublin/utils/get_time_format.dart';
 import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
-import 'package:sublin/widgets/provider_header_widget.dart';
+// import 'package:sublin/widgets/provider/provider_header_widget.dart';
 import 'package:sublin/widgets/input/time_field_widget.dart';
 
 class ProviderRegistration extends StatefulWidget {
@@ -31,7 +31,7 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
   TextEditingController _stationFormFieldController = TextEditingController();
   TextEditingController _postcodeFormFieldController = TextEditingController();
   DateFormat format = DateFormat('HHmm');
-  var time = DateTime.parse("1969-07-20 20:18:04Z");
+  DateTime time = DateTime.parse("1969-07-20 20:18:04Z");
 
   DateTime _timeEndDateTime;
   DateTime _timeStartDateTime;
@@ -51,19 +51,19 @@ class _ProviderRegistrationState extends State<ProviderRegistration> {
     final auth = Provider.of<Auth>(context);
     final providerUser = Provider.of<ProviderUser>(context);
 
-    void editProfile() {
-      setState(() {
-        showEditProfile = !showEditProfile;
-        _providerName = providerUser.name ?? '';
-        _stations = providerUser.stations ?? [];
-        _postcodes = providerUser.postcodes ?? [];
-      });
-      _providerNameFormFieldController.text = providerUser.name ?? '';
-      _stationFormFieldController.text = providerUser.stations[0].substring(
-              providerUser.stations[0].indexOf('_') + 1,
-              providerUser.stations[0].length) ??
-          '';
-    }
+    // void editProfile() {
+    //   setState(() {
+    //     showEditProfile = !showEditProfile;
+    //     _providerName = providerUser.name ?? '';
+    //     _stations = providerUser.stations ?? [];
+    //     _postcodes = providerUser.postcodes ?? [];
+    //   });
+    //   _providerNameFormFieldController.text = providerUser.name ?? '';
+    //   _stationFormFieldController.text = providerUser.stations[0].substring(
+    //           providerUser.stations[0].indexOf('_') + 1,
+    //           providerUser.stations[0].length) ??
+    //       '';
+    // }
 
     return Scaffold(
       appBar: AppBar(

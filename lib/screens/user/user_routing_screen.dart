@@ -138,19 +138,19 @@ class _RoutingScreenState extends State<RoutingScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
-                                            Text(
-                                              routingService
-                                                  .sublinEndStep['endAddress'],
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline3,
-                                            ),
-                                            Text(
-                                              'Ankunft ${getTimeFormat(routingService.sublinEndStep['endTime'])}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline3,
-                                            ),
+                                            // Text(
+                                            //   routingService
+                                            //       .sublinEndStep['endAddress'],
+                                            //   style: Theme.of(context)
+                                            //       .textTheme
+                                            //       .headline3,
+                                            // ),
+                                            // Text(
+                                            //   'Ankunft ${getTimeFormat(routingService.sublinEndStep['endTime'])}',
+                                            //   style: Theme.of(context)
+                                            //       .textTheme
+                                            //       .headline3,
+                                            // ),
                                           ]),
                                     ),
                                   ),
