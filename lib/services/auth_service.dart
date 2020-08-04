@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sublin/models/auth.dart';
-import 'package:sublin/models/provider_user.dart';
-import 'package:sublin/models/user.dart';
-import 'package:sublin/services/provider_user_service.dart';
-import 'package:sublin/services/user_service.dart';
+import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/user.dart';
+import 'package:Sublin/services/provider_user_service.dart';
+import 'package:Sublin/services/user_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -20,7 +20,7 @@ class AuthService {
     String password,
     String firstName,
     String type,
-    // String providerName,
+
     // String providerAddress,
     // String providerType,
   }) async {

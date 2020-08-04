@@ -4,13 +4,15 @@ ThemeData themeData(context) {
   return ThemeData(
     primarySwatch: Colors.blueGrey,
     primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
-    primaryColor: Color.fromRGBO(54, 73, 88, 1),
+    // primaryColor: Color.fromRGBO(54, 73, 88, 1),
+    primaryColor: Color.fromRGBO(216, 214, 204, 1),
+    secondaryHeaderColor: Color.fromRGBO(0, 133, 74, 1),
     brightness: Brightness.light,
     accentColor: Colors.blueGrey[100],
     accentColorBrightness: Brightness.dark,
-    splashColor: Color.fromRGBO(54, 73, 88, 1),
+    splashColor: Color.fromRGBO(3, 174, 99, 1),
     buttonTheme: ButtonTheme.of(context).copyWith(
-      buttonColor: Color.fromRGBO(59, 96, 100, 1),
+      buttonColor: Color.fromRGBO(0, 133, 74, 1),
       textTheme: ButtonTextTheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     ),
@@ -22,6 +24,7 @@ ThemeData themeData(context) {
       endIndent: 20,
     ),
     canvasColor: Colors.white,
+    errorColor: Colors.red[400],
     inputDecorationTheme: InputDecorationTheme(
       fillColor: Color.fromRGBO(245, 245, 245, 1),
       filled: true,
@@ -33,6 +36,7 @@ ThemeData themeData(context) {
     ),
     backgroundColor: Color.fromRGBO(201, 228, 202, 1),
     visualDensity: VisualDensity.adaptivePlatformDensity,
+    // appBarTheme: AppBarTheme(textTheme: TextTh),
     textTheme: TextTheme(
       caption: TextStyle(fontSize: 13),
       button: TextStyle(fontSize: 16),

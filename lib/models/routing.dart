@@ -1,6 +1,6 @@
-import 'package:sublin/models/address.dart';
-import 'package:sublin/models/provider_user.dart';
-import 'package:sublin/models/step.dart';
+import 'package:Sublin/models/address.dart';
+import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/step.dart';
 
 class Routing {
   final bool streamingOn;
@@ -16,7 +16,7 @@ class Routing {
   String endId;
   bool checkAddress;
   List<Step> publicSteps;
-  Map<dynamic, dynamic> sublinEndStep;
+  Map<dynamic, dynamic> SublinEndStep;
   DateTime timestamp;
 
   Routing({
@@ -33,7 +33,7 @@ class Routing {
     this.endId = '',
     this.checkAddress = false,
     this.publicSteps = const [],
-    this.sublinEndStep = const {},
+    this.SublinEndStep = const {},
     this.timestamp,
   });
 
@@ -55,7 +55,7 @@ class Routing {
       id: data['id'] ?? defaultValue.id,
       booked: data['booked'] ?? defaultValue.booked,
       confirmed: data['confirmed'] ?? defaultValue.confirmed,
-      sublinEndStep: data['sublinEndStep'] ?? defaultValue.sublinEndStep,
+      SublinEndStep: data['SublinEndStep'] ?? defaultValue.SublinEndStep,
       user: data['user'] ?? defaultValue.user,
       endId: data['endId'] ?? defaultValue.endId,
       startId: data['startId'] ?? defaultValue.startId,
@@ -67,8 +67,8 @@ class Routing {
           : ProviderUser(
               isProvider: data['provider']['isProvider'] ??
                   defaultValueProviderUser.isProvider,
-              isTaxi:
-                  data['provider']['isTaxi'] ?? defaultValueProviderUser.isTaxi,
+              // isTaxi:
+              // data['provider']['isTaxi'] ?? defaultValueProviderUser.isTaxi,
               operationRequested: data['provider']['operationRequested'] ??
                   defaultValueProviderUser.operationRequested,
               inOperation: data['provider']['inOperation'] ??

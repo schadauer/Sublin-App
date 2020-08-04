@@ -2,9 +2,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-import 'package:sublin/screens/authenticate/sign_in.dart';
-import 'package:sublin/services/auth_service.dart';
-import 'package:sublin/utils/is_geolocation_permission_granted.dart';
+import 'package:Sublin/screens/authenticate/sign_in.dart';
+import 'package:Sublin/services/auth_service.dart';
+import 'package:Sublin/utils/is_email_format.dart';
+import 'package:Sublin/utils/is_geolocation_permission_granted.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -24,9 +25,6 @@ class _RegisterState extends State<Register> {
   bool passwordProvided = false;
   bool providerChecked = false;
   final _formKey = GlobalKey<FormState>();
-  RegExp regExpEmail = RegExp(
-    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-  );
 
   @override
   void initState() {
@@ -79,7 +77,7 @@ class _RegisterState extends State<Register> {
                         height: 10,
                       ),
                       AutoSizeText(
-                        'Diese App soll es dir in der Zukunft ermöglichen, ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase. Melde dich an und gib deine Plätze bekannt, die du ohne eigenes Auto erreichen willst. Damit können wir gezielter dort nach Anbietern suchen, wo du sie benötigst.',
+                        'Diese App soll dir in der Zukunft ermöglichen, bequem ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase. Melde dich an und gib deine Plätze bekannt, die du ohne eigenes Auto erreichen willst. Damit können wir gezielter dort nach Anbietern suchen, wo du sie benötigst.',
                         style: Theme.of(context).textTheme.bodyText1,
                         maxLines: 8,
                       ),
@@ -137,7 +135,7 @@ class _RegisterState extends State<Register> {
                                 onChanged: (val) {
                                   setState(() {
                                     email = val;
-                                    if (regExpEmail.hasMatch(val)) {
+                                    if (isEmailFormat(val)) {
                                       emailProvided = true;
                                     } else {
                                       emailProvided = false;
@@ -203,33 +201,36 @@ class _RegisterState extends State<Register> {
                             SizedBox(
                               height: 10,
                             ),
-                            Container(
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    providerChecked = !providerChecked;
-                                    if (providerChecked) {
-                                      type = 'provider';
-                                    } else {
-                                      type = 'user';
-                                    }
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(12),
-                                  color: Color.fromRGBO(245, 245, 245, 1),
-                                  child: Row(
-                                    children: <Widget>[
-                                      (type == 'provider')
-                                          ? _checked(context)
-                                          : _unchecked(context),
-                                      SizedBox(
-                                        width: 13,
-                                      ),
-                                      Text(
-                                        'Ich bin lizenzierter Anbieter',
-                                      ),
-                                    ],
+                            Card(
+                              child: Container(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      providerChecked = !providerChecked;
+                                      if (providerChecked) {
+                                        type = 'provider';
+                                      } else {
+                                        type = 'user';
+                                      }
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 15),
+                                    // color: Color.fromRGBO(245, 245, 245, 1),
+                                    child: Row(
+                                      children: <Widget>[
+                                        (type == 'provider')
+                                            ? _checked(context)
+                                            : _unchecked(context),
+                                        SizedBox(
+                                          width: 13,
+                                        ),
+                                        Text(
+                                          'Ich biete Transferservice an',
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -279,14 +280,14 @@ class _RegisterState extends State<Register> {
   Icon _checked(context) {
     return Icon(
       Icons.check_box,
-      color: Theme.of(context).accentColor,
+      // color: Theme.of(context).accentColor,
     );
   }
 
   Icon _unchecked(context) {
     return Icon(
       Icons.check_box_outline_blank,
-      color: Colors.black12,
+      color: Theme.of(context).accentColor,
     );
   }
 

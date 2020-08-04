@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:sublin/models/provider_selection.dart';
+import 'package:Sublin/models/provider_plan.dart';
+import 'package:Sublin/models/provider_type.dart';
 
 class ProviderSelectionWidget extends StatelessWidget {
   final String title;
   final String text;
   final String caption;
+  final Function buttonFunction;
+  final String buttonText;
   final ProviderType providerSelection;
-  final Function providerSelectionFunction;
+  final ProviderPlan providerPlanSelection;
+  final Function selectionFunction;
   final bool active;
   const ProviderSelectionWidget({
     this.title,
     this.text,
     this.caption,
+    this.buttonFunction,
+    this.buttonText: '',
     this.providerSelection,
-    this.providerSelectionFunction,
+    this.selectionFunction,
+    this.providerPlanSelection,
     this.active,
     Key key,
   }) : super(key: key);
@@ -23,20 +30,20 @@ class ProviderSelectionWidget extends StatelessWidget {
     return Card(
       child: InkWell(
         onTap: () {
-          providerSelectionFunction(providerSelection);
+          selectionFunction(providerSelection ?? providerPlanSelection);
         },
         child: Padding(
           padding: EdgeInsets.all(10.0),
           child: Row(
             children: <Widget>[
-              Flexible(
+              Expanded(
                 flex: 1,
                 child: active
                     ? Icon(Icons.radio_button_checked)
                     : Icon(Icons.radio_button_unchecked),
               ),
-              Flexible(
-                flex: 4,
+              Expanded(
+                flex: 5,
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
@@ -47,6 +54,24 @@ class ProviderSelectionWidget extends StatelessWidget {
                             maxLines: 2,
                             style: Theme.of(context).textTheme.bodyText1),
                         Text(text, style: Theme.of(context).textTheme.caption),
+                        if (buttonFunction != null)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  RaisedButton(
+                                      onPressed: () {
+                                        buttonFunction(context);
+                                      },
+                                      child: Text(buttonText)),
+                                ],
+                              ),
+                            ],
+                          )
                       ],
                     ),
                   ),

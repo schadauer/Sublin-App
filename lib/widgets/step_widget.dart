@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sublin/screens/address_input_screen.dart';
-import 'package:sublin/widgets/step_icon_widget.dart';
-import 'package:sublin/utils/get_time_format.dart';
+import 'package:Sublin/screens/address_input_screen.dart';
+import 'package:Sublin/widgets/step_icon_widget.dart';
+import 'package:Sublin/utils/get_time_format.dart';
 
 class StepWidget extends StatefulWidget {
-  //The following types are possible: start, end, train, bus, sublin
+  //The following types are possible: start, end, train, bus, Sublin
   final bool isStartAddress;
   final bool isEndAddress;
   final String startAddress;

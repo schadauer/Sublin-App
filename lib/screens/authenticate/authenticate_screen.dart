@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sublin/screens/authenticate/register.dart';
+import 'package:Sublin/screens/authenticate/register.dart';
 
 class AuthenticateScreen extends StatefulWidget {
   @override

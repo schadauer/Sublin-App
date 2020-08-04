@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sublin/screens/provider/provider_registration_screen.dart';
+import 'package:Sublin/screens/provider/provider_registration_screen.dart';
 
 class ProviderBottomNavigationBarWidget extends StatefulWidget {
   // const ProviderBottomNavigationBarWidget({

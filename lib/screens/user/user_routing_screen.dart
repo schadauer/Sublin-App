@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sublin/models/routing.dart';
-import 'package:sublin/utils/get_time_format.dart';
-import 'package:sublin/widgets/step_icon_widget.dart';
-import 'package:sublin/widgets/step_widget.dart';
+import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/utils/get_time_format.dart';
+import 'package:Sublin/widgets/step_icon_widget.dart';
+import 'package:Sublin/widgets/step_widget.dart';
 
 class RoutingScreen extends StatefulWidget {
   static const routeName = '/routingScreen';
@@ -140,13 +140,13 @@ class _RoutingScreenState extends State<RoutingScreen> {
                                           children: <Widget>[
                                             // Text(
                                             //   routingService
-                                            //       .sublinEndStep['endAddress'],
+                                            //       .SublinEndStep['endAddress'],
                                             //   style: Theme.of(context)
                                             //       .textTheme
                                             //       .headline3,
                                             // ),
                                             // Text(
-                                            //   'Ankunft ${getTimeFormat(routingService.sublinEndStep['endTime'])}',
+                                            //   'Ankunft ${getTimeFormat(routingService.SublinEndStep['endTime'])}',
                                             //   style: Theme.of(context)
                                             //       .textTheme
                                             //       .headline3,

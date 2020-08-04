@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sublin/models/provider_user.dart';
-import 'package:sublin/models/routing.dart';
-import 'package:sublin/models/user.dart';
-import 'package:sublin/screens/authenticate/authenticate_screen.dart';
-import 'package:sublin/screens/home_screen.dart';
-import 'package:sublin/services/provider_user_service.dart';
-import 'package:sublin/services/routing_service.dart';
-import 'package:sublin/services/user_service.dart';
-import 'package:sublin/theme/theme.dart';
+import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/user.dart';
+import 'package:Sublin/screens/authenticate/authenticate_screen.dart';
+import 'package:Sublin/screens/home_screen.dart';
+import 'package:Sublin/services/provider_user_service.dart';
+import 'package:Sublin/services/routing_service.dart';
+import 'package:Sublin/services/user_service.dart';
+import 'package:Sublin/theme/theme.dart';
 
 import '../models/auth.dart';
 

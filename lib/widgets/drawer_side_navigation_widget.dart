@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sublin/screens/provider/provider_registration_screen.dart';
-import 'package:sublin/screens/user/user_home_screen.dart';
-import 'package:sublin/services/auth_service.dart';
+import 'package:Sublin/screens/provider/provider_registration_screen.dart';
+import 'package:Sublin/screens/user/user_home_screen.dart';
+import 'package:Sublin/services/auth_service.dart';
 
 class DrawerSideNavigationWidget extends StatelessWidget {
   const DrawerSideNavigationWidget({

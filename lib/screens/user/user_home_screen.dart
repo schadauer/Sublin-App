@@ -5,16 +5,16 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:sublin/models/auth.dart';
-import 'package:sublin/models/request.dart';
-import 'package:sublin/screens/user/user_routing_screen.dart';
-import 'package:sublin/services/auth_service.dart';
-import 'package:sublin/services/google_map_service.dart';
-import 'package:sublin/services/routing_service.dart';
+import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/models/request.dart';
+import 'package:Sublin/screens/user/user_routing_screen.dart';
+import 'package:Sublin/services/auth_service.dart';
+import 'package:Sublin/services/google_map_service.dart';
+import 'package:Sublin/services/routing_service.dart';
 
-import 'package:sublin/models/routing.dart';
-import 'package:sublin/widgets/address_search_widget.dart';
-import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
+import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/widgets/address_search_widget.dart';
+import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 
 class UserHomeScreen extends StatefulWidget {
   static const routeName = '/userHomeScreen';
@@ -160,8 +160,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         });
         String address = await _getPlacemarkFromCoordinates(
             _currentLocationLatLng.latitude, _currentLocationLatLng.longitude);
-        _currentLocationAutocompleteResults =
-            await GoogleMapService().getGoogleAddressAutocomplete(address, '');
+        _currentLocationAutocompleteResults = await GoogleMapService()
+            .getGoogleAddressAutocomplete(input: address);
         setState(() {
           _localRequest.startAddress =
               _currentLocationAutocompleteResults[0]['name'];

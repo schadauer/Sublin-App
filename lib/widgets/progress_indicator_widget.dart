@@ -16,16 +16,16 @@ class ProgressIndicatorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        SizedBox(
-          height: 1,
-        ),
+        // SizedBox(
+        //   height: 1,
+        // ),
         if (!showProgressIndicator)
           SizedBox(
             height: 10,
             child: Row(
               children: <Widget>[
                 Flexible(
-                  child: Container(color: Theme.of(context).primaryColor),
+                  child: Container(color: Theme.of(context).splashColor),
                   flex: index,
                 ),
                 Flexible(
@@ -41,7 +41,7 @@ class ProgressIndicatorWidget extends StatelessWidget {
           SizedBox(
             height: 10,
             child: LinearProgressIndicator(
-              backgroundColor: Theme.of(context).primaryColor,
+              backgroundColor: Theme.of(context).splashColor,
             ),
           ),
       ],

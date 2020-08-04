@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sublin/services/google_map_service.dart';
+import 'package:Sublin/services/google_map_service.dart';
 
 class AddressInputScreen extends StatefulWidget {
   final Function addressInputFunction;
@@ -8,6 +8,7 @@ class AddressInputScreen extends StatefulWidget {
   final bool isEndAddress;
   final String title;
   final String restrictions;
+  final bool cityOnly;
 
   AddressInputScreen({
     this.addressInputFunction,
@@ -16,6 +17,7 @@ class AddressInputScreen extends StatefulWidget {
     this.isEndAddress = false,
     this.title = 'Addresse suchen',
     this.restrictions = '',
+    this.cityOnly = false,
   });
 
   @override
@@ -60,7 +62,9 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                       onChanged: (input) async {
                         var result =
                             await _autocomplete.getGoogleAddressAutocomplete(
-                                input, widget.restrictions);
+                                input: input,
+                                restrictions: widget.restrictions,
+                                cityOnly: widget.cityOnly);
                         setState(() {
                           _autocompleteResults = result ?? [];
                         });
@@ -94,25 +98,25 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                       child: ListView.builder(
                           itemCount: _autocompleteResults.length,
                           itemBuilder: (_, index) {
-                            if (_autocompleteResults[index]['name']
-                                .toString()
-                                .contains(widget.restrictions))
-                              return GestureDetector(
-                                onTap: () {
-                                  widget.addressInputFunction(
-                                      _autocompleteResults[index]['name'],
-                                      _autocompleteResults[index]['id'],
-                                      widget.isStartAddress,
-                                      widget.isEndAddress);
-                                  Navigator.of(context).pop();
-                                },
-                                child: ListTile(
-                                    contentPadding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    leading: Icon(Icons.home),
-                                    title: Text(
-                                        _autocompleteResults[index]['name'])),
-                              );
+                            // if (_autocompleteResults[index]['name']
+                            //     .toString()
+                            //     .contains(widget.restrictions))
+                            return GestureDetector(
+                              onTap: () {
+                                widget.addressInputFunction(
+                                    _autocompleteResults[index]['name'],
+                                    _autocompleteResults[index]['id'],
+                                    widget.isStartAddress,
+                                    widget.isEndAddress);
+                                Navigator.of(context).pop();
+                              },
+                              child: ListTile(
+                                  contentPadding:
+                                      EdgeInsets.symmetric(horizontal: 20),
+                                  leading: Icon(Icons.home),
+                                  title: Text(
+                                      _autocompleteResults[index]['name'])),
+                            );
                           }),
                     ),
                   )

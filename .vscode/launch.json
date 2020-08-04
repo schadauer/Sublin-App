@@ -13,7 +13,7 @@
       "name": "Android",
       "request": "launch",
       "type": "dart",
-      "deviceId": "emulator-5554"
+      "deviceId": "emulator-5556"
     },
     {
       "name": "iPhone 8",
@@ -40,16 +40,16 @@
       "deviceId": "SM A105FN"
     },
     {
-      "name": "iPhone 6",
+      "name": "Pixel 3a API 29",
       "request": "launch",
       "type": "dart",
-      "deviceId": "bixiPhone"
+      "deviceId": "emulator-5556"
     },
     {
-      "name": "Pixel 2 API 30",
+      "name": "Pixel 2 API 29",
       "request": "launch",
       "type": "dart",
-      "deviceId": "Pixel 2 API 30"
+      "deviceId": "emulator-5554"
     }
   ],
   "compounds": [

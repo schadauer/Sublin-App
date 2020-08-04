@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sublin/screens/auth_screen.dart';
+import 'package:Sublin/screens/auth_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:sublin/services/auth_service.dart';
+import 'package:Sublin/services/auth_service.dart';
 import './models/auth.dart';
 
 void main() => runApp(MyApp());

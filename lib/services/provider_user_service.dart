@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:sublin/models/provider_user.dart';
+import 'package:Sublin/models/provider_user.dart';
 
 class ProviderService {
   final Firestore _database = Firestore.instance;

@@ -1,28 +1,33 @@
 import 'dart:async';
 
+import 'package:Sublin/services/google_map_service.dart';
+import 'package:Sublin/utils/format_address.dart';
+import 'package:Sublin/utils/get_part_of_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sublin/models/auth.dart';
-import 'package:sublin/models/provider_selection.dart';
-import 'package:sublin/models/provider_user.dart';
-import 'package:sublin/models/request.dart';
-import 'package:sublin/models/routing.dart';
-import 'package:sublin/models/timespan.dart';
-import 'package:sublin/models/user.dart';
-import 'package:sublin/screens/address_input_screen.dart';
-import 'package:sublin/services/auth_service.dart';
-import 'package:sublin/services/provider_user_service.dart';
+import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/models/provider_plan.dart';
+import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/request.dart';
+import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/timespan.dart';
+import 'package:Sublin/models/user.dart';
+import 'package:Sublin/screens/address_input_screen.dart';
+import 'package:Sublin/screens/email_list_screen.dart';
+import 'package:Sublin/services/auth_service.dart';
+import 'package:Sublin/services/provider_user_service.dart';
 
-import 'package:sublin/services/routing_service.dart';
-import 'package:sublin/widgets/address_search_widget.dart';
-import 'package:sublin/widgets/drawer_side_navigation_widget.dart';
-import 'package:sublin/widgets/input/time_field_widget.dart';
-import 'package:sublin/widgets/progress_indicator_widget.dart';
-import 'package:sublin/widgets/provider/provider_selection_widget.dart';
+import 'package:Sublin/services/routing_service.dart';
+import 'package:Sublin/widgets/address_search_widget.dart';
+import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
+import 'package:Sublin/widgets/input/time_field_widget.dart';
+import 'package:Sublin/widgets/progress_indicator_widget.dart';
+import 'package:Sublin/widgets/provider/provider_selection_widget.dart';
 
 enum SingingCharacter { provider, service }
 
@@ -40,29 +45,27 @@ class _ProviderRegistrationScreenState
       TextEditingController();
   TextEditingController _stationFormFieldController = TextEditingController();
   TextEditingController _postcodeFormFieldController = TextEditingController();
+  // _providerUser is the object that we will fill with user data
   ProviderUser _providerUser = ProviderUser();
   ProviderUser _defaultProviderUser = ProviderUser();
   Routing _defaultValueRouting = Routing();
   Routing _checkRoutingData;
   Request _request = Request();
   bool _showProgressIndicator = false;
-  String _checkId = 'Initial';
+  String _previousDataId;
   // Button active or disabled
   bool _addressFound = false;
   StreamSubscription<Routing> _subscription;
   int _pageSteps = 1;
-  // ProviderType _providerSelection;
+  String _station = '';
 
   DateFormat format = DateFormat('HHmm');
   var time = DateTime.parse("1969-07-20 20:18:04Z");
-  // DateTime _timeEndDateTime;
-  // DateTime _timeStartDateTime;
-
-  String _station = '';
 
   @override
   void initState() {
     super.initState();
+    _previousDataId = _defaultValueRouting.id;
     // Dummy address to calculate route
     _request.startAddress =
         'Wien Hauptbahnhof, Wien Südbahnhof, Am Hauptbahnhof, Vienna, Austria';
@@ -73,6 +76,7 @@ class _ProviderRegistrationScreenState
 
   @override
   void dispose() {
+    print('dispose');
     _pageViewController.dispose();
     _subscription.cancel();
     super.dispose();
@@ -82,17 +86,25 @@ class _ProviderRegistrationScreenState
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
-    final providerUser = Provider.of<ProviderUser>(context);
+    // final providerUser = Provider.of<ProviderUser>(context);
 
-    print(providerUser.providerType);
+    print(ProviderUser().toMap(_providerUser));
+    // print(ProviderUser().toMap(_defaultProviderUser));
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Registrierung als Anbieter'),
-        elevation: 0.0,
-        backgroundColor: Theme.of(context).primaryColor,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: AppBar(
+          title: Text('Registrierung als Anbieter'),
+          elevation: 0.0,
+          backgroundColor: Theme.of(context).primaryColor,
+          leading: Image.asset(
+            'assets/images/Sublin.png',
+            scale: 1.3,
+          ),
+        ),
       ),
-      drawer: DrawerSideNavigationWidget(
+      endDrawer: DrawerSideNavigationWidget(
         authService: AuthService(),
       ),
       body: SafeArea(
@@ -100,6 +112,10 @@ class _ProviderRegistrationScreenState
           controller: _pageViewController,
           children: <Widget>[
             // First Page ------------------------------- 1 ----------------------------------
+            // 1. 'addressInputFunction' sets the 'addresses' field of the '_userProvider' object
+            // 2. when the user clicks the button a call to RoutingService().requestRoute is sent that
+            // triggers a 'routing' service in the backend
+            // 3. '_checkAddressStatus opens a stream 'RoutingService().streamCheck(uid)' to check for the route in the 'check' collection of the database
             Container(
               child: Column(
                 children: <Widget>[
@@ -117,7 +133,7 @@ class _ProviderRegistrationScreenState
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                'Hallo ' + user.firstName + ',',
+                                'Hallo ' + user.firstName,
                                 style: Theme.of(context).textTheme.headline3,
                                 textAlign: TextAlign.left,
                               ),
@@ -127,7 +143,7 @@ class _ProviderRegistrationScreenState
                             height: 10,
                           ),
                           AutoSizeText(
-                            'finde deine Betriebsadresse, um herauszufinden, ob sich für deine Postleitzahl bereits ein Taxi- oder Mietwagenunternehmen registriert hat.',
+                            'Super, du hast dich als Anbieter registriert. Wir benötigen noch ein paar Informationen von dir, damit wir deine Registrierung bearbeiten können.',
                             style: Theme.of(context).textTheme.bodyText1,
                             maxLines: 8,
                           ),
@@ -135,7 +151,7 @@ class _ProviderRegistrationScreenState
                             height: 20,
                           ),
                           AddressSearchWidget(
-                            addressInputFunction: addressInputFunction,
+                            addressInputFunction: addressSelectionFunction,
                             isEndAddress: true,
                             isStartAddress: false,
                             isCheckOnly: true,
@@ -151,21 +167,40 @@ class _ProviderRegistrationScreenState
                                         try {
                                           setState(() {
                                             _showProgressIndicator = true;
+                                            _providerUser = ProviderUser();
+                                            _providerUser.addresses = [
+                                              formatAddress(_request.endAddress)
+                                            ];
                                           });
+                                          // Create a route to check if there is service at the end address
                                           await RoutingService().requestRoute(
                                             uid: auth.uid,
                                             startAddress: _request.startAddress,
                                             startId: _request.startId,
                                             endAddress: _request.endAddress,
                                             endId: _request.endId,
-                                            checkAddress: true,
+                                            checkAddress:
+                                                true, // checking only address to see if a service is available
                                             timestamp: DateTime.now()
                                                 .millisecondsSinceEpoch,
                                           );
+
                                           // At the moment only one address is possible
-                                          _providerUser.addresses[0] =
-                                              _request.endAddress;
-                                          _checkAddressStatus(auth.uid);
+                                          // Format of address is [street]__[postcode]
+                                          // String
+                                          //     formattedAddressWithGooglePlace =
+                                          //     await (GoogleMapService()
+                                          //         .getFormattedAddressWithGooglePlace(
+                                          //             _request.endId));
+                                          // _providerUser.addresses = [
+                                          //   formattedAddressWithGooglePlace
+                                          // ];
+                                          await _checkAddressStatus(auth.uid);
+                                          // Also set the first postcode - this is the postcode of the provider's address -
+                                          // Strips the postcode part of the address
+                                          // _providerUser.postcodes = [
+                                          //   formatAddress(_request.endAddress)
+                                          // ];
                                         } catch (e) {}
                                       }
                                     : null,
@@ -210,10 +245,10 @@ class _ProviderRegistrationScreenState
                                   ),
                                   if (!_checkRoutingData.endAddressAvailable)
                                     Text(
-                                        'Für die Postleitzahl ${_checkRoutingData.endAddress.postcode} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
+                                        'Für ${_checkRoutingData.endAddress.city} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
                                   if (_checkRoutingData.endAddressAvailable)
                                     Text(
-                                        '${_checkRoutingData.provider.name} hat sich bereits für die Postleitzahl ${_checkRoutingData.endAddress.postcode} registriert und führt voraussichtlich Zubringerservices vom Bahnhof zu den Adressen dieser Postleitzahl durch.'),
+                                        '${_checkRoutingData.provider.name} hat sich bereits für ${_checkRoutingData.endAddress.city} registriert und führt voraussichtlich Transferservice vom und zum Bahnhof durch.'),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -225,13 +260,13 @@ class _ProviderRegistrationScreenState
                                   if (_checkRoutingData.endAddressAvailable)
                                     ProviderSelectionWidget(
                                       title:
-                                          'Zubringerservice durch ${_checkRoutingData.provider.name}',
+                                          'Transferservice durch ${_checkRoutingData.provider.name}',
                                       text:
-                                          'Kostenloses Service vom Bahnhof zu deiner angegebenen Adresse für ausgewählte Personen',
+                                          'Transfers werden zwischen deiner Address und dem Bahnhof von ${_checkRoutingData.provider.name} durchgeführt.',
                                       caption: '',
                                       providerSelection:
                                           ProviderType.taxiShuttle,
-                                      providerSelectionFunction:
+                                      selectionFunction:
                                           providerSelectionFunction,
                                       active: ProviderType.taxiShuttle ==
                                           _providerUser.providerType,
@@ -242,17 +277,17 @@ class _ProviderRegistrationScreenState
                                       text:
                                           'vom Bahnhof zu den Adressen der Postleitzahl ${_checkRoutingData.endAddress.postcode}. Gewerbeberechtigung notwendig.',
                                       providerSelection: ProviderType.taxi,
-                                      providerSelectionFunction:
+                                      selectionFunction:
                                           providerSelectionFunction,
                                       active: ProviderType.taxi ==
                                           _providerUser.providerType,
                                     ),
                                   ProviderSelectionWidget(
-                                    title: 'Eigenes Zubringerservice',
+                                    title: 'Eigenes Tranferservice',
                                     text:
-                                        'Kostenloses Service vom Bahnhof zu deiner angegebenen Adresse für ausgewählte Personen',
+                                        'Du führst selbst den Transfer zwischen Bahnhof und deiner Adresse durch.',
                                     providerSelection: ProviderType.ownShuttle,
-                                    providerSelectionFunction:
+                                    selectionFunction:
                                         providerSelectionFunction,
                                     active: ProviderType.ownShuttle ==
                                         _providerUser.providerType,
@@ -269,8 +304,8 @@ class _ProviderRegistrationScreenState
                                     onPressed: _providerUser.providerType !=
                                             null
                                         ? () {
-                                            _getStationName(_checkRoutingData
-                                                .provider.stations);
+                                            // _getStationName(_checkRoutingData
+                                            //   .provider.stations);
                                             _pageViewController.nextPage(
                                                 duration:
                                                     Duration(milliseconds: 300),
@@ -309,19 +344,13 @@ class _ProviderRegistrationScreenState
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        _providerUser.name ==
-                                                _defaultProviderUser.name
-                                            ? 'Nur noch zwei Schritte'
-                                            : '${_providerUser.name} hat noch gefehlt!',
+                                        'Noch ein paar Details zu deinem Unternehmen',
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline3,
                                       ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
                                       AutoSizeText(
-                                        'Bitte teil uns deinen Betriebsnamen mit.',
+                                        'Bitte teile uns deinen Unternehmensnamen mit.',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1,
@@ -330,40 +359,37 @@ class _ProviderRegistrationScreenState
                                         height: 10,
                                       ),
                                       Card(
-                                        child: Column(children: <Widget>[
-                                          Hero(
-                                            tag: 'addressField',
-                                            child: Material(
-                                              child: TextFormField(
-                                                  validator: (val) => val
-                                                              .length <
-                                                          4
-                                                      ? 'Bitte gib hier deinen Betriebsnamen ein'
-                                                      : null,
-                                                  controller:
-                                                      _providerNameFormFieldController,
-                                                  onChanged: (val) {
-                                                    setState(() {
-                                                      _providerUser.name = val;
-                                                    });
-                                                  },
-                                                  decoration: InputDecoration(
-                                                    hintText:
-                                                        'Dein Betriebsname',
-                                                    prefixIcon: Icon(
-                                                        Icons.account_circle,
-                                                        color: Theme.of(context)
-                                                            .accentColor),
-                                                  )),
-                                            ),
-                                          ),
-                                        ]),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15),
+                                          child: Column(children: <Widget>[
+                                            TextFormField(
+                                                validator: (val) => val.length <
+                                                        4
+                                                    ? 'Bitte gib hier deinen Betriebsnamen ein'
+                                                    : null,
+                                                controller:
+                                                    _providerNameFormFieldController,
+                                                onChanged: (val) {
+                                                  setState(() {
+                                                    _providerUser.name = val;
+                                                  });
+                                                },
+                                                decoration: InputDecoration(
+                                                  hintText:
+                                                      'Dein Unternehmensname',
+                                                  prefixIcon: Icon(
+                                                      Icons.account_circle,
+                                                      color: Theme.of(context)
+                                                          .accentColor),
+                                                )),
+                                          ]),
+                                        ),
                                       ),
                                       SizedBox(
                                         height: 20,
                                       ),
                                       AutoSizeText(
-                                        'Zu welchen Uhrzeiten bietest du deine Leistungen an?',
+                                        'Zu welchen Uhrzeiten bietest du deine Leistungen an? Du kannst das Services jederzeit aussetzen.',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1,
@@ -373,37 +399,45 @@ class _ProviderRegistrationScreenState
                                       ),
                                       GestureDetector(
                                         onTap: () => null, // _pickTime(),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Flexible(
-                                                flex: 1, child: Text('Von')),
-                                            Flexible(
-                                                flex: 2,
-                                                child: TimeFildWidget(
-                                                  initalTime:
-                                                      _fromIntToDateTime(
-                                                          _providerUser
-                                                              .timeStart),
-                                                  timespan: Timespan.start,
-                                                  timeInputFunction:
-                                                      _fromDateTimeToInt,
-                                                )),
-                                            Flexible(
-                                                flex: 1, child: Text('bis')),
-                                            Flexible(
-                                                flex: 2,
-                                                child: TimeFildWidget(
-                                                  initalTime:
-                                                      _fromIntToDateTime(
-                                                          _providerUser
-                                                              .timeEnd),
-                                                  timespan: Timespan.end,
-                                                  timeInputFunction:
-                                                      _fromDateTimeToInt,
-                                                ))
-                                          ],
+                                        child: Card(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(15),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Flexible(
+                                                    flex: 1,
+                                                    child: Text('Von')),
+                                                Flexible(
+                                                    flex: 2,
+                                                    child: TimeFildWidget(
+                                                      initalTime:
+                                                          _fromIntToDateTime(
+                                                              _providerUser
+                                                                  .timeStart),
+                                                      timespan: Timespan.start,
+                                                      timeInputFunction:
+                                                          _fromDateTimeToInt,
+                                                    )),
+                                                Flexible(
+                                                    flex: 1,
+                                                    child: Text('bis')),
+                                                Flexible(
+                                                    flex: 2,
+                                                    child: TimeFildWidget(
+                                                      initalTime:
+                                                          _fromIntToDateTime(
+                                                              _providerUser
+                                                                  .timeEnd),
+                                                      timespan: Timespan.end,
+                                                      timeInputFunction:
+                                                          _fromDateTimeToInt,
+                                                    ))
+                                              ],
+                                            ),
+                                          ),
                                         ),
                                       ),
                                       SizedBox(
@@ -441,7 +475,8 @@ class _ProviderRegistrationScreenState
                         ],
                       ))),
             // Fourth Page ------------------------------- 4 ----------------------------------
-            if (_pageSteps >= 3)
+            if (_pageSteps >= 3 &&
+                _providerUser.providerType == ProviderType.taxi)
               SingleChildScrollView(
                   child: Container(
                       width: MediaQuery.of(context).size.width,
@@ -468,7 +503,7 @@ class _ProviderRegistrationScreenState
                                       height: 10,
                                     ),
                                     AutoSizeText(
-                                      'Für welchen Bahnhof bietest du deine Zubringerdienste an?',
+                                      'Für welchen Bahnhof bietest du deine Transferservice an?',
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                     ),
@@ -483,10 +518,10 @@ class _ProviderRegistrationScreenState
                                                 builder: (context) =>
                                                     AddressInputScreen(
                                                       addressInputFunction:
-                                                          _stationInputFunction,
+                                                          stationSelectionFunction,
                                                       isEndAddress: false,
                                                       isStartAddress: false,
-                                                      restrictions: 'Bahn',
+                                                      restrictions: 'Bahnhof',
                                                       title: 'Bahnhof suchen',
                                                     )));
                                       },
@@ -499,9 +534,7 @@ class _ProviderRegistrationScreenState
                                             controller:
                                                 _stationFormFieldController,
                                             onChanged: (val) {
-                                              setState(() {
-                                                // _providerName = val;
-                                              });
+                                              setState(() {});
                                             },
                                             decoration: InputDecoration(
                                               hintText: 'Bahnhof hinzufügen',
@@ -515,57 +548,42 @@ class _ProviderRegistrationScreenState
                                       height: 20,
                                     ),
                                     AutoSizeText(
-                                      'Für welche Postleitzahlen bietest du deine Dienste an?',
+                                      'Du bietest deine Transferdienstleistungen für folgende Ortschaften an:',
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                     ),
                                     SizedBox(
                                       height: 15,
                                     ),
-                                    _getPostcodes(_providerUser.postcodes),
+                                    _getCitiesFromStationsWidget(
+                                        _providerUser.stations),
                                     SizedBox(
                                       height: 15,
                                     ),
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
                                         Container(
-                                          width: 170,
-                                          child: TextFormField(
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              maxLength: 4,
-                                              buildCounter:
-                                                  (BuildContext context,
-                                                          {int currentLength,
-                                                          int maxLength,
-                                                          bool isFocused}) =>
-                                                      null,
-                                              controller:
-                                                  _postcodeFormFieldController,
-                                              enabled: _providerUser.stations !=
-                                                      _defaultProviderUser
-                                                          .stations
-                                                  ? false
-                                                  : true,
-                                              decoration: InputDecoration(
-                                                  contentPadding:
-                                                      EdgeInsets.all(10),
-                                                  hintText: 'PLZ',
-                                                  prefixIcon:
-                                                      Icon(Icons.add_location),
-                                                  suffixIcon: IconButton(
-                                                    icon: Icon(Icons.add_box),
-                                                    onPressed: () {
-                                                      _postcodeInputFunction(
-                                                          input:
-                                                              _postcodeFormFieldController
-                                                                  .text);
-                                                      setState(() {
-                                                        _postcodeFormFieldController
-                                                            .text = '';
-                                                      });
-                                                    },
-                                                  ))),
+                                          child: FlatButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AddressInputScreen(
+                                                              addressInputFunction:
+                                                                  citySelectionFunction,
+                                                              isEndAddress:
+                                                                  false,
+                                                              isStartAddress:
+                                                                  false,
+                                                              cityOnly: true,
+                                                              title:
+                                                                  'Ortschaft hinzufügen',
+                                                            )));
+                                              },
+                                              child: Text(
+                                                  'Weitere Ortschaften Hinzufügen')),
                                         ),
                                       ],
                                     ),
@@ -576,105 +594,213 @@ class _ProviderRegistrationScreenState
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
                                         RaisedButton(
-                                          onPressed: _providerUser.postcodes !=
-                                                  _defaultProviderUser.postcodes
-                                              ? () {
-                                                  ProviderService()
-                                                      .updateProviderUserData(
-                                                          uid: auth.uid,
-                                                          data: _providerUser);
-                                                }
-                                              : null,
+                                          onPressed:
+                                              _providerUser.stations.length > 0
+                                                  ? () {
+                                                      ProviderService()
+                                                          .updateProviderUserData(
+                                                              uid: auth.uid,
+                                                              data:
+                                                                  _providerUser);
+                                                    }
+                                                  : null,
                                           child: Text('Jetzt registrieren'),
                                         )
                                       ],
                                     )
                                   ])
                             ]))
-                      ])))
+                      ]))),
+            // Fourth Page ------------------------------- 4 ----------------------------------
+            if (_pageSteps >= 3 &&
+                    _providerUser.providerType == ProviderType.ownShuttle ||
+                _providerUser.providerType == ProviderType.taxiShuttle)
+              SingleChildScrollView(
+                child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    // padding: EdgeInsets.all(15),
+                    child: Column(children: <Widget>[
+                      ProgressIndicatorWidget(
+                        index: 4,
+                        elements: 4,
+                        showProgressIndicator: _showProgressIndicator,
+                      ),
+                      Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Zum Schluss noch deine Zielgruppe',
+                                style: Theme.of(context).textTheme.headline3,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              AutoSizeText(
+                                'Wer kann Transferservices in Anspruch nehmen?',
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                              ProviderSelectionWidget(
+                                title: 'Nur bestimmte Personen',
+                                text:
+                                    'Nur Personen mit einer bestimmten E-Mail-Adressen. Du kannst jederzeit E-Mails hinzufügen oder entfernen',
+                                buttonFunction: ProviderPlan.emailOnly ==
+                                        _providerUser.providerPlan
+                                    ? pushToEmailListScreen
+                                    : null,
+                                buttonText: 'E-Mails hinzufügen',
+                                providerPlanSelection: ProviderPlan.emailOnly,
+                                selectionFunction:
+                                    providerPlanSelectionFunction,
+                                active: ProviderPlan.emailOnly ==
+                                    _providerUser.providerPlan,
+                              ),
+                              ProviderSelectionWidget(
+                                title: 'Alle',
+                                text:
+                                    'Alle Personen, die den Service zwischen Bahnhof und der Address ${_providerUser.addresses[0]} beautragen.',
+                                providerPlanSelection: ProviderPlan.all,
+                                selectionFunction:
+                                    providerPlanSelectionFunction,
+                                active: ProviderPlan.all ==
+                                    _providerUser.providerPlan,
+                              ),
+                            ],
+                          ))
+                    ])),
+              ),
           ],
         ),
       ),
     );
   }
 
-  String _getStationName(List stations) {
-    String station;
-    stations.map((e) {
-      print(e);
-    });
-    return station;
+  Future pushToEmailListScreen(BuildContext context) {
+    // _providerUser.targetGroup = ['andreas.schadauer'];
+    return Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EmailListScreen(
+                  emailListScreenFunction: emailListScreenFunction,
+                  targetGroup: _providerUser.targetGroup,
+                )));
   }
 
-  void providerSelectionFunction(selection) {
+  void emailListScreenFunction(List<String> list) {
+    setState(() {
+      _providerUser.targetGroup = list;
+    });
+  }
+
+  void providerPlanSelectionFunction(ProviderPlan selection) {
+    setState(() {
+      _providerUser.providerPlan = selection;
+    });
+  }
+
+  void providerSelectionFunction(ProviderType selection) {
     setState(() {
       _providerUser.providerType = selection;
-      // _providerSelection = selection;
       _pageSteps = 3;
-      _providerUser.isTaxi = selection == ProviderType.taxi ? true : false;
     });
   }
 
-  void addressInputFunction(
+  void addressSelectionFunction(
       String input, String id, bool startAddress, bool endAddress) {
     setState(() {
       _addressFound = true;
       _request.endAddress = input;
       _request.endId = id;
-      _providerUser.addresses = [
-        input,
-        id,
-      ];
     });
   }
 
-  void _stationInputFunction(
+  void stationSelectionFunction(
       String input, String id, bool startAddress, bool endAddress) {
+    _stationFormFieldController.text = input;
+    _setStationFromAddressFunction(station: _stationFormFieldController.text);
+  }
+
+  void citySelectionFunction(
+      String input, String id, bool startAddress, bool endAddress) {
+    _addCityToStations(input);
+    // _stationFormFieldController.text = input;
+    // _setStationFunction(station: _stationFormFieldController.text);
+  }
+
+  Future<void> _checkAddressStatus(String uid) async {
+    try {
+      final myStream = RoutingService().streamCheck(uid);
+      _subscription = myStream.listen((data) {
+        if (data.id != _defaultValueRouting.id && data.id != _previousDataId) {
+          setState(() {
+            _checkRoutingData = data;
+            _showProgressIndicator = false;
+            _pageSteps = 2;
+            _pageViewController.nextPage(
+                duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+          });
+          _previousDataId = data.id;
+          RoutingService().deleteCheck(uid);
+          _subscription.cancel();
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _setStationFromAddressFunction({
+    String address = '',
+    // String postcode = '',
+    String station = '',
+    bool remove = false,
+  }) {
+    String scope = _providerUser.addresses[0];
+    // If Taxi the scope is the postcode
+    // If not Taxi the scope is the full address
+    if (_providerUser.providerType == ProviderType.taxi)
+      scope = getPartOfAddress(_providerUser.addresses[0], '__');
     setState(() {
-      _stationFormFieldController.text = input;
-      _station = input;
+      if (station != '')
+        _providerUser.stations = [
+          scope + '___' + station,
+        ];
     });
   }
 
-  void _postcodeInputFunction({String input, bool remove = false}) {
-    if (input.length == 4) {
-      var index = _providerUser.postcodes.indexOf(input);
-      print(index);
+  void _addCityToStations(String city) {
+    bool cityExists = false;
+    _providerUser.stations.map((e) {
+      String cityFromAddress = getPartOfAddress(e, '__');
+      if (city == cityFromAddress) {
+        cityExists = true;
+      }
+    }).toList();
+    if (cityExists == false) {
       setState(() {
-        if (remove) {
-          if (index >= 0) {
-            _providerUser.postcodes.removeAt(index);
-            _providerUser.stations.removeAt(index);
-          }
-        } else {
-          _providerUser.postcodes = [..._providerUser.postcodes, input];
-          _providerUser.stations = [
-            ..._providerUser.stations,
-            input + '_' + _station
-          ];
-          print(_providerUser.stations);
-        }
+        _providerUser.stations
+            .add(city + '___' + _stationFormFieldController.text);
       });
     }
   }
 
-  void _checkAddressStatus(uid) {
-    final myStream = RoutingService().streamCheck(uid);
-    _subscription = myStream.listen((data) {
-      if (data.id != _defaultValueRouting.id && _checkId != data.id) {
-        setState(() {
-          _checkRoutingData = data;
-          _checkId = data.id;
-          _showProgressIndicator = false;
-          _pageSteps = 2;
-          _pageViewController.nextPage(
-              duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-        });
+  void _removeCityFromStation(String city) {
+    setState(() {
+      int removeIndex;
+      for (var i = 0; i < _providerUser.stations.length; i++) {
+        String cityFromAddress =
+            getPartOfAddress(_providerUser.stations[i], '__');
+        if (city == cityFromAddress) {
+          removeIndex = i;
+        }
       }
+      _providerUser.stations.removeAt(removeIndex);
     });
   }
 
-  void _fromDateTimeToInt(Timespan timespan, time) {
+  void _fromDateTimeToInt(Timespan timespan, DateTime time) {
     setState(() {
       if (timespan == Timespan.start) {
         setState(() {
@@ -701,17 +827,20 @@ class _ProviderRegistrationScreenState
     return timeDate;
   }
 
-  Widget _getPostcodes(List<String> postcodes) {
-    if (postcodes != null && postcodes.length > 0) {
+  Widget _getCitiesFromStationsWidget(List<String> addresses) {
+    if (addresses != null && addresses.length > 0) {
       return Wrap(
           direction: Axis.horizontal,
           alignment: WrapAlignment.spaceBetween,
           spacing: 8.0,
-          children: postcodes.map((postcode) {
+          children: addresses.map((address) {
+            String city = getPartOfAddress(address, '__');
             return Chip(
-              label: Text(postcode),
-              onDeleted: () =>
-                  _postcodeInputFunction(input: postcode, remove: true),
+              label: Text(city),
+              onDeleted:
+                  city == getPartOfAddress(_providerUser.addresses[0], '__')
+                      ? null
+                      : () => _removeCityFromStation(city),
             );
           }).toList());
     } else {
