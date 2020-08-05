@@ -10,15 +10,17 @@ class ProviderSelectionWidget extends StatelessWidget {
   final String buttonText;
   final ProviderType providerSelection;
   final ProviderPlan providerPlanSelection;
+  final bool isProvider;
   final Function selectionFunction;
   final bool active;
   const ProviderSelectionWidget({
     this.title,
-    this.text,
+    this.text = '',
     this.caption,
     this.buttonFunction,
     this.buttonText: '',
     this.providerSelection,
+    this.isProvider,
     this.selectionFunction,
     this.providerPlanSelection,
     this.active,
@@ -27,13 +29,15 @@ class ProviderSelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(providerSelection ?? providerPlanSelection ?? isProvider);
     return Card(
       child: InkWell(
         onTap: () {
-          selectionFunction(providerSelection ?? providerPlanSelection);
+          selectionFunction(
+              providerSelection ?? providerPlanSelection ?? isProvider);
         },
         child: Padding(
-          padding: EdgeInsets.all(10.0),
+          padding: EdgeInsets.symmetric(vertical: 5),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -53,7 +57,9 @@ class ProviderSelectionWidget extends StatelessWidget {
                         Text(title,
                             maxLines: 2,
                             style: Theme.of(context).textTheme.bodyText1),
-                        Text(text, style: Theme.of(context).textTheme.caption),
+                        if (text != '')
+                          Text(text,
+                              style: Theme.of(context).textTheme.caption),
                         if (buttonFunction != null)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,

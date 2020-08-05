@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Sublin/utils/convert_to_formatted_address.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -107,10 +108,11 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     try {
                                       await RoutingService().requestRoute(
                                         uid: auth.uid,
-                                        startAddress:
-                                            _localRequest.startAddress,
+                                        startAddress: convertToFormattedAddress(
+                                            _localRequest.startAddress),
                                         startId: _localRequest.startId,
-                                        endAddress: _localRequest.endAddress,
+                                        endAddress: convertToFormattedAddress(
+                                            _localRequest.endAddress),
                                         endId: _localRequest.endId,
                                       );
                                       await Navigator.pushNamed(

@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:Sublin/services/google_map_service.dart';
-import 'package:Sublin/utils/format_address.dart';
+import 'package:Sublin/utils/convert_to_formatted_address.dart';
 import 'package:Sublin/utils/get_part_of_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +43,7 @@ class _ProviderRegistrationScreenState
   TextEditingController _providerNameFormFieldController =
       TextEditingController();
   TextEditingController _stationFormFieldController = TextEditingController();
-  TextEditingController _postcodeFormFieldController = TextEditingController();
+  // TextEditingController _postcodeFormFieldController = TextEditingController();
   // _providerUser is the object that we will fill with user data
   ProviderUser _providerUser = ProviderUser();
   ProviderUser _defaultProviderUser = ProviderUser();
@@ -57,7 +56,7 @@ class _ProviderRegistrationScreenState
   bool _addressFound = false;
   StreamSubscription<Routing> _subscription;
   int _pageSteps = 1;
-  String _station = '';
+  // String _station = '';
 
   DateFormat format = DateFormat('HHmm');
   var time = DateTime.parse("1969-07-20 20:18:04Z");
@@ -87,8 +86,13 @@ class _ProviderRegistrationScreenState
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
     // final providerUser = Provider.of<ProviderUser>(context);
+    // _providerUser =
+    //     providerUser == _providerUser ? providerUser : _providerUser;
+    //     ? _defaultProviderUser
+    //     : _providerUser;
 
     print(ProviderUser().toMap(_providerUser));
+    // print(ProviderUser().toMap(providerUser));
     // print(ProviderUser().toMap(_defaultProviderUser));
 
     return Scaffold(
@@ -169,7 +173,8 @@ class _ProviderRegistrationScreenState
                                             _showProgressIndicator = true;
                                             _providerUser = ProviderUser();
                                             _providerUser.addresses = [
-                                              formatAddress(_request.endAddress)
+                                              convertToFormattedAddress(
+                                                  _request.endAddress)
                                             ];
                                           });
                                           // Create a route to check if there is service at the end address
@@ -184,23 +189,7 @@ class _ProviderRegistrationScreenState
                                             timestamp: DateTime.now()
                                                 .millisecondsSinceEpoch,
                                           );
-
-                                          // At the moment only one address is possible
-                                          // Format of address is [street]__[postcode]
-                                          // String
-                                          //     formattedAddressWithGooglePlace =
-                                          //     await (GoogleMapService()
-                                          //         .getFormattedAddressWithGooglePlace(
-                                          //             _request.endId));
-                                          // _providerUser.addresses = [
-                                          //   formattedAddressWithGooglePlace
-                                          // ];
                                           await _checkAddressStatus(auth.uid);
-                                          // Also set the first postcode - this is the postcode of the provider's address -
-                                          // Strips the postcode part of the address
-                                          // _providerUser.postcodes = [
-                                          //   formatAddress(_request.endAddress)
-                                          // ];
                                         } catch (e) {}
                                       }
                                     : null,
@@ -248,7 +237,7 @@ class _ProviderRegistrationScreenState
                                         'Für ${_checkRoutingData.endAddress.city} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
                                   if (_checkRoutingData.endAddressAvailable)
                                     Text(
-                                        '${_checkRoutingData.provider.name} hat sich bereits für ${_checkRoutingData.endAddress.city} registriert und führt voraussichtlich Transferservice vom und zum Bahnhof durch.'),
+                                        '${_checkRoutingData.provider.name} hat sich bereits für ${_checkRoutingData.endAddress.city} registriert und führt voraussichtlich Shuttleservice vom und zum Bahnhof durch.'),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -260,7 +249,7 @@ class _ProviderRegistrationScreenState
                                   if (_checkRoutingData.endAddressAvailable)
                                     ProviderSelectionWidget(
                                       title:
-                                          'Transferservice durch ${_checkRoutingData.provider.name}',
+                                          'Shuttleservice durch ${_checkRoutingData.provider.name}',
                                       text:
                                           'Transfers werden zwischen deiner Address und dem Bahnhof von ${_checkRoutingData.provider.name} durchgeführt.',
                                       caption: '',
@@ -283,9 +272,9 @@ class _ProviderRegistrationScreenState
                                           _providerUser.providerType,
                                     ),
                                   ProviderSelectionWidget(
-                                    title: 'Eigenes Tranferservice',
+                                    title: 'Nur Shuttleservice',
                                     text:
-                                        'Du führst selbst den Transfer zwischen Bahnhof und deiner Adresse durch.',
+                                        'Du bietest ein Shuttleservice zwischen Bahnhof und deiner Adresse an.',
                                     providerSelection: ProviderType.ownShuttle,
                                     selectionFunction:
                                         providerSelectionFunction,
@@ -304,8 +293,14 @@ class _ProviderRegistrationScreenState
                                     onPressed: _providerUser.providerType !=
                                             null
                                         ? () {
-                                            // _getStationName(_checkRoutingData
-                                            //   .provider.stations);
+                                            _providerUser.partners =
+                                                _providerUser.providerType ==
+                                                        ProviderType.taxiShuttle
+                                                    ? [
+                                                        _checkRoutingData
+                                                            .provider.id
+                                                      ]
+                                                    : [];
                                             _pageViewController.nextPage(
                                                 duration:
                                                     Duration(milliseconds: 300),
@@ -348,6 +343,9 @@ class _ProviderRegistrationScreenState
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline3,
+                                      ),
+                                      SizedBox(
+                                        height: 10,
                                       ),
                                       AutoSizeText(
                                         'Bitte teile uns deinen Unternehmensnamen mit.',
@@ -503,7 +501,7 @@ class _ProviderRegistrationScreenState
                                       height: 10,
                                     ),
                                     AutoSizeText(
-                                      'Für welchen Bahnhof bietest du deine Transferservice an?',
+                                      'Für welchen Bahnhof bietest du deine Shuttleservice an?',
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                     ),
@@ -547,66 +545,66 @@ class _ProviderRegistrationScreenState
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    AutoSizeText(
-                                      'Du bietest deine Transferdienstleistungen für folgende Ortschaften an:',
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
-                                    ),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
-                                    _getCitiesFromStationsWidget(
-                                        _providerUser.stations),
-                                    SizedBox(
-                                      height: 15,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        Container(
-                                          child: FlatButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            AddressInputScreen(
-                                                              addressInputFunction:
-                                                                  citySelectionFunction,
-                                                              isEndAddress:
-                                                                  false,
-                                                              isStartAddress:
-                                                                  false,
-                                                              cityOnly: true,
-                                                              title:
-                                                                  'Ortschaft hinzufügen',
-                                                            )));
-                                              },
-                                              child: Text(
-                                                  'Weitere Ortschaften Hinzufügen')),
-                                        ),
-                                      ],
-                                    ),
+                                    if (_providerUser.stations.length > 0)
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          AutoSizeText(
+                                            'Du bietest deinen Shuttleservice für folgende Ortschaften an:',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                          ),
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          _getCitiesFromStationsWidget(
+                                              _providerUser.stations),
+                                          SizedBox(
+                                            height: 15,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: <Widget>[
+                                              Container(
+                                                child: FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  AddressInputScreen(
+                                                                    addressInputFunction:
+                                                                        citySelectionFunction,
+                                                                    isEndAddress:
+                                                                        false,
+                                                                    isStartAddress:
+                                                                        false,
+                                                                    cityOnly:
+                                                                        true,
+                                                                    title:
+                                                                        'Ortschaft hinzufügen',
+                                                                  )));
+                                                    },
+                                                    child: Text(
+                                                        'Weitere Ortschaften Hinzufügen')),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        RaisedButton(
-                                          onPressed:
-                                              _providerUser.stations.length > 0
-                                                  ? () {
-                                                      ProviderService()
-                                                          .updateProviderUserData(
-                                                              uid: auth.uid,
-                                                              data:
-                                                                  _providerUser);
-                                                    }
-                                                  : null,
-                                          child: Text('Jetzt registrieren'),
-                                        )
-                                      ],
+                                    RegisterNowWidget(
+                                      providerUser: _providerUser,
+                                      auth: auth,
+                                      isActive:
+                                          _providerUser.stations.length > 0,
                                     )
                                   ])
                             ]))
@@ -639,7 +637,7 @@ class _ProviderRegistrationScreenState
                                 height: 10,
                               ),
                               AutoSizeText(
-                                'Wer kann Transferservices in Anspruch nehmen?',
+                                'Wer kann Shuttleservices in Anspruch nehmen?',
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                               ProviderSelectionWidget(
@@ -650,7 +648,10 @@ class _ProviderRegistrationScreenState
                                         _providerUser.providerPlan
                                     ? pushToEmailListScreen
                                     : null,
-                                buttonText: 'E-Mails hinzufügen',
+                                buttonText:
+                                    _providerUser.targetGroup.length == 0
+                                        ? 'E-Mails hinzufügen'
+                                        : 'E-Mails verwalten',
                                 providerPlanSelection: ProviderPlan.emailOnly,
                                 selectionFunction:
                                     providerPlanSelectionFunction,
@@ -660,13 +661,25 @@ class _ProviderRegistrationScreenState
                               ProviderSelectionWidget(
                                 title: 'Alle',
                                 text:
-                                    'Alle Personen, die den Service zwischen Bahnhof und der Address ${_providerUser.addresses[0]} beautragen.',
+                                    'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getPartOfAddress(_providerUser.addresses[0], '__')} beautragen.',
                                 providerPlanSelection: ProviderPlan.all,
                                 selectionFunction:
                                     providerPlanSelectionFunction,
                                 active: ProviderPlan.all ==
                                     _providerUser.providerPlan,
                               ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              RegisterNowWidget(
+                                providerUser: _providerUser,
+                                auth: auth,
+                                isActive: _providerUser.providerPlan ==
+                                            ProviderPlan.emailOnly &&
+                                        _providerUser.targetGroup.length > 0 ||
+                                    _providerUser.providerPlan ==
+                                        ProviderPlan.all,
+                              )
                             ],
                           ))
                     ])),
@@ -846,5 +859,38 @@ class _ProviderRegistrationScreenState
     } else {
       return Wrap();
     }
+  }
+}
+
+class RegisterNowWidget extends StatelessWidget {
+  const RegisterNowWidget(
+      {Key key,
+      @required ProviderUser providerUser,
+      @required this.auth,
+      @required this.isActive})
+      : _providerUser = providerUser,
+        super(key: key);
+
+  final ProviderUser _providerUser;
+  final Auth auth;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        RaisedButton(
+          onPressed: isActive
+              ? () {
+                  _providerUser.operationRequested = true;
+                  ProviderService().updateProviderUserData(
+                      uid: auth.uid, data: _providerUser);
+                }
+              : null,
+          child: Text('Jetzt registrieren'),
+        )
+      ],
+    );
   }
 }

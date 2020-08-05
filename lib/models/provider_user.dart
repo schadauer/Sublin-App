@@ -3,13 +3,14 @@ import 'package:Sublin/models/provider_type.dart';
 
 class ProviderUser {
   final bool streamingOn;
-  final bool isProvider;
-  final bool operationRequested;
+  // final bool isProvider;
   final bool inOperation;
+  bool operationRequested;
   ProviderType providerType;
   ProviderPlan providerPlan;
   bool outOfWork;
   String name;
+  String id;
   List<String> targetGroup;
   List<String> addresses;
   List<String> postcodes;
@@ -20,13 +21,14 @@ class ProviderUser {
 
   ProviderUser({
     this.streamingOn: false,
-    this.isProvider: true,
+    // this.isProvider: true,
     this.providerType,
     this.providerPlan,
-    this.operationRequested: true,
+    this.operationRequested: false,
     this.inOperation: false,
     this.outOfWork: false,
     this.name: '',
+    this.id: '',
     this.targetGroup: const [],
     this.addresses: const [],
     this.postcodes: const [],
@@ -41,7 +43,7 @@ class ProviderUser {
     data = data ?? {};
     return ProviderUser(
       streamingOn: true,
-      isProvider: data['isProvider'] ?? defaultValues.isProvider,
+      // isProvider: data['isProvider'] ?? defaultValues.isProvider,
       providerType: ProviderType.values.firstWhere(
           (e) => e.toString() == 'ProviderType.' + data['providerType'],
           orElse: () => defaultValues.providerType),
@@ -53,6 +55,7 @@ class ProviderUser {
       inOperation: data['inOperation'] ?? defaultValues.inOperation,
       outOfWork: data['outOfWork'] ?? defaultValues.inOperation,
       name: data['name'] ?? defaultValues.name,
+      id: data['id'] ?? defaultValues.id,
       targetGroup: (data['targetGroup'] == [])
           ? defaultValues.postcodes
           : data['targetGroup'].map<String>((targetG) {
@@ -87,23 +90,35 @@ class ProviderUser {
     String providerType = data.providerType.toString();
     String providerPlan = data.providerPlan.toString();
     return {
-      if (data.isProvider != null) 'isProvider': data.isProvider,
+      // if (data.isProvider != null) 'isProvider': data.isProvider,
       if (data.providerType != null)
         'providerType': providerType.substring(providerType.indexOf('.') + 1),
       if (data.providerPlan != null)
         'providerPlan': providerPlan.substring(providerPlan.indexOf('.') + 1),
       if (data.operationRequested != null)
         'operationRequested': data.operationRequested,
-      if (data.inOperation != null) 'inOperation': data.inOperation,
-      if (data.outOfWork != null) 'outOfWork': data.outOfWork,
-      if (data.name != null) 'name': data.name,
-      if (data.targetGroup != null) 'addresses': data.targetGroup,
-      if (data.addresses != null) 'addresses': data.addresses,
-      if (data.postcodes != null) 'postcodes': data.postcodes,
-      if (data.stations != null) 'stations': data.stations,
-      if (data.partners != null) 'partners': data.partners,
-      if (data.timeStart != null) 'timeStart': data.timeStart,
-      if (data.timeEnd != null) 'timeEnd': data.timeEnd,
+      if (data.inOperation != null)
+        'inOperation': data.inOperation,
+      if (data.outOfWork != null)
+        'outOfWork': data.outOfWork,
+      if (data.name != null)
+        'name': data.name,
+      if (data.id != null)
+        'id': data.id,
+      if (data.targetGroup != null)
+        'targetGroup': data.targetGroup,
+      if (data.addresses != null)
+        'addresses': data.addresses,
+      if (data.postcodes != null)
+        'postcodes': data.postcodes,
+      if (data.stations != null)
+        'stations': data.stations,
+      if (data.partners != null)
+        'partners': data.partners,
+      if (data.timeStart != null)
+        'timeStart': data.timeStart,
+      if (data.timeEnd != null)
+        'timeEnd': data.timeEnd,
     };
   }
 

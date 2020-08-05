@@ -1,3 +1,4 @@
+import 'package:Sublin/screens/provider/provider_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/auth.dart';
@@ -106,8 +107,10 @@ class _HomeScreenState extends State<HomeScreen> {
       title: 'Sublin',
       theme: themeData(context),
 
-      home: (user.isProvider && providerUser.operationRequested)
-          ? ProviderRegistrationScreen()
+      home: (user.isProvider && !providerUser.inOperation)
+          ? !providerUser.operationRequested
+              ? ProviderRegistrationScreen()
+              : ProviderHomeScreen()
           : UserHomeScreen(),
 
       // Scaffold(

@@ -1,7 +1,7 @@
 // Format of address is [house number]_[street]__[city]___[country iso code]<->[station]
 // at the moment only addresses from AT are allowed!
 
-String formatAddress(String address) {
+String convertToFormattedAddress(String address) {
   RegExp regExp = RegExp("[0-9]{1,4}");
   String houseNo = regExp.stringMatch(address);
   bool isCityOnly = address.indexOf(',') == -1 ? true : false;

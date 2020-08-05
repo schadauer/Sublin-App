@@ -65,8 +65,8 @@ class Routing {
       provider: (data['provider'] == null)
           ? defaultValueProviderUser
           : ProviderUser(
-              isProvider: data['provider']['isProvider'] ??
-                  defaultValueProviderUser.isProvider,
+              // isProvider: data['provider']['isProvider'] ??
+              //     defaultValueProviderUser.isProvider,
               // isTaxi:
               // data['provider']['isTaxi'] ?? defaultValueProviderUser.isTaxi,
               operationRequested: data['provider']['operationRequested'] ??
@@ -76,6 +76,7 @@ class Routing {
               outOfWork: data['provider']['outOfWork'] ??
                   defaultValueProviderUser.outOfWork,
               name: data['provider']['name'] ?? defaultValueProviderUser.name,
+              id: data['provider']['id'] ?? defaultValueProviderUser.id,
               addresses: data['provider']['addresses'] ??
                   defaultValueProviderUser.addresses,
               // postcodes: data['provider']['postcodes'] ??

@@ -1,3 +1,4 @@
+import 'package:Sublin/widgets/provider/provider_selection_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -101,7 +102,7 @@ class _RegisterState extends State<Register> {
                           children: <Widget>[
                             TextFormField(
                                 validator: (val) => val.length < 2
-                                    ? 'Bitte gib einen Vornamen ein'
+                                    ? 'Bitte gib deinen Vornamen an'
                                     : null,
                                 onTap: () {
                                   textFocus = true;
@@ -127,6 +128,9 @@ class _RegisterState extends State<Register> {
                               height: 10,
                             ),
                             TextFormField(
+                                validator: (val) => val.length < 2
+                                    ? 'Bitte gib eine gültige E-Mailadresse an'
+                                    : null,
                                 onTap: () {
                                   setState(() {
                                     textFocus = true;
@@ -143,7 +147,7 @@ class _RegisterState extends State<Register> {
                                   });
                                 },
                                 decoration: InputDecoration(
-                                  hintText: 'Email',
+                                  hintText: 'Deine Email Adresse',
                                   filled: Theme.of(context)
                                       .inputDecorationTheme
                                       .filled,
@@ -167,6 +171,9 @@ class _RegisterState extends State<Register> {
                               height: 10,
                             ),
                             TextFormField(
+                                validator: (val) => val.length < 6
+                                    ? 'Das Passwort muss eine Mindeslänge von 6 Zeichen haben'
+                                    : null,
                                 onTap: () {
                                   setState(() {
                                     textFocus = true;
@@ -201,39 +208,23 @@ class _RegisterState extends State<Register> {
                             SizedBox(
                               height: 10,
                             ),
-                            Card(
-                              child: Container(
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      providerChecked = !providerChecked;
-                                      if (providerChecked) {
-                                        type = 'provider';
-                                      } else {
-                                        type = 'user';
-                                      }
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 15),
-                                    // color: Color.fromRGBO(245, 245, 245, 1),
-                                    child: Row(
-                                      children: <Widget>[
-                                        (type == 'provider')
-                                            ? _checked(context)
-                                            : _unchecked(context),
-                                        SizedBox(
-                                          width: 13,
-                                        ),
-                                        Text(
-                                          'Ich biete Transferservice an',
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+                            ProviderSelectionWidget(
+                              title: 'Private Nutzung',
+                              selectionFunction: typeSelectionFunction,
+                              isProvider: false,
+                              active: type == 'user',
+                            ),
+                            ProviderSelectionWidget(
+                              title: 'Gewerbliche Nutzung',
+                              selectionFunction: typeSelectionFunction,
+                              isProvider: true,
+                              active: type == 'provider',
+                            ),
+                            ProviderSelectionWidget(
+                              title: 'Öffentlicher Dienst',
+                              selectionFunction: typeSelectionFunction,
+                              isProvider: true,
+                              active: type == 'provider',
                             ),
                             SizedBox(
                               height: 10,
@@ -275,6 +266,12 @@ class _RegisterState extends State<Register> {
                 ),
               ],
             )));
+  }
+
+  void typeSelectionFunction(isProvider) {
+    setState(() {
+      type = isProvider ? 'provider' : 'user';
+    });
   }
 
   Icon _checked(context) {

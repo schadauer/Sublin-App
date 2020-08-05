@@ -7,9 +7,11 @@ class DrawerSideNavigationWidget extends StatelessWidget {
   const DrawerSideNavigationWidget({
     Key key,
     @required this.authService,
+    this.providerUser,
   }) : super(key: key);
 
   final AuthService authService;
+  final providerUser;
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +32,13 @@ class DrawerSideNavigationWidget extends StatelessWidget {
             title: Text('Fahrt suchen'),
             onTap: () => Navigator.pushNamed(context, UserHomeScreen.routeName),
           ),
-          ListTile(
-            leading: Icon(Icons.person_outline),
-            title: Text('Als Anbieter starten'),
-            onTap: () => Navigator.pushNamed(
-                context, ProviderRegistrationScreen.routeName),
-          ),
+          if (providerUser != null)
+            ListTile(
+              leading: Icon(Icons.person_outline),
+              title: Text('Als Anbieter starten'),
+              onTap: () => Navigator.pushNamed(
+                  context, ProviderRegistrationScreen.routeName),
+            ),
           ListTile(
             leading: Icon(Icons.power_settings_new),
             title: Text('Ausloggen'),

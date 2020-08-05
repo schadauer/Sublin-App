@@ -1,10 +1,12 @@
+import 'package:Sublin/models/provider_user.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/utils/get_email_initials.dart';
 import 'package:Sublin/utils/is_email_format.dart';
+import 'package:provider/provider.dart';
 
 class EmailListScreen extends StatefulWidget {
-  List<String> targetGroup;
-  Function emailListScreenFunction;
+  final List<String> targetGroup;
+  final Function emailListScreenFunction;
 
   EmailListScreen({
     this.targetGroup,
@@ -18,13 +20,18 @@ class EmailListScreen extends StatefulWidget {
 class _EmailListScreenState extends State<EmailListScreen> {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
   TextEditingController _emailFieldController = TextEditingController();
-  List<String> targetGroup = ['1', '2', '4', 'd', 'df'];
+  List<String> _targetGroup = [];
   bool _isEmail = false;
-  String _email = '';
+  // String _email = '';
+
+  @override
+  void initState() {
+    _targetGroup = [...widget.targetGroup];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    print(targetGroup);
     return Scaffold(
       appBar: AppBar(
         title: Text('E-Mails hinzufügen'),
@@ -42,9 +49,10 @@ class _EmailListScreenState extends State<EmailListScreen> {
                     // height: 75,
                     child: TextFormField(
                       autofocus: true,
-                      onChanged: (input) {
+                      onChanged: (val) {
                         setState(() {
-                          _isEmail = isEmailFormat(input);
+                          print(isEmailFormat(_emailFieldController.text));
+                          _isEmail = isEmailFormat(_emailFieldController.text);
                         });
 
                         // if (isEmailFormat(input) != _isEmail)
@@ -65,13 +73,11 @@ class _EmailListScreenState extends State<EmailListScreen> {
                                 Icons.add_circle_outline,
                                 size: 30,
                               ),
-                              onPressed: !_isEmail
+                              onPressed: _isEmail
                                   ? () {
-                                      _insertSingleItem(_emailFieldController
-                                          .text
+                                      _addSingleItem(_emailFieldController.text
                                           .toLowerCase());
                                       _emailFieldController.text = '';
-                                      setState(() {});
                                     }
                                   : null)),
                     ),
@@ -85,9 +91,9 @@ class _EmailListScreenState extends State<EmailListScreen> {
                     75,
                 child: AnimatedList(
                   key: _listKey,
-                  initialItemCount: targetGroup.length,
+                  initialItemCount: _targetGroup.length,
                   itemBuilder: (context, index, animation) {
-                    return _buildItem(targetGroup[index], animation, index);
+                    return _buildItem(_targetGroup[index], animation, index);
                   },
                 ),
               ),
@@ -98,19 +104,24 @@ class _EmailListScreenState extends State<EmailListScreen> {
     );
   }
 
-  void _insertSingleItem(String email) {
+  void _addSingleItem(String email) {
+    print(email);
     int insertIndex = 0;
-    targetGroup.insert(insertIndex, email);
-    _listKey.currentState.insertItem(insertIndex);
+    setState(() {
+      _isEmail = false;
+      _targetGroup.insert(insertIndex, email);
+      widget.emailListScreenFunction(_targetGroup);
+      _listKey.currentState.insertItem(insertIndex);
+    });
   }
 
   void _removeSingleItems(int index) {
-    String removedItem = targetGroup.removeAt(index);
+    String removedItem = _targetGroup.removeAt(index);
     AnimatedListRemovedItemBuilder builder = (context, animation) {
       // A method to build the Card widget.
       return _buildItem(removedItem, animation, index);
     };
-
+    widget.emailListScreenFunction(_targetGroup);
     _listKey.currentState.removeItem(index, builder);
   }
 
