@@ -29,7 +29,6 @@ class ProviderSelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(providerSelection ?? providerPlanSelection ?? isProvider);
     return Card(
       child: InkWell(
         onTap: () {

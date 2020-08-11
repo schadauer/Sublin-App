@@ -1,13 +1,13 @@
-import 'package:Sublin/screens/provider/provider_home_screen.dart';
+import 'package:Sublin/screens/provider_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
-import 'package:Sublin/screens/provider/provider_registration_screen.dart';
-import 'package:Sublin/screens/user/user_home_screen.dart';
-import 'package:Sublin/screens/user/user_routing_screen.dart';
+import 'package:Sublin/screens/provider_registration_screen.dart';
+import 'package:Sublin/screens/user_home_screen.dart';
+import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/loading_widget.dart';
 
@@ -18,69 +18,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // PageController _pageController;
-  // int providerSelectedItem = 0;
-  // static List<Widget> _providerWidgetOptions = <Widget>[
-  //   ProviderHomeScreen(),
-  //   UserHomeScreen(),
-  //   ProviderHomeScreen(),
-  // ];
-
-  // static List<Widget> _userWidgetOptions = <Widget>[
-  //   UserHomeScreen(),
-  //   UserHomeScreen(),
-  //   UserHomeScreen(),
-  // ];
-
-  // void onItemTappedProvider(int index) {
-  //   setState(() {
-  //     providerSelectedItem = index;
-  //     // _pageController.animateToPage(index,
-  //     //     duration: Duration(milliseconds: 500), curve: Curves.easeOut);
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // _pageController = PageController();
-  // }
-
-  // @override
-  // void dispose() {
-  //   _pageController.dispose();
-  //   super.dispose();
-  // }
-
-  // void displayBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //       context: context,
-  //       builder: (ctx) {
-  //         return Container(
-  //           height: MediaQuery.of(context).size.height * 0.4,
-  //           child: ListView(
-  //             children: <Widget>[
-  //               ListTile(
-  //                 leading: Icon(Icons.person_outline),
-  //                 title: Text('Persönliche Einstellungen'),
-  //                 onTap: null,
-  //               ),
-  //               ListTile(
-  //                 leading: Icon(Icons.person_outline),
-  //                 title: Text('Durchgeführte Fahrten'),
-  //                 onTap: null,
-  //               ),
-  //               ListTile(
-  //                 leading: Icon(Icons.person_outline),
-  //                 title: Text('Als Anbieter starten'),
-  //                 onTap: null,
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       });
-  // }
-
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<Auth>(context);
@@ -93,11 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
         home: Loading(),
       );
 
-    //if (providerUser.isProvider) return ProviderHomeScreen();
-
     return MaterialApp(
       routes: {
         HomeScreen.routeName: (context) => HomeScreen(),
+        ProviderHomeScreen.routeName: (context) => ProviderHomeScreen(),
         UserHomeScreen.routeName: (context) => UserHomeScreen(),
         ProviderRegistrationScreen.routeName: (context) =>
             ProviderRegistrationScreen(),
@@ -106,50 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       title: 'Sublin',
       theme: themeData(context),
-
       home: (user.isProvider && !providerUser.inOperation)
           ? !providerUser.operationRequested
               ? ProviderRegistrationScreen()
               : ProviderHomeScreen()
           : UserHomeScreen(),
-
-      // Scaffold(
-      //     appBar: AppBar(
-      //       title: Text('Sublin'),
-      //       backgroundColor: Colors.black12,
-      //     ),
-      //     drawer: DrawerSideNavigationWidget(
-      //       authService: authService,
-      //     ),
-      //     floatingActionButton: FloatingActionButton(
-      //       onPressed: () => displayBottomSheet(context),
-      //       child: Icon(Icons.add),
-      //     ),
-      //     body: SafeArea(
-      //         top: false,
-      //         child: (user.streamingOn == true && user.isProvider == false)
-      //             ? UserHomeScreen()
-      //             : ProviderHomeScreen()
-
-      //         // child: IndexedStack(
-      //         //   index: providerSelectedItem,
-      //         //   children: providerUser.isProvider
-      //         //       ? _providerWidgetOptions
-      //         //       : _userWidgetOptions,
-      //         // )),
-      //         // bottomNavigationBar: providerUser.isProvider
-      //         //     ? ProviderBottomNavigationBarWidget(
-      //         //         onItemTappedProvider,
-      //         //         providerSelectedItem,
-      //         //         showProviderMenu,
-      //         //       )
-      //         //     : ProviderBottomNavigationBarWidget(
-      //         //         onItemTappedProvider,
-      //         //         providerSelectedItem,
-      //         //         showProviderMenu,
-      //         //       ),
-      //         // _providerWidgetOptions.elementAt(providerSelectedItem)
-      //         )),
     );
   }
 

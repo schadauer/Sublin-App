@@ -1,6 +1,4 @@
-import 'package:Sublin/utils/format_address.dart';
-import 'package:Sublin/utils/get_part_of_address.dart';
-import 'package:flutter/material.dart';
+import 'package:Sublin/models/delimiter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
 import 'dart:convert';
@@ -12,7 +10,6 @@ class GoogleMapService {
   static const placeUrl =
       'https://maps.googleapis.com/maps/api/place/details/json';
   static const key = 'AIzaSyDIq5WwJZUG-b_UKlOGaLl4532A9XxY8Lw';
-
   String type;
 
   Future<List> getGoogleAddressAutocomplete({
@@ -27,7 +24,7 @@ class GoogleMapService {
       input = (restrictions != '')
           ? restrictions +
               ' ' +
-              removeRestrictionString(input: input, restriction: restrictions)
+              _removeRestrictionString(input: input, restriction: restrictions)
           : input;
       var response = await client.get(
           '$autocompleteUrl?key=$key&sessiontoken=$sessionToken&input=$input&components=country:at&language=de');
@@ -37,9 +34,21 @@ class GoogleMapService {
             .replaceAll(new RegExp(r"(, ?Österreich| ?\d{4} ?)"), "")
             .toString();
         return {
-          'name': name,
+          'name': _convertGoogleToFormattedAddress(
+            description: val['description'],
+            terms: val['terms'],
+            types: val['types'],
+          ),
           'id': val['place_id'],
+          'terms': val['terms'],
+          'isCompany': val['types'].indexOf('establishment') != -1
         };
+        // return {
+        //   'name': name,
+        //   'id': val['place_id'],
+        //   'terms': val['terms'],
+        //   'isCompany': val['types'].indexOf('establishment') != -1
+        // };
       }).toList();
       return strippedOutput;
     } catch (e) {
@@ -48,33 +57,33 @@ class GoogleMapService {
     }
   }
 
-  Future<String> getFormattedAddressWithGooglePlace(
-    String googleId,
-  ) async {
-    List output;
-    String formattedAddress = '';
-    var client = http.Client();
-    try {
-      var response = await client.get(
-          '$placeUrl?place_id=$googleId&fields=address_components&key=$key');
-      output = await jsonDecode(response.body)['result']['address_components'];
-      for (var i = 0; i < output.length; i++) {
-        if (output[i]['types'][0] == 'postal_code') {
-          formattedAddress = formattedAddress + '__' + output[i]['long_name'];
-        }
-        if (output[i]['types'][0] == 'route') {
-          formattedAddress = output[i]['long_name'] + formattedAddress;
-        }
-      }
-      return formattedAddress;
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
+  // Future<String> getFormattedAddressWithGooglePlace(
+  //   String googleId,
+  // ) async {
+  //   List output;
+  //   String formattedAddress = '';
+  //   var client = http.Client();
+  //   try {
+  //     var response = await client.get(
+  //         '$placeUrl?place_id=$googleId&fields=address_components&key=$key');
+  //     output = await jsonDecode(response.body)['result']['address_components'];
+  //     for (var i = 0; i < output.length; i++) {
+  //       if (output[i]['types'][0] == 'postal_code') {
+  //         formattedAddress = formattedAddress + '__' + output[i]['long_name'];
+  //       }
+  //       if (output[i]['types'][0] == 'route') {
+  //         formattedAddress = output[i]['long_name'] + formattedAddress;
+  //       }
+  //     }
+  //     return formattedAddress;
+  //   } catch (e) {
+  //     print(e);
+  //     return null;
+  //   }
+  // }
 }
 
-String removeRestrictionString({String input, String restriction = ''}) {
+String _removeRestrictionString({String input, String restriction = ''}) {
   input = input.toLowerCase();
   restriction = restriction.toLowerCase();
   int restrictionLength = restriction.length;
@@ -85,4 +94,86 @@ String removeRestrictionString({String input, String restriction = ''}) {
     }
   }
   return input;
+}
+
+String _convertGoogleToFormattedAddress({
+  String description,
+  List<dynamic> terms,
+  List<dynamic> types,
+  bool onlyStation = false,
+  bool onlyCity = false,
+}) {
+  // Check if house number is given form Google address pattern
+
+  String numberPart = '';
+  String streetPart = '';
+  String cityPart = '';
+  String countryPart = '';
+  String companyPart = '';
+
+  bool isValidAddress = true;
+  bool isCompany = types.indexOf('establishment') != -1 ? true : false;
+  bool isAddressStreet = types.indexOf('street_address') != -1 ? true : false;
+  int lengthTerms = terms.length;
+
+  if (isAddressStreet && terms.length == 3) {
+    // There is street and number in one string
+    RegExp regExp = RegExp(r"\d+$");
+    String addressWithNumber = terms[0]['value'];
+
+    if (regExp.hasMatch(addressWithNumber)) {
+      String number = regExp.stringMatch(addressWithNumber).toString();
+      numberPart = Delimiter.number + number;
+      int indexOfNumber = addressWithNumber.indexOf(number);
+      if (indexOfNumber > 0) {
+        streetPart = Delimiter.street +
+            addressWithNumber.substring(0, indexOfNumber).trim();
+      }
+    }
+  }
+  if (isAddressStreet && terms.length == 4) {
+    streetPart = Delimiter.street + terms[0]['value'];
+    numberPart = Delimiter.number + terms[1]['value'];
+  }
+  if (!isAddressStreet && terms.length == 3) {
+    streetPart = Delimiter.street + terms[0]['value'];
+  }
+  if (!isAddressStreet && !isCompany && terms.length == 4) {
+    streetPart = Delimiter.street + terms[0]['value'];
+    numberPart = Delimiter.number + terms[1]['value'];
+  }
+  if (isCompany && terms.length == 4) {
+    companyPart = Delimiter.company + terms[0]['value'];
+    numberPart = Delimiter.street + terms[1]['value'];
+  }
+  cityPart = Delimiter.city + terms[lengthTerms - 2]['value'];
+  countryPart =
+      Delimiter.country + _getCountryCode(terms[lengthTerms - 1]['value']);
+
+  if (isAddressStreet && terms.length <= 2) isValidAddress = false;
+  print(terms);
+  print(types);
+  print(isValidAddress
+      ? countryPart + cityPart + streetPart + numberPart + companyPart
+      : '');
+
+  return isValidAddress
+      ? countryPart + cityPart + streetPart + numberPart + companyPart
+      : '';
+}
+
+String _getCountryCode(String country) {
+  String code;
+  switch (country) {
+    case 'Österreich':
+    case 'Austria':
+      code = 'AT';
+      break;
+    case 'Deutschland':
+      code = 'DE';
+      break;
+    default:
+      code = 'AT';
+  }
+  return code;
 }

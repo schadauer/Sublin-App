@@ -30,6 +30,9 @@ class AuthScreen extends StatelessWidget {
         StreamProvider<Routing>.value(
           initialData: Routing(),
           value: RoutingService().streamRouting(user.uid),
+          // catchError: (_, err) {
+          //   print(err.toString());
+          // },
           lazy: true,
         ),
         StreamProvider<User>.value(

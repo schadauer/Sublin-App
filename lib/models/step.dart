@@ -1,3 +1,5 @@
+import 'package:Sublin/models/provider_user.dart';
+
 class Step {
   bool isSublin;
   bool isStart;
@@ -10,7 +12,7 @@ class Step {
   String endId;
   String stationAddress;
   String stationName;
-  String provider;
+  ProviderUser provider;
   int startTime;
   int endTime;
   int duration;
@@ -28,19 +30,10 @@ class Step {
     this.endId = '',
     this.stationAddress = '',
     this.stationName = '',
-    this.provider = '',
+    this.provider,
     this.startTime = 0,
     this.endTime = 0,
     this.duration = 0,
     this.distance = 0,
   });
-
-  // factory Step.fromMap(Map data) {
-  //   data = data ?? {};
-  //   return Step(
-  //     endAddress: data['endAddress'] ?? '',
-  //     startAddress: data['startAddress'] ?? '',
-  //     provider: data['provider'] ?? '',
-  //   );
-  // }
 }

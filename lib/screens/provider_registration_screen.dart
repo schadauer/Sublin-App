@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:Sublin/utils/convert_to_formatted_address.dart';
-import 'package:Sublin/utils/get_part_of_address.dart';
+import 'package:Sublin/models/delimiter.dart';
+import 'package:Sublin/utils/get_part_of_formatted_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -91,9 +91,7 @@ class _ProviderRegistrationScreenState
     //     ? _defaultProviderUser
     //     : _providerUser;
 
-    print(ProviderUser().toMap(_providerUser));
-    // print(ProviderUser().toMap(providerUser));
-    // print(ProviderUser().toMap(_defaultProviderUser));
+    // print(ProviderUser().toMap(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -173,8 +171,7 @@ class _ProviderRegistrationScreenState
                                             _showProgressIndicator = true;
                                             _providerUser = ProviderUser();
                                             _providerUser.addresses = [
-                                              convertToFormattedAddress(
-                                                  _request.endAddress)
+                                              _request.endAddress
                                             ];
                                           });
                                           // Create a route to check if there is service at the end address
@@ -224,7 +221,7 @@ class _ProviderRegistrationScreenState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    'Grüße nach ${_checkRoutingData.endAddress.city}',
+                                    'Grüße nach ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
                                     style:
                                         Theme.of(context).textTheme.headline3,
                                     textAlign: TextAlign.left,
@@ -234,10 +231,10 @@ class _ProviderRegistrationScreenState
                                   ),
                                   if (!_checkRoutingData.endAddressAvailable)
                                     Text(
-                                        'Für ${_checkRoutingData.endAddress.city} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
+                                        'Für ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
                                   if (_checkRoutingData.endAddressAvailable)
                                     Text(
-                                        '${_checkRoutingData.provider.name} hat sich bereits für ${_checkRoutingData.endAddress.city} registriert und führt voraussichtlich Shuttleservice vom und zum Bahnhof durch.'),
+                                        '${_checkRoutingData.sublinEndStep.provider.providerName} hat sich bereits für ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} registriert und führt voraussichtlich Shuttleservice vom und zum Bahnhof durch.'),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -249,9 +246,9 @@ class _ProviderRegistrationScreenState
                                   if (_checkRoutingData.endAddressAvailable)
                                     ProviderSelectionWidget(
                                       title:
-                                          'Shuttleservice durch ${_checkRoutingData.provider.name}',
+                                          'Shuttleservice durch ${_checkRoutingData.sublinEndStep.provider.providerName}',
                                       text:
-                                          'Transfers werden zwischen deiner Address und dem Bahnhof von ${_checkRoutingData.provider.name} durchgeführt.',
+                                          'Transfers werden zwischen deiner Address und dem Bahnhof von ${_checkRoutingData.sublinEndStep.provider.providerName} durchgeführt.',
                                       caption: '',
                                       providerSelection:
                                           ProviderType.taxiShuttle,
@@ -264,7 +261,7 @@ class _ProviderRegistrationScreenState
                                     ProviderSelectionWidget(
                                       title: 'Taxi- oder Mietwagenservice',
                                       text:
-                                          'vom Bahnhof zu den Adressen der Postleitzahl ${_checkRoutingData.endAddress.postcode}. Gewerbeberechtigung notwendig.',
+                                          'vom Bahnhof zu den Adressen der Postleitzahl ${_checkRoutingData.endAddress}. Gewerbeberechtigung notwendig.',
                                       providerSelection: ProviderType.taxi,
                                       selectionFunction:
                                           providerSelectionFunction,
@@ -298,7 +295,9 @@ class _ProviderRegistrationScreenState
                                                         ProviderType.taxiShuttle
                                                     ? [
                                                         _checkRoutingData
-                                                            .provider.id
+                                                            .sublinEndStep
+                                                            .provider
+                                                            .id
                                                       ]
                                                     : [];
                                             _pageViewController.nextPage(
@@ -369,7 +368,8 @@ class _ProviderRegistrationScreenState
                                                     _providerNameFormFieldController,
                                                 onChanged: (val) {
                                                   setState(() {
-                                                    _providerUser.name = val;
+                                                    _providerUser.providerName =
+                                                        val;
                                                   });
                                                 },
                                                 decoration: InputDecoration(
@@ -446,24 +446,26 @@ class _ProviderRegistrationScreenState
                                             MainAxisAlignment.end,
                                         children: <Widget>[
                                           RaisedButton(
-                                            onPressed: (_providerUser.name !=
-                                                    _defaultProviderUser.name)
-                                                ? () async {
-                                                    try {
-                                                      _providerNameFormFieldController
-                                                              .text =
-                                                          _providerUser.name;
-                                                      _pageSteps = 4;
-                                                      _pageViewController
-                                                          .nextPage(
+                                            onPressed:
+                                                (_providerUser.providerName !=
+                                                        _defaultProviderUser
+                                                            .providerName)
+                                                    ? () async {
+                                                        try {
+                                                          _providerNameFormFieldController
+                                                                  .text =
+                                                              _providerUser
+                                                                  .providerName;
+                                                          _pageSteps = 4;
+                                                          _pageViewController.nextPage(
                                                               duration: Duration(
                                                                   milliseconds:
                                                                       300),
                                                               curve: Curves
                                                                   .easeOut);
-                                                    } catch (e) {}
-                                                  }
-                                                : null,
+                                                        } catch (e) {}
+                                                      }
+                                                    : null,
                                             child: Text('Weiter'),
                                           )
                                         ],
@@ -531,9 +533,9 @@ class _ProviderRegistrationScreenState
                                                 : null,
                                             controller:
                                                 _stationFormFieldController,
-                                            onChanged: (val) {
-                                              setState(() {});
-                                            },
+                                            // onChanged: (val) {
+                                            //   setState(() {});
+                                            // },
                                             decoration: InputDecoration(
                                               hintText: 'Bahnhof hinzufügen',
                                               prefixIcon: Icon(Icons.train,
@@ -661,7 +663,7 @@ class _ProviderRegistrationScreenState
                               ProviderSelectionWidget(
                                 title: 'Alle',
                                 text:
-                                    'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getPartOfAddress(_providerUser.addresses[0], '__')} beautragen.',
+                                    'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getPartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beautragen.',
                                 providerPlanSelection: ProviderPlan.all,
                                 selectionFunction:
                                     providerPlanSelectionFunction,
@@ -720,8 +722,14 @@ class _ProviderRegistrationScreenState
     });
   }
 
-  void addressSelectionFunction(
-      String input, String id, bool startAddress, bool endAddress) {
+  void addressSelectionFunction({
+    String input,
+    String id,
+    bool isCompany,
+    List<dynamic> terms,
+    bool isStartAddress,
+    bool isEndAddress,
+  }) {
     setState(() {
       _addressFound = true;
       _request.endAddress = input;
@@ -730,9 +738,17 @@ class _ProviderRegistrationScreenState
   }
 
   void stationSelectionFunction(
-      String input, String id, bool startAddress, bool endAddress) {
+      {String input,
+      String id,
+      bool isCompany,
+      List<dynamic> terms,
+      bool isStartAddress,
+      bool isEndAddress}) {
     _stationFormFieldController.text = input;
-    _setStationFromAddressFunction(station: _stationFormFieldController.text);
+    _setStationFromProviderAddressFunction(
+      station: _stationFormFieldController.text,
+      delimiter: Delimiter.city,
+    );
   }
 
   void citySelectionFunction(
@@ -764,9 +780,9 @@ class _ProviderRegistrationScreenState
     }
   }
 
-  void _setStationFromAddressFunction({
+  void _setStationFromProviderAddressFunction({
     String address = '',
-    // String postcode = '',
+    String delimiter = Delimiter.city,
     String station = '',
     bool remove = false,
   }) {
@@ -774,27 +790,41 @@ class _ProviderRegistrationScreenState
     // If Taxi the scope is the postcode
     // If not Taxi the scope is the full address
     if (_providerUser.providerType == ProviderType.taxi)
-      scope = getPartOfAddress(_providerUser.addresses[0], '__');
+      scope = getPartOfFormattedAddress(_providerUser.addresses[0], delimiter);
     setState(() {
       if (station != '')
         _providerUser.stations = [
-          scope + '___' + station,
+          Delimiter.country +
+              'AT' +
+              delimiter +
+              scope +
+              Delimiter.station +
+              station,
         ];
+      _providerUser.addresses.add(Delimiter.country + 'AT' + delimiter + scope);
     });
   }
 
   void _addCityToStations(String city) {
     bool cityExists = false;
-    _providerUser.stations.map((e) {
-      String cityFromAddress = getPartOfAddress(e, '__');
+    _providerUser.stations.map((station) {
+      String cityFromAddress =
+          getPartOfFormattedAddress(station, Delimiter.city);
+
       if (city == cityFromAddress) {
         cityExists = true;
       }
     }).toList();
     if (cityExists == false) {
       setState(() {
-        _providerUser.stations
-            .add(city + '___' + _stationFormFieldController.text);
+        _providerUser.stations.add(Delimiter.country +
+            'AT' +
+            Delimiter.city +
+            city +
+            Delimiter.station +
+            _stationFormFieldController.text);
+        _providerUser.addresses
+            .add(Delimiter.country + 'AT' + Delimiter.city + city);
       });
     }
   }
@@ -803,8 +833,8 @@ class _ProviderRegistrationScreenState
     setState(() {
       int removeIndex;
       for (var i = 0; i < _providerUser.stations.length; i++) {
-        String cityFromAddress =
-            getPartOfAddress(_providerUser.stations[i], '__');
+        String cityFromAddress = getPartOfFormattedAddress(
+            _providerUser.stations[i], Delimiter.city);
         if (city == cityFromAddress) {
           removeIndex = i;
         }
@@ -847,13 +877,14 @@ class _ProviderRegistrationScreenState
           alignment: WrapAlignment.spaceBetween,
           spacing: 8.0,
           children: addresses.map((address) {
-            String city = getPartOfAddress(address, '__');
+            String city = getPartOfFormattedAddress(address, Delimiter.city);
             return Chip(
               label: Text(city),
-              onDeleted:
-                  city == getPartOfAddress(_providerUser.addresses[0], '__')
-                      ? null
-                      : () => _removeCityFromStation(city),
+              onDeleted: city ==
+                      getPartOfFormattedAddress(
+                          _providerUser.addresses[0], Delimiter.city)
+                  ? null
+                  : () => _removeCityFromStation(city),
             );
           }).toList());
     } else {

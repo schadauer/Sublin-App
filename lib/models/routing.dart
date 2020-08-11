@@ -1,4 +1,6 @@
 import 'package:Sublin/models/address.dart';
+import 'package:Sublin/models/provider_plan.dart';
+import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/step.dart';
 
@@ -7,16 +9,17 @@ class Routing {
   String id;
   bool booked;
   bool confirmed;
-  ProviderUser provider;
+  // ProviderUser provider;
   String user;
   String startAddress;
   String startId;
-  Address endAddress;
+  String endAddress;
   bool endAddressAvailable;
   String endId;
   bool checkAddress;
   List<Step> publicSteps;
-  Map<dynamic, dynamic> SublinEndStep;
+  Step sublinEndStep;
+  Step sublinStartStep;
   DateTime timestamp;
 
   Routing({
@@ -24,7 +27,7 @@ class Routing {
     this.id = '',
     this.booked = false,
     this.confirmed = false,
-    this.provider,
+    // this.provider,
     this.user = '',
     this.startAddress = '',
     this.startId = '',
@@ -33,21 +36,15 @@ class Routing {
     this.endId = '',
     this.checkAddress = false,
     this.publicSteps = const [],
-    this.SublinEndStep = const {},
+    this.sublinEndStep,
+    this.sublinStartStep,
     this.timestamp,
   });
-
-  // factory Routing.initialData() {
-  //   return Routing(
-  //     provider: {},
-  //     streamingOn: false,
-  //     checkAddress: false,
-  //   );
-  // }
 
   factory Routing.fromMap(Map data) {
     Routing defaultValue = Routing();
     Address defaultValueAddress = Address();
+    Step defaultValueStep = Step();
     ProviderUser defaultValueProviderUser = ProviderUser();
     data = data ?? {};
     return Routing(
@@ -55,67 +52,119 @@ class Routing {
       id: data['id'] ?? defaultValue.id,
       booked: data['booked'] ?? defaultValue.booked,
       confirmed: data['confirmed'] ?? defaultValue.confirmed,
-      SublinEndStep: data['SublinEndStep'] ?? defaultValue.SublinEndStep,
+      sublinEndStep: (data['sublinEndStep'] == null)
+          ? defaultValue.sublinEndStep
+          : Step(
+              endAddress: data['sublinEndStep']['endAddress'] ??
+                  defaultValueStep.endAddress,
+              startAddress: data['sublinEndStep']['startAddress'] ??
+                  defaultValueStep.startAddress,
+              startTime: data['sublinEndStep']['startTime'] ??
+                  defaultValueStep.startTime,
+              endTime:
+                  data['sublinEndStep']['endTime'] ?? defaultValueStep.endTime,
+              provider: (data['sublinEndStep']['provider'] == null)
+                  ? defaultValueStep.provider
+                  : ProviderUser(
+                      providerType: ProviderType.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'ProviderType.' +
+                                  data['sublinEndStep']['provider']
+                                      ['providerType'],
+                          orElse: () => defaultValueProviderUser.providerType),
+                      providerPlan: ProviderPlan.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'providerPlan.' +
+                                  data['sublinEndStep']['provider']
+                                      ['providerPlan'],
+                          orElse: () => defaultValueProviderUser.providerPlan),
+                      providerName: data['sublinEndStep']['provider']
+                              ['providerName'] ??
+                          defaultValueProviderUser.providerName,
+                      id: data['sublinEndStep']['provider']['id'] ??
+                          defaultValueProviderUser.id,
+                      timeStart: data['sublinEndStep']['provider']
+                              ['timeStart'] ??
+                          defaultValueProviderUser.timeStart,
+                      timeEnd: data['sublinEndStep']['provider']['timeEnd'] ??
+                          defaultValueProviderUser.timeEnd,
+                    ),
+              distance: data['sublinEndStep']['distance'] ??
+                  defaultValueStep.distance,
+              duration: data['sublinEndStep']['duration'] ??
+                  defaultValueStep.duration,
+            ),
+      sublinStartStep: (data['sublinStartStep'] == null)
+          ? defaultValue.sublinEndStep
+          : Step(
+              endAddress: data['sublinStartStep']['endAddress'] ??
+                  defaultValueStep.endAddress,
+              startAddress: data['sublinStartStep']['startAddress'] ??
+                  defaultValueStep.startAddress,
+              startTime: data['sublinStartStep']['startTime'] ??
+                  defaultValueStep.startTime,
+              endTime: data['sublinStartStep']['endTime'] ??
+                  defaultValueStep.endTime,
+              provider: (data['sublinStartStep']['provider'] == null)
+                  ? defaultValueStep.provider
+                  : ProviderUser(
+                      // outOfWork: data['sublinStartStep']['endAddress']
+                      //         ['provider']['outOfWork'] ??
+                      // defaultValueProviderUser.outOfWork,
+                      providerName: data['sublinStartStep']['provider']
+                              ['providerName'] ??
+                          defaultValueProviderUser.providerName,
+                      id: data['sublinStartStep']['provider']['id'] ??
+                          defaultValueProviderUser.id,
+                      timeStart: data['sublinStartStep']['provider']
+                              ['timeStart'] ??
+                          defaultValueProviderUser.timeStart,
+                      timeEnd: data['sublinStartStep']['provider']['timeEnd'] ??
+                          defaultValueProviderUser.timeEnd,
+                    ),
+              distance: data['sublinStartStep']['distance'] ??
+                  defaultValueStep.distance,
+              duration: data['sublinStartStep']['duration'] ??
+                  defaultValueStep.duration,
+            ),
       user: data['user'] ?? defaultValue.user,
       endId: data['endId'] ?? defaultValue.endId,
+      endAddress: data['endAddress'] ?? defaultValue.endAddress,
       startId: data['startId'] ?? defaultValue.startId,
+      startAddress: data['startAddress'] ?? defaultValue.startAddress,
       checkAddress: data['checkAddress'] ?? defaultValue.checkAddress,
       endAddressAvailable:
           data['endAddressAvailable'] ?? defaultValue.endAddressAvailable,
-      provider: (data['provider'] == null)
-          ? defaultValueProviderUser
-          : ProviderUser(
-              // isProvider: data['provider']['isProvider'] ??
-              //     defaultValueProviderUser.isProvider,
-              // isTaxi:
-              // data['provider']['isTaxi'] ?? defaultValueProviderUser.isTaxi,
-              operationRequested: data['provider']['operationRequested'] ??
-                  defaultValueProviderUser.operationRequested,
-              inOperation: data['provider']['inOperation'] ??
-                  defaultValueProviderUser.inOperation,
-              outOfWork: data['provider']['outOfWork'] ??
-                  defaultValueProviderUser.outOfWork,
-              name: data['provider']['name'] ?? defaultValueProviderUser.name,
-              id: data['provider']['id'] ?? defaultValueProviderUser.id,
-              addresses: data['provider']['addresses'] ??
-                  defaultValueProviderUser.addresses,
-              // postcodes: data['provider']['postcodes'] ??
-              //     defaultValueProviderUser.postcodes,
-              // stations: data['provider']['stations'] ??
-              //     defaultValueProviderUser.stations,
-              timeStart: data['provider']['timeStart'] ??
-                  defaultValueProviderUser.timeStart,
-              timeEnd: data['provider']['timeEnd'] ??
-                  defaultValueProviderUser.timeEnd,
-            ),
-      endAddress: (data['endAddress'] == null)
-          ? defaultValueAddress
-          : Address(
-              id: data['endAddress']['id'] ?? defaultValueAddress.id,
-              city: data['endAddress']['city'] ?? defaultValueAddress.city,
-              country:
-                  data['endAddress']['country'] ?? defaultValueAddress.country,
-              district: data['endAddress']['district'] ??
-                  defaultValueAddress.district,
-              postcode: data['endAddress']['postcode'] ??
-                  defaultValueAddress.postcode,
-              street:
-                  data['endAddress']['street'] ?? defaultValueAddress.street,
-              state: data['endAddress']['state'] ?? defaultValueAddress.state,
-              formattedAddress: data['endAddress']['formattedAddress'] ??
-                  defaultValueAddress.formattedAddress,
-            ),
+      // endAddress: (data['endAddress'] == null)
+      //     ? defaultValueAddress
+      //     : Address(
+      //         id: data['endAddress']['id'] ?? defaultValueAddress.id,
+      //         city: data['endAddress']['city'] ?? defaultValueAddress.city,
+      //         country:
+      //             data['endAddress']['country'] ?? defaultValueAddress.country,
+      //         district: data['endAddress']['district'] ??
+      //             defaultValueAddress.district,
+      //         postcode: data['endAddress']['postcode'] ??
+      //             defaultValueAddress.postcode,
+      //         street:
+      //             data['endAddress']['street'] ?? defaultValueAddress.street,
+      //         state: data['endAddress']['state'] ?? defaultValueAddress.state,
+      //         formattedAddress: data['endAddress']['formattedAddress'] ??
+      //             defaultValueAddress.formattedAddress,
+      //       ),
       publicSteps: (data['publicSteps'] == null)
           ? defaultValue.publicSteps
           : data['publicSteps'].map<Step>((step) {
-              Step defaultValueStep = Step();
+              // Step defaultValueStep = Step();
               return Step(
                 endAddress: step['endAddress'] ?? defaultValueStep.endAddress,
                 startAddress:
                     step['startAddress'] ?? defaultValueStep.startAddress,
                 startTime: step['startTime'] ?? defaultValueStep.startTime,
                 endTime: step['endTime'] ?? defaultValueStep.endTime,
-                provider: step['provider'] ?? defaultValueStep.provider,
+                // provider: step['provider'] ?? defaultValueStep.provider,
                 distance: step['distance'] ?? defaultValueStep.distance,
                 duration: step['duration'] ?? defaultValueStep.duration,
               );

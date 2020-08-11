@@ -51,7 +51,6 @@ class _EmailListScreenState extends State<EmailListScreen> {
                       autofocus: true,
                       onChanged: (val) {
                         setState(() {
-                          print(isEmailFormat(_emailFieldController.text));
                           _isEmail = isEmailFormat(_emailFieldController.text);
                         });
 
@@ -105,7 +104,6 @@ class _EmailListScreenState extends State<EmailListScreen> {
   }
 
   void _addSingleItem(String email) {
-    print(email);
     int insertIndex = 0;
     setState(() {
       _isEmail = false;

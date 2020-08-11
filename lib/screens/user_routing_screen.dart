@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/services/routing_service.dart';
+import 'package:Sublin/utils/get_time_format.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:Sublin/models/routing.dart';
-import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:Sublin/widgets/step_widget.dart';
 
@@ -31,6 +33,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
   Widget build(BuildContext context) {
     final Routing args = ModalRoute.of(context).settings.arguments;
     final Routing routingService = Provider.of<Routing>(context);
+    final Auth auth = Provider.of<Auth>(context);
 
     if (args.startId != routingService.startId ||
         args.endId != routingService.endId) {
@@ -39,8 +42,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
         child: Text('Deine Route wird neu berechnet'),
       ));
     }
-    if (routingService.provider == null &&
-        routingService.endAddressAvailable != false) {
+    if (routingService.endAddressAvailable == false) {
       return Scaffold(
           body: Center(
         child: Container(
@@ -83,7 +85,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
                             routingService.publicSteps[index].endAddress,
                         startTime: routingService.publicSteps[index].startTime,
                         endTime: routingService.publicSteps[index].endTime,
-                        provider: routingService.publicSteps[index].provider,
+                        // provider: routingService.publicSteps[index].provider,
                         distance: routingService.publicSteps[index].distance,
                         duration: routingService.publicSteps[index].duration,
                       );
@@ -138,19 +140,18 @@ class _RoutingScreenState extends State<RoutingScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: <Widget>[
-                                            // Text(
-                                            //   routingService
-                                            //       .SublinEndStep['endAddress'],
-                                            //   style: Theme.of(context)
-                                            //       .textTheme
-                                            //       .headline3,
-                                            // ),
-                                            // Text(
-                                            //   'Ankunft ${getTimeFormat(routingService.SublinEndStep['endTime'])}',
-                                            //   style: Theme.of(context)
-                                            //       .textTheme
-                                            //       .headline3,
-                                            // ),
+                                            Text(
+                                              'Ankunft ca. ${getTimeFormat(routingService.sublinEndStep.endTime)}',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline3,
+                                            ),
+                                            Text(
+                                              'Taxi...',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1,
+                                            ),
                                           ]),
                                     ),
                                   ),
@@ -172,7 +173,13 @@ class _RoutingScreenState extends State<RoutingScreen> {
                                 },
                                 child: Text('Ädresse ändern')),
                             RaisedButton(
-                                onPressed: null, child: Text('Jetzt buchen'))
+                                onPressed: routingService.booked
+                                    ? null
+                                    : () {
+                                        RoutingService()
+                                            .bookRoute(uid: auth.uid);
+                                      },
+                                child: Text('Jetzt buchen'))
                           ],
                         ),
                       ],

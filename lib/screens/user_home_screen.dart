@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Sublin/utils/convert_to_formatted_address.dart';
+import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/request.dart';
-import 'package:Sublin/screens/user/user_routing_screen.dart';
+import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/google_map_service.dart';
 import 'package:Sublin/services/routing_service.dart';
@@ -44,12 +44,9 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     // final ProviderUser providerUser = Provider.of<ProviderUser>(context);
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Sublin'),
-      ),
-      drawer: DrawerSideNavigationWidget(
+      appBar: AppbarWidget(title: 'Home'),
+      endDrawer: DrawerSideNavigationWidget(
         authService: AuthService(),
       ),
       body: SizedBox(
@@ -108,12 +105,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                                     try {
                                       await RoutingService().requestRoute(
                                         uid: auth.uid,
-                                        startAddress: convertToFormattedAddress(
-                                            _localRequest.startAddress),
+                                        startAddress:
+                                            _localRequest.startAddress,
                                         startId: _localRequest.startId,
-                                        endAddress: convertToFormattedAddress(
-                                            _localRequest.endAddress),
+                                        endAddress: _localRequest.endAddress,
                                         endId: _localRequest.endId,
+                                        timestamp: DateTime.now(),
                                       );
                                       await Navigator.pushNamed(
                                         context,
@@ -142,12 +139,19 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
   void addressInputFunction(
-      String input, String id, bool startAddress, bool endAddress) {
+      {String input,
+      String id,
+      bool isCompany,
+      List<dynamic> terms,
+      bool isStartAddress,
+      bool isEndAddress}) {
     setState(() {
-      if (startAddress) _localRequest.startAddress = input;
-      if (startAddress) _localRequest.startId = id;
-      if (endAddress) _localRequest.endAddress = input;
-      if (endAddress) _localRequest.endId = id;
+      print(_localRequest.startAddress);
+      print(_localRequest.endAddress);
+      if (isStartAddress) _localRequest.startAddress = input;
+      if (isStartAddress) _localRequest.startId = id;
+      if (isEndAddress) _localRequest.endAddress = input;
+      if (isEndAddress) _localRequest.endId = id;
     });
   }
 

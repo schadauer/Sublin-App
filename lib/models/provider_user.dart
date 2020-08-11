@@ -3,13 +3,12 @@ import 'package:Sublin/models/provider_type.dart';
 
 class ProviderUser {
   final bool streamingOn;
-  // final bool isProvider;
   final bool inOperation;
   bool operationRequested;
   ProviderType providerType;
   ProviderPlan providerPlan;
   bool outOfWork;
-  String name;
+  String providerName;
   String id;
   List<String> targetGroup;
   List<String> addresses;
@@ -21,13 +20,12 @@ class ProviderUser {
 
   ProviderUser({
     this.streamingOn: false,
-    // this.isProvider: true,
     this.providerType,
     this.providerPlan,
     this.operationRequested: false,
     this.inOperation: false,
     this.outOfWork: false,
-    this.name: '',
+    this.providerName: '',
     this.id: '',
     this.targetGroup: const [],
     this.addresses: const [],
@@ -43,7 +41,6 @@ class ProviderUser {
     data = data ?? {};
     return ProviderUser(
       streamingOn: true,
-      // isProvider: data['isProvider'] ?? defaultValues.isProvider,
       providerType: ProviderType.values.firstWhere(
           (e) => e.toString() == 'ProviderType.' + data['providerType'],
           orElse: () => defaultValues.providerType),
@@ -54,7 +51,7 @@ class ProviderUser {
           data['operationRequested'] ?? defaultValues.operationRequested,
       inOperation: data['inOperation'] ?? defaultValues.inOperation,
       outOfWork: data['outOfWork'] ?? defaultValues.inOperation,
-      name: data['name'] ?? defaultValues.name,
+      providerName: data['providerName'] ?? defaultValues.providerName,
       id: data['id'] ?? defaultValues.id,
       targetGroup: (data['targetGroup'] == [])
           ? defaultValues.postcodes
@@ -97,28 +94,17 @@ class ProviderUser {
         'providerPlan': providerPlan.substring(providerPlan.indexOf('.') + 1),
       if (data.operationRequested != null)
         'operationRequested': data.operationRequested,
-      if (data.inOperation != null)
-        'inOperation': data.inOperation,
-      if (data.outOfWork != null)
-        'outOfWork': data.outOfWork,
-      if (data.name != null)
-        'name': data.name,
-      if (data.id != null)
-        'id': data.id,
-      if (data.targetGroup != null)
-        'targetGroup': data.targetGroup,
-      if (data.addresses != null)
-        'addresses': data.addresses,
-      if (data.postcodes != null)
-        'postcodes': data.postcodes,
-      if (data.stations != null)
-        'stations': data.stations,
-      if (data.partners != null)
-        'partners': data.partners,
-      if (data.timeStart != null)
-        'timeStart': data.timeStart,
-      if (data.timeEnd != null)
-        'timeEnd': data.timeEnd,
+      if (data.inOperation != null) 'inOperation': data.inOperation,
+      if (data.outOfWork != null) 'outOfWork': data.outOfWork,
+      if (data.providerName != null) 'providerName': data.providerName,
+      if (data.id != null) 'id': data.id,
+      if (data.targetGroup != null) 'targetGroup': data.targetGroup,
+      if (data.addresses != null) 'addresses': data.addresses,
+      if (data.postcodes != null) 'postcodes': data.postcodes,
+      if (data.stations != null) 'stations': data.stations,
+      if (data.partners != null) 'partners': data.partners,
+      if (data.timeStart != null) 'timeStart': data.timeStart,
+      if (data.timeEnd != null) 'timeEnd': data.timeEnd,
     };
   }
 

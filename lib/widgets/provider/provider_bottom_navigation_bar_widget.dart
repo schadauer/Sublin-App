@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Sublin/screens/provider/provider_registration_screen.dart';
+import 'package:Sublin/screens/provider_registration_screen.dart';
 
 class ProviderBottomNavigationBarWidget extends StatefulWidget {
   // const ProviderBottomNavigationBarWidget({
@@ -24,7 +24,6 @@ class _ProviderBottomNavigationBarWidgetState
     extends State<ProviderBottomNavigationBarWidget> {
   @override
   Widget build(BuildContext context) {
-    print(widget.providerSelectedItem);
     return SafeArea(
       child: SizedBox(
         height: 80,

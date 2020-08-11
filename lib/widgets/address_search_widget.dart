@@ -1,3 +1,4 @@
+import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 
@@ -104,7 +105,8 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                     Text(
-                                      widget.address,
+                                      convertFormattedAddressToReadableAddress(
+                                          widget.address),
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                     ),

@@ -1,3 +1,5 @@
+import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
+import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
 
@@ -42,9 +44,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppbarWidget(title: widget.title),
       body: SizedBox(
         height: MediaQuery.of(context).size.height -
             AppBar().preferredSize.height -
@@ -52,10 +52,10 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
         child: Column(
           children: <Widget>[
             Container(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(15.0),
                 child: Material(
                   child: SizedBox(
-                    height: 75,
+                    height: 50,
                     child: TextFormField(
                       focusNode: _focus,
                       autofocus: true,
@@ -104,18 +104,26 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                             return GestureDetector(
                               onTap: () {
                                 widget.addressInputFunction(
-                                    _autocompleteResults[index]['name'],
-                                    _autocompleteResults[index]['id'],
-                                    widget.isStartAddress,
-                                    widget.isEndAddress);
+                                    input: _autocompleteResults[index]['name'],
+                                    id: _autocompleteResults[index]['id'],
+                                    isCompany: _autocompleteResults[index]
+                                        ['isCompany'],
+                                    terms: _autocompleteResults[index]['terms'],
+                                    isStartAddress: widget.isStartAddress,
+                                    isEndAddress: widget.isEndAddress);
                                 Navigator.of(context).pop();
                               },
                               child: ListTile(
                                   contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 20),
-                                  leading: Icon(Icons.home),
+                                      EdgeInsets.symmetric(horizontal: 25),
+                                  leading: Icon(_autocompleteResults[index]
+                                          ['isCompany']
+                                      ? Icons.business
+                                      : Icons.home),
                                   title: Text(
-                                      _autocompleteResults[index]['name'])),
+                                      convertFormattedAddressToReadableAddress(
+                                          _autocompleteResults[index]
+                                              ['name']))),
                             );
                           }),
                     ),

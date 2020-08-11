@@ -222,8 +222,6 @@ PODS:
     - Firebase/Core
     - Firebase/Firestore (~> 6.0)
     - Flutter
-  - cloud_firestore_web (0.1.0):
-    - Flutter
   - Firebase/Analytics (6.24.0):
     - Firebase/Core
   - Firebase/Auth (6.24.0):
@@ -247,8 +245,6 @@ PODS:
     - Flutter
   - firebase_core (0.0.1):
     - Firebase/Core
-    - Flutter
-  - firebase_core_web (0.1.0):
     - Flutter
   - FirebaseAnalytics (6.5.0):
     - FirebaseCore (~> 6.7)
@@ -297,11 +293,7 @@ PODS:
     - GoogleUtilities/UserDefaults (~> 6.6)
     - PromisesObjC (~> 1.2)
   - Flutter (1.0.0)
-  - flutter_plugin_android_lifecycle (0.0.1):
-    - Flutter
   - "geolocator (5.3.2+2)":
-    - Flutter
-  - google_api_availability (2.0.4):
     - Flutter
   - google_maps_flutter (0.0.1):
     - Flutter
@@ -379,15 +371,11 @@ PODS:
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
-  - cloud_firestore_web (from `.symlinks/plugins/cloud_firestore_web/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
-  - firebase_core_web (from `.symlinks/plugins/firebase_core_web/ios`)
   - Flutter (from `Flutter`)
-  - flutter_plugin_android_lifecycle (from `.symlinks/plugins/flutter_plugin_android_lifecycle/ios`)
   - geolocator (from `.symlinks/plugins/geolocator/ios`)
-  - google_api_availability (from `.symlinks/plugins/google_api_availability/ios`)
   - google_maps_flutter (from `.symlinks/plugins/google_maps_flutter/ios`)
   - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
@@ -420,24 +408,16 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
-  cloud_firestore_web:
-    :path: ".symlinks/plugins/cloud_firestore_web/ios"
   firebase_analytics:
     :path: ".symlinks/plugins/firebase_analytics/ios"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
-  firebase_core_web:
-    :path: ".symlinks/plugins/firebase_core_web/ios"
   Flutter:
     :path: Flutter
-  flutter_plugin_android_lifecycle:
-    :path: ".symlinks/plugins/flutter_plugin_android_lifecycle/ios"
   geolocator:
     :path: ".symlinks/plugins/geolocator/ios"
-  google_api_availability:
-    :path: ".symlinks/plugins/google_api_availability/ios"
   google_maps_flutter:
     :path: ".symlinks/plugins/google_maps_flutter/ios"
   location_permissions:
@@ -449,12 +429,10 @@ SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   cloud_firestore: 4cc700e236ebfe2d5d980e49cb066d202cfee0e9
-  cloud_firestore_web: 9ec3dc7f5f98de5129339802d491c1204462bfec
   Firebase: b28e55c60efd98963cd9011fe2fac5a10c2ba124
   firebase_analytics: 71531c94f4457504e12bb60baa53bf283f59e67f
   firebase_auth: d99b993c1405096e66c58211b1cd956c23eed1c5
   firebase_core: 335c02abd48672b7c83c683df833d0488a72e73e
-  firebase_core_web: d501d8b946b60c8af265428ce483b0fff5ad52d1
   FirebaseAnalytics: 7386fc2176e3f93ad8ef34b5b1f2b33a891e4962
   FirebaseAuth: 7047aec89c0b17ecd924a550c853f0c27ac6015e
   FirebaseAuthInterop: a0f37ae05833af156e72028f648d313f7e7592e9
@@ -464,9 +442,7 @@ SPEC CHECKSUMS:
   FirebaseFirestore: 35f8f67d7b25e4743c62ea6e46c38cafa8dc32b5
   FirebaseInstallations: 2119fb3e46b0a88bfdbf12562f855ee3252462fa
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_plugin_android_lifecycle: dc0b544e129eebb77a6bfb1239d4d1c673a60a35
   geolocator: f7622e0e7e2a24718285b73916d60c4a54b9f5b6
-  google_api_availability: 15fa42a8cd83c0a6738507ffe6e87096f12abcb8
   google_maps_flutter: df4e7de95264aa0a2f11aac0fc7e313acb8ffc7e
   GoogleAppMeasurement: 4c644d86835d827bab30ab6aabb9ecaf1f500735
   GoogleDataTransport: f6f8eba931df03ebd2232ff4645aa85f8f47b5ab
@@ -482,6 +458,6 @@ SPEC CHECKSUMS:
   permission_handler: 7022f8972d2d85ce95c1040db945f28bdbfa45d1
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
 
-PODFILE CHECKSUM: 56c2f93aa1029628b1b136fcff7c8959c402e2a1
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 
 COCOAPODS: 1.9.1

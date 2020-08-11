@@ -4,14 +4,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:Sublin/models/routing.dart';
 
-class RoutingService {
+class BookingService {
   final Firestore _database = Firestore.instance;
 
-  Stream<Routing> streamRouting(uid) {
+  Stream<Routing> streamBooking(uid) {
     try {
       return _database
-          .collection('routings')
+          .collection('booking')
           .document(uid)
+          .collection('open')
+          .document()
           .snapshots()
           .map((snap) {
         return Routing.fromMap(snap.data);
