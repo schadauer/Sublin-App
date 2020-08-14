@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Sublin/services/booking_service.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -130,6 +131,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         ],
                       ),
                     ),
+                    // StreamBuilder(
+                    //     stream: BookingService().streamBooking(auth.uid),
+                    //     builder: (context, snapshot) {
+                    //       print(snapshot.data);
+                    //       return Text('asdf');
+                    //     })
                   ],
                 ),
               ),

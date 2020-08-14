@@ -16,6 +16,7 @@ class GoogleMapService {
     String input,
     String restrictions = '',
     bool cityOnly = false,
+    bool isStation = false,
   }) async {
     List output;
     List strippedOutput;
@@ -38,6 +39,7 @@ class GoogleMapService {
             description: val['description'],
             terms: val['terms'],
             types: val['types'],
+            isStation: isStation,
           ),
           'id': val['place_id'],
           'terms': val['terms'],
@@ -100,7 +102,7 @@ String _convertGoogleToFormattedAddress({
   String description,
   List<dynamic> terms,
   List<dynamic> types,
-  bool onlyStation = false,
+  bool isStation = false,
   bool onlyCity = false,
 }) {
   // Check if house number is given form Google address pattern
@@ -110,55 +112,71 @@ String _convertGoogleToFormattedAddress({
   String cityPart = '';
   String countryPart = '';
   String companyPart = '';
+  String stationPart = '';
 
   bool isValidAddress = true;
   bool isCompany = types.indexOf('establishment') != -1 ? true : false;
   bool isAddressStreet = types.indexOf('street_address') != -1 ? true : false;
   int lengthTerms = terms.length;
 
-  if (isAddressStreet && terms.length == 3) {
-    // There is street and number in one string
-    RegExp regExp = RegExp(r"\d+$");
-    String addressWithNumber = terms[0]['value'];
+  if (isStation) {
+    stationPart = Delimiter.station + terms[0]['value'];
+  } else if (!isStation) {
+    if (isAddressStreet && terms.length == 3) {
+      // There is street and number in one string
+      RegExp regExp = RegExp(r"\d+$");
+      String addressWithNumber = terms[0]['value'];
 
-    if (regExp.hasMatch(addressWithNumber)) {
-      String number = regExp.stringMatch(addressWithNumber).toString();
-      numberPart = Delimiter.number + number;
-      int indexOfNumber = addressWithNumber.indexOf(number);
-      if (indexOfNumber > 0) {
-        streetPart = Delimiter.street +
-            addressWithNumber.substring(0, indexOfNumber).trim();
+      if (regExp.hasMatch(addressWithNumber)) {
+        String number = regExp.stringMatch(addressWithNumber).toString();
+        numberPart = Delimiter.number + number;
+        int indexOfNumber = addressWithNumber.indexOf(number);
+        if (indexOfNumber > 0) {
+          streetPart = Delimiter.street +
+              addressWithNumber.substring(0, indexOfNumber).trim();
+        }
       }
     }
+    if (isAddressStreet && terms.length == 4) {
+      streetPart = Delimiter.street + terms[0]['value'];
+      numberPart = Delimiter.number + terms[1]['value'];
+    }
+    if (!isAddressStreet && terms.length == 3) {
+      streetPart = Delimiter.street + terms[0]['value'];
+    }
+    if (!isAddressStreet && !isCompany && terms.length == 4) {
+      streetPart = Delimiter.street + terms[0]['value'];
+      numberPart = Delimiter.number + terms[1]['value'];
+    }
+    if (isCompany && terms.length == 4) {
+      companyPart = Delimiter.company + terms[0]['value'];
+      numberPart = Delimiter.street + terms[1]['value'];
+    }
   }
-  if (isAddressStreet && terms.length == 4) {
-    streetPart = Delimiter.street + terms[0]['value'];
-    numberPart = Delimiter.number + terms[1]['value'];
-  }
-  if (!isAddressStreet && terms.length == 3) {
-    streetPart = Delimiter.street + terms[0]['value'];
-  }
-  if (!isAddressStreet && !isCompany && terms.length == 4) {
-    streetPart = Delimiter.street + terms[0]['value'];
-    numberPart = Delimiter.number + terms[1]['value'];
-  }
-  if (isCompany && terms.length == 4) {
-    companyPart = Delimiter.company + terms[0]['value'];
-    numberPart = Delimiter.street + terms[1]['value'];
-  }
+
   cityPart = Delimiter.city + terms[lengthTerms - 2]['value'];
   countryPart =
       Delimiter.country + _getCountryCode(terms[lengthTerms - 1]['value']);
 
   if (isAddressStreet && terms.length <= 2) isValidAddress = false;
-  print(terms);
-  print(types);
+  // print(terms);
+  // print(types);
   print(isValidAddress
-      ? countryPart + cityPart + streetPart + numberPart + companyPart
+      ? stationPart +
+          countryPart +
+          cityPart +
+          streetPart +
+          numberPart +
+          companyPart
       : '');
 
   return isValidAddress
-      ? countryPart + cityPart + streetPart + numberPart + companyPart
+      ? stationPart +
+          countryPart +
+          cityPart +
+          streetPart +
+          numberPart +
+          companyPart
       : '';
 }
 

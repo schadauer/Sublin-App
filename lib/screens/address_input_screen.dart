@@ -1,5 +1,7 @@
+import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
+import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
 
@@ -11,6 +13,7 @@ class AddressInputScreen extends StatefulWidget {
   final String title;
   final String restrictions;
   final bool cityOnly;
+  final bool isStation;
 
   AddressInputScreen({
     this.addressInputFunction,
@@ -20,6 +23,7 @@ class AddressInputScreen extends StatefulWidget {
     this.title = 'Addresse suchen',
     this.restrictions = '',
     this.cityOnly = false,
+    this.isStation = false,
   });
 
   @override
@@ -45,6 +49,9 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppbarWidget(title: widget.title),
+      endDrawer: DrawerSideNavigationWidget(
+        authService: AuthService(),
+      ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height -
             AppBar().preferredSize.height -
@@ -64,7 +71,8 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                             await _autocomplete.getGoogleAddressAutocomplete(
                                 input: input,
                                 restrictions: widget.restrictions,
-                                cityOnly: widget.cityOnly);
+                                cityOnly: widget.cityOnly,
+                                isStation: widget.isStation);
                         setState(() {
                           _autocompleteResults = result ?? [];
                         });

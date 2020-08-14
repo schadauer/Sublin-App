@@ -1,104 +1,57 @@
 import 'dart:async';
 
+import 'package:Sublin/models/booking.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'package:Sublin/models/routing.dart';
 
 class BookingService {
   final Firestore _database = Firestore.instance;
 
-  Stream<Routing> streamBooking(uid) {
+  Stream<List<Booking>> streamOpenBookings(uid) {
     try {
       return _database
           .collection('booking')
           .document(uid)
           .collection('open')
-          .document()
           .snapshots()
-          .map((snap) {
-        return Routing.fromMap(snap.data);
-      });
+          .map((snapshot) => snapshot.documents.map((document) {
+                return Booking.fromMap(document.data, document.documentID);
+              }).toList());
     } catch (e) {
       print(e);
       return null;
     }
   }
 
-  Stream<Routing> streamCheck(uid) {
+  Stream<List<Booking>> streamConfirmedBookings(uid) {
     try {
       return _database
-          .collection('check')
+          .collection('booking')
           .document(uid)
+          .collection('confirmed')
           .snapshots()
-          .map((snap) {
-        return Routing.fromMap(snap.data);
-      });
+          .map((snapshot) => snapshot.documents.map((document) {
+                return Booking.fromMap(document.data, document.documentID);
+              }).toList());
     } catch (e) {
       print(e);
       return null;
     }
   }
 
-  Future<void> requestRoute(
-      {uid,
-      endAddress,
-      endId,
-      startAddress,
-      startId,
-      checkAddress = false,
-      timestamp}) async {
+  Future<void> confirmBooking(
+      {uid, String documentId, bool isSublinEndStep}) async {
+    // print(uid);
     try {
-      _database.collection('requests').document(uid).setData({
-        'endAddress': endAddress,
-        'endId': endId,
-        'startAddress': startAddress,
-        'startId': startId,
-        'checkAddress': checkAddress,
-        'timestamp': timestamp,
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> bookRoute({uid}) async {
-    print(uid);
-    try {
-      _database.collection('routings').document(uid).setData({
-        'booked': true,
+      _database
+          .collection('booking')
+          .document(uid)
+          .collection('open')
+          .document(documentId)
+          .setData({
+        isSublinEndStep ? 'sublinEndStep' : "sublinStartStep": {
+          'confirmed': true,
+        }
       }, merge: true);
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<Routing> getRoute(uid) async {
-    try {
-      _database.collection('routings').document(uid).get().then((value) {
-        return Routing.fromMap(value.data);
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<bool> checkIfProviderAvailable(uid) async {
-    return _database.collection('check').document(uid).get().then((value) {
-      return value.data['providerAvailable'];
-    });
-  }
-
-  Future<void> deleteCheck(uid) async {
-    try {
-      _database.collection('check').document(uid).delete();
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> removeProviderFromRoute(uid) async {
-    try {
-      _database.collection('routings').document(uid).setData({'provider': ''});
     } catch (e) {
       print(e);
     }

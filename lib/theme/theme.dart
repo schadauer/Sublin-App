@@ -38,8 +38,14 @@ ThemeData themeData(context) {
     visualDensity: VisualDensity.adaptivePlatformDensity,
     // appBarTheme: AppBarTheme(textTheme: TextTh),
     textTheme: TextTheme(
-      caption: TextStyle(fontSize: 13),
-      button: TextStyle(fontSize: 16),
+      caption: TextStyle(
+        fontSize: 13,
+        color: Colors.black,
+      ),
+      button: TextStyle(
+        fontSize: 16,
+        color: Colors.black,
+      ),
       bodyText1: TextStyle(
         fontSize: 16,
         color: Colors.black,
@@ -70,6 +76,7 @@ ThemeData themeData(context) {
       ),
       headline4: TextStyle(
         fontSize: 16,
+        color: Colors.black,
         fontWeight: FontWeight.bold,
       ),
     ),

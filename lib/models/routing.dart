@@ -43,7 +43,7 @@ class Routing {
 
   factory Routing.fromMap(Map data) {
     Routing defaultValue = Routing();
-    Address defaultValueAddress = Address();
+    // Address defaultValueAddress = Address();
     Step defaultValueStep = Step();
     ProviderUser defaultValueProviderUser = ProviderUser();
     data = data ?? {};

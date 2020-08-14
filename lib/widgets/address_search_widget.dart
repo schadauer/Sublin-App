@@ -14,6 +14,8 @@ class AddressSearchWidget extends StatefulWidget {
   final int startTime;
   final Function addressInputFunction;
   final bool isCheckOnly;
+  final String restrictions;
+  final bool isStation;
 
   AddressSearchWidget({
     this.isStartAddress = false,
@@ -26,6 +28,8 @@ class AddressSearchWidget extends StatefulWidget {
     this.startTime,
     this.addressInputFunction,
     this.isCheckOnly = false,
+    this.restrictions = '',
+    this.isStation = false,
   });
 
   @override
@@ -111,7 +115,8 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                           Theme.of(context).textTheme.bodyText1,
                                     ),
                                     if (widget.isEndAddress ||
-                                        widget.isStartAddress)
+                                        widget.isStartAddress ||
+                                        widget.isStation)
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
@@ -202,6 +207,8 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                   addressInputFunction: widget.addressInputFunction,
                   isEndAddress: widget.isEndAddress,
                   isStartAddress: widget.isStartAddress,
+                  isStation: widget.isStation,
+                  restrictions: widget.restrictions,
                   title: widget.isEndAddress
                       ? widget.endHintText
                       : widget.startHintText,

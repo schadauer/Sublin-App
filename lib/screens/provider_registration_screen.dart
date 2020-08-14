@@ -56,7 +56,7 @@ class _ProviderRegistrationScreenState
   bool _addressFound = false;
   StreamSubscription<Routing> _subscription;
   int _pageSteps = 1;
-  // String _station = '';
+  String _station = '';
 
   DateFormat format = DateFormat('HHmm');
   var time = DateTime.parse("1969-07-20 20:18:04Z");
@@ -75,9 +75,8 @@ class _ProviderRegistrationScreenState
 
   @override
   void dispose() {
-    print('dispose');
-    _pageViewController.dispose();
-    _subscription.cancel();
+    _pageViewController ?? _pageViewController.dispose();
+    _subscription ?? _subscription.cancel();
     super.dispose();
   }
 
@@ -85,13 +84,8 @@ class _ProviderRegistrationScreenState
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
-    // final providerUser = Provider.of<ProviderUser>(context);
-    // _providerUser =
-    //     providerUser == _providerUser ? providerUser : _providerUser;
-    //     ? _defaultProviderUser
-    //     : _providerUser;
 
-    // print(ProviderUser().toMap(_providerUser));
+    print(ProviderUser().toMap(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -261,7 +255,7 @@ class _ProviderRegistrationScreenState
                                     ProviderSelectionWidget(
                                       title: 'Taxi- oder Mietwagenservice',
                                       text:
-                                          'vom Bahnhof zu den Adressen der Postleitzahl ${_checkRoutingData.endAddress}. Gewerbeberechtigung notwendig.',
+                                          'vom Bahnhof zu den Adressen in ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}. Gewerbeberechtigung notwendig.',
                                       providerSelection: ProviderType.taxi,
                                       selectionFunction:
                                           providerSelectionFunction,
@@ -347,7 +341,7 @@ class _ProviderRegistrationScreenState
                                         height: 10,
                                       ),
                                       AutoSizeText(
-                                        'Bitte teile uns deinen Unternehmensnamen mit.',
+                                        'Wie lautet dein Unternehmensname?',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1,
@@ -508,42 +502,57 @@ class _ProviderRegistrationScreenState
                                           Theme.of(context).textTheme.bodyText1,
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      height: 20,
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AddressInputScreen(
-                                                      addressInputFunction:
-                                                          stationSelectionFunction,
-                                                      isEndAddress: false,
-                                                      isStartAddress: false,
-                                                      restrictions: 'Bahnhof',
-                                                      title: 'Bahnhof suchen',
-                                                    )));
-                                      },
-                                      child: AbsorbPointer(
-                                        child: TextFormField(
-                                            validator: (val) => !val
-                                                    .contains('Bahnhof')
-                                                ? 'Bitte gib hier einen Bahnhof ein'
-                                                : null,
-                                            controller:
-                                                _stationFormFieldController,
-                                            // onChanged: (val) {
-                                            //   setState(() {});
-                                            // },
-                                            decoration: InputDecoration(
-                                              hintText: 'Bahnhof hinzufügen',
-                                              prefixIcon: Icon(Icons.train,
-                                                  color: Theme.of(context)
-                                                      .accentColor),
-                                            )),
-                                      ),
+                                    AddressSearchWidget(
+                                      addressInputFunction:
+                                          stationSelectionFunction,
+                                      isEndAddress: false,
+                                      isStartAddress: false,
+                                      isStation: true,
+                                      isCheckOnly: true,
+                                      restrictions: 'Bahnhof',
+                                      address: _station,
+                                      endHintText: 'Dein Bahnhof',
                                     ),
+                                    // SizedBox(
+                                    //   height: 10,
+                                    // ),
+                                    // GestureDetector(
+                                    //   onTap: () {
+                                    //     Navigator.push(
+                                    //         context,
+                                    //         MaterialPageRoute(
+                                    //             builder: (context) =>
+                                    //                 AddressInputScreen(
+                                    //                   addressInputFunction:
+                                    //                       stationSelectionFunction,
+                                    //                   isEndAddress: false,
+                                    //                   isStartAddress: false,
+                                    //                   isStation: true,
+                                    //                   restrictions: 'Bahnhof',
+                                    //                   title: 'Bahnhof suchen',
+                                    //                 )));
+                                    //   },
+                                    //   child: AbsorbPointer(
+                                    //     child: TextFormField(
+                                    //         validator: (val) => !val
+                                    //                 .contains('Bahnhof')
+                                    //             ? 'Bitte gib hier einen Bahnhof ein'
+                                    //             : null,
+                                    //         controller:
+                                    //             _stationFormFieldController,
+                                    //         // onChanged: (val) {
+                                    //         //   setState(() {});
+                                    //         // },
+                                    //         decoration: InputDecoration(
+                                    //           hintText: 'Bahnhof hinzufügen',
+                                    //           prefixIcon: Icon(Icons.train,
+                                    //               color: Theme.of(context)
+                                    //                   .accentColor),
+                                    //         )),
+                                    //   ),
+                                    // ),
                                     SizedBox(
                                       height: 20,
                                     ),
@@ -744,18 +753,23 @@ class _ProviderRegistrationScreenState
       List<dynamic> terms,
       bool isStartAddress,
       bool isEndAddress}) {
-    _stationFormFieldController.text = input;
+    print(input);
+    _station = input;
     _setStationFromProviderAddressFunction(
-      station: _stationFormFieldController.text,
+      station: _station,
       delimiter: Delimiter.city,
     );
   }
 
-  void citySelectionFunction(
-      String input, String id, bool startAddress, bool endAddress) {
+  void citySelectionFunction({
+    String input,
+    String id,
+    bool isCompany,
+    List<dynamic> terms,
+    bool isStartAddress,
+    bool isEndAddress,
+  }) {
     _addCityToStations(input);
-    // _stationFormFieldController.text = input;
-    // _setStationFunction(station: _stationFormFieldController.text);
   }
 
   Future<void> _checkAddressStatus(String uid) async {
@@ -772,7 +786,7 @@ class _ProviderRegistrationScreenState
           });
           _previousDataId = data.id;
           RoutingService().deleteCheck(uid);
-          _subscription.cancel();
+          //_subscription.cancel();
         }
       });
     } catch (e) {
@@ -781,7 +795,6 @@ class _ProviderRegistrationScreenState
   }
 
   void _setStationFromProviderAddressFunction({
-    String address = '',
     String delimiter = Delimiter.city,
     String station = '',
     bool remove = false,
@@ -794,12 +807,7 @@ class _ProviderRegistrationScreenState
     setState(() {
       if (station != '')
         _providerUser.stations = [
-          Delimiter.country +
-              'AT' +
-              delimiter +
-              scope +
-              Delimiter.station +
-              station,
+          Delimiter.country + 'AT' + delimiter + scope + station,
         ];
       _providerUser.addresses.add(Delimiter.country + 'AT' + delimiter + scope);
     });
@@ -817,12 +825,7 @@ class _ProviderRegistrationScreenState
     }).toList();
     if (cityExists == false) {
       setState(() {
-        _providerUser.stations.add(Delimiter.country +
-            'AT' +
-            Delimiter.city +
-            city +
-            Delimiter.station +
-            _stationFormFieldController.text);
+        _providerUser.stations.add(city + _station);
         _providerUser.addresses
             .add(Delimiter.country + 'AT' + Delimiter.city + city);
       });

@@ -1,6 +1,12 @@
 import 'package:Sublin/models/provider_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Step {
+  String id;
+  // bool booked;
+  int bookedTime;
+  int confirmedTime;
+  int completedTime;
   bool isSublin;
   bool isStart;
   bool isEnd;
@@ -19,6 +25,11 @@ class Step {
   int distance;
 
   Step({
+    this.id,
+    // this.booked,
+    this.bookedTime,
+    this.confirmedTime,
+    this.completedTime,
     this.isSublin = false,
     this.isStart = false,
     this.isEnd = false,

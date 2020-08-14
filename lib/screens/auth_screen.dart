@@ -1,3 +1,5 @@
+import 'package:Sublin/models/booking.dart';
+import 'package:Sublin/services/booking_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/provider_user.dart';
@@ -38,6 +40,11 @@ class AuthScreen extends StatelessWidget {
         StreamProvider<User>.value(
           initialData: User.initialData(),
           value: UserService().streamUser(user.uid),
+          lazy: true,
+        ),
+        StreamProvider<List<Booking>>.value(
+          // initialData: [Booking()],
+          value: BookingService().streamOpenBookings(user.uid),
           lazy: true,
         ),
         StreamProvider<ProviderUser>.value(
