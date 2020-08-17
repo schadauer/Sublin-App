@@ -1,3 +1,4 @@
+import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/screens/provider_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,13 +24,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final auth = Provider.of<Auth>(context);
     final user = Provider.of<User>(context);
     final providerUser = Provider.of<ProviderUser>(context);
+    final Routing routingService = Provider.of<Routing>(context);
 
     if (user.streamingOn == false && providerUser.streamingOn == false)
       return MaterialApp(
         theme: themeData(context),
         home: Loading(),
       );
-
+    print(routingService.booked != null && routingService.booked == true);
     return MaterialApp(
       routes: {
         HomeScreen.routeName: (context) => HomeScreen(),
@@ -46,7 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ? !providerUser.operationRequested
               ? ProviderRegistrationScreen()
               : ProviderHomeScreen()
-          : UserHomeScreen(),
+          : routingService.booked != null && routingService.booked == true
+              ? RoutingScreen()
+              : UserHomeScreen(),
     );
   }
 

@@ -1,15 +1,19 @@
+import 'package:Sublin/models/request.dart';
 import 'package:Sublin/services/auth_service.dart';
+import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AddressInputScreen extends StatefulWidget {
   final Function addressInputFunction;
   final String address;
   final bool isStartAddress;
   final bool isEndAddress;
+  final bool showGeolocationOption;
   final String title;
   final String restrictions;
   final bool cityOnly;
@@ -20,6 +24,7 @@ class AddressInputScreen extends StatefulWidget {
     this.address = '',
     this.isStartAddress = false,
     this.isEndAddress = false,
+    this.showGeolocationOption = false,
     this.title = 'Addresse suchen',
     this.restrictions = '',
     this.cityOnly = false,
@@ -36,17 +41,16 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
   TextEditingController _textFormFieldController = TextEditingController();
   List _autocompleteResults = [];
 
-  // @override
-  // void initState() {
-  //   // if (widget.restrictions != '') {
-  //   //   _textFormFieldController.text = widget.restrictions + ' ';
-  //   // }
-  //   // TODO: implement initState
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    if (widget.showGeolocationOption == true)
+      _getStartAddressFromGeolocastion();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(widget.showGeolocationOption);
     return Scaffold(
       appBar: AppbarWidget(title: widget.title),
       endDrawer: DrawerSideNavigationWidget(
@@ -141,5 +145,27 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _getStartAddressFromGeolocastion() async {
+    try {
+      Request _geolocation = await GeolocationService().getCurrentCoordinates();
+      if (_geolocation != null) {
+        setState(() {
+          _autocompleteResults = [
+            {
+              'name': _geolocation.startAddress,
+              'id': _geolocation.startId,
+              'terms': null,
+              'isCompany': false,
+              'isStartAddress': true,
+              'isEndAddress': false,
+            }
+          ];
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

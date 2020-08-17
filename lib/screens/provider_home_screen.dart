@@ -4,7 +4,7 @@ import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/booking.dart';
 import 'package:Sublin/models/booking_status.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/step.dart' as step;
 import 'package:Sublin/services/booking_service.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +22,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   double get maxHeight => 150 + MediaQuery.of(context).padding.top;
   double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
   bool isEmpty = false;
-  StreamSubscription<List<Booking>> _confirmedBookingsSubscription;
+  // StreamSubscription<List<Booking>> _confirmedBookingsSubscription;
   List<Booking> confirmedBookings;
   BookingStatus bookingStatus;
 
@@ -34,18 +34,15 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     });
   }
 
-  // @override
-  // void dispose() {
-
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<Auth>(context);
     final openBookings = Provider.of<List<Booking>>(context);
-
     return Scaffold(
+        // appBar: AppbarWidget(title: 'Home'),
+        // endDrawer: DrawerSideNavigationWidget(
+        //   authService: AuthService(),
+        // ),
         body: SafeArea(
       child: StreamBuilder<List<Booking>>(
           initialData: [Booking()],
@@ -105,7 +102,6 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   ListTile _buildCard(int index, List<Booking> openBookings,
       List<Booking> confirmedBookings, BookingStatus bookingstatus) {
     List<Booking> bookings;
-
     switch (bookingstatus) {
       case BookingStatus.confirmed:
         bookings = confirmedBookings;
@@ -116,24 +112,45 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     if (bookings != null && index < bookings.length) {
       Booking booking = bookings[index];
       bool isSublinEndStep = false;
+      bool isSublinStartStep = false;
+
       if (booking.sublinEndStep != null) isSublinEndStep = true;
+      if (booking.sublinStartStep != null) isSublinStartStep = true;
+
+      step.Step bookingStep = step.Step(
+          startAddress: isSublinEndStep == true
+              ? booking.sublinEndStep.startAddress
+              : booking.sublinStartStep.startAddress,
+          endAddress: isSublinEndStep == true
+              ? booking.sublinEndStep.endAddress
+              : booking.sublinStartStep.endAddress,
+          startTime: isSublinEndStep == true
+              ? booking.sublinEndStep.startTime
+              : booking.sublinStartStep.startTime,
+          endTime: isSublinEndStep == true
+              ? booking.sublinEndStep.endTime
+              : booking.sublinStartStep.endTime,
+          provider: isSublinEndStep == true
+              ? ProviderUser(
+                  id: booking.sublinEndStep.provider.id,
+                )
+              : ProviderUser(
+                  id: booking.sublinStartStep.provider.id,
+                ));
       return ListTile(
         contentPadding: EdgeInsets.all(20),
         enabled: true,
         leading: isSublinEndStep ? Icon(Icons.train) : Icon(Icons.home),
         title: Text(
-          booking.sublinEndStep.endAddress,
+          bookingStep.startAddress,
           style: Theme.of(context).textTheme.headline4,
         ),
-        subtitle: Text(
-            'Abholung um ' + getTimeFormat(booking.sublinEndStep.startTime)),
+        subtitle: Text('Abholung um ' + getTimeFormat(bookingStep.startTime)),
         trailing: InkWell(
           onTap: () {
             BookingService().confirmBooking(
-                uid: booking.sublinEndStep.provider.id,
-                documentId: isSublinEndStep
-                    ? booking.sublinEndStep.id
-                    : booking.sublinStartStep.id,
+                uid: bookingStep.provider.id,
+                documentId: booking.id,
                 isSublinEndStep: isSublinEndStep);
           },
           child: Column(
@@ -217,37 +234,40 @@ class Header extends StatelessWidget {
     return expandRatio;
   }
 
-  ConstrainedBox _buildFilter(
+  Padding _buildFilter(
     Animation<double> animation,
     BoxConstraints constraints,
     Function setFilterFunction,
   ) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: constraints.maxHeight,
-        minHeight: constraints.minHeight,
-      ),
-      child: Row(
-        children: [
-          BookingFilterWidget(
-            number: openBookingsCount,
-            description: 'Offene',
-            setFilterFunction: setFilterFunction,
-            bookingStatus: BookingStatus.open,
-          ),
-          BookingFilterWidget(
-            number: confirmedBookingsCount,
-            description: 'Bestätigte',
-            setFilterFunction: setFilterFunction,
-            bookingStatus: BookingStatus.confirmed,
-          ),
-          BookingFilterWidget(
-            number: 0,
-            description: 'Durchgeführte',
-            setFilterFunction: setFilterFunction,
-            bookingStatus: BookingStatus.completed,
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.all(3.0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: constraints.maxHeight,
+          minHeight: constraints.minHeight,
+        ),
+        child: Row(
+          children: [
+            BookingFilterWidget(
+              number: openBookingsCount,
+              description: 'Offene',
+              setFilterFunction: setFilterFunction,
+              bookingStatus: BookingStatus.open,
+            ),
+            BookingFilterWidget(
+              number: confirmedBookingsCount,
+              description: 'Bestätigte',
+              setFilterFunction: setFilterFunction,
+              bookingStatus: BookingStatus.confirmed,
+            ),
+            BookingFilterWidget(
+              number: 0,
+              description: 'Vergangene',
+              setFilterFunction: setFilterFunction,
+              bookingStatus: BookingStatus.completed,
+            ),
+          ],
+        ),
       ),
     );
   }

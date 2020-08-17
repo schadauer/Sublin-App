@@ -28,25 +28,25 @@
       "deviceId": "iPhone 11"
     },
     {
-      "name": "iPhone AS",
+      "name": "iPhone 6",
       "request": "launch",
       "type": "dart",
-      "deviceId": "AS"
+      "deviceId": "15a728cf885fa997719eacbbb4c43f457f538982"
     },
     {
       "name": "Samsung A10",
       "request": "launch",
       "type": "dart",
-      "deviceId": "SM A105FN"
+      "deviceId": "R58N32RAT7N"
     },
     {
-      "name": "Pixel 3a API 29",
+      "name": "Pixel 2 API 29",
       "request": "launch",
       "type": "dart",
       "deviceId": "emulator-5556"
     },
     {
-      "name": "Pixel 2 API 29",
+      "name": "Pixel 3a API 29",
       "request": "launch",
       "type": "dart",
       "deviceId": "emulator-5554"

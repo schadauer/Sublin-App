@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -16,6 +17,9 @@ class RoutingService {
           .map((snap) {
         return Routing.fromMap(snap.data);
       });
+    } on SocketException {
+      print('no internet');
+      return null;
     } catch (e) {
       print(e);
       return null;
@@ -46,7 +50,8 @@ class RoutingService {
       checkAddress = false,
       timestamp}) async {
     try {
-      _database.collection('requests').document(uid).setData({
+      // await _database.collection('routings').document(uid).delete();
+      await _database.collection('requests').document(uid).setData({
         'endAddress': endAddress,
         'endId': endId,
         'startAddress': startAddress,
@@ -54,6 +59,8 @@ class RoutingService {
         'checkAddress': checkAddress,
         'timestamp': timestamp,
       });
+    } on SocketException {
+      print('no internet');
     } catch (e) {
       print(e);
     }
@@ -62,7 +69,7 @@ class RoutingService {
   Future<void> bookRoute({uid}) async {
     print(uid);
     try {
-      _database.collection('routings').document(uid).setData({
+      await _database.collection('routings').document(uid).setData({
         'booked': true,
       }, merge: true);
     } catch (e) {

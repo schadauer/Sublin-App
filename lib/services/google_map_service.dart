@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Sublin/models/delimiter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
@@ -53,6 +55,8 @@ class GoogleMapService {
         // };
       }).toList();
       return strippedOutput;
+    } on SocketException {
+      print('No internet connection');
     } catch (e) {
       print(e);
       return null;

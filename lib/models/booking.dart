@@ -4,9 +4,11 @@ import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/step.dart';
 
 class Booking {
+  String id;
   Step sublinStartStep;
   Step sublinEndStep;
   Booking({
+    this.id,
     this.sublinStartStep,
     this.sublinEndStep,
   });
@@ -19,10 +21,17 @@ class Booking {
     data = data ?? {};
     // print(documentId);
     Booking booking = Booking(
+      id: data['id'] ?? defaultValueBooking.id,
       sublinEndStep: (data['sublinEndStep'] == null)
           ? defaultValueBooking.sublinEndStep
           : Step(
               id: documentId,
+              confirmed: data['sublinEndStep']['confirmed'] ??
+                  defaultValueStep.confirmed,
+              confirmedTime: data['sublinEndStep']['confirmedTime'] ??
+                  defaultValueStep.confirmedTime,
+              completedTime: data['sublinEndStep']['completedTime'] ??
+                  defaultValueStep.completedTime,
               endAddress: data['sublinEndStep']['endAddress'] ??
                   defaultValueStep.endAddress,
               startAddress: data['sublinEndStep']['startAddress'] ??
@@ -64,30 +73,58 @@ class Booking {
               duration: data['sublinEndStep']['duration'] ??
                   defaultValueStep.duration,
             ),
+      sublinStartStep: (data['sublinStartStep'] == null)
+          ? defaultValueBooking.sublinStartStep
+          : Step(
+              id: documentId,
+              confirmed: data['sublinStartStep']['confirmed'] ??
+                  defaultValueStep.confirmed,
+              confirmedTime: data['sublinStartStep']['confirmedTime'] ??
+                  defaultValueStep.confirmedTime,
+              completedTime: data['sublinStartStep']['completedTime'] ??
+                  defaultValueStep.completedTime,
+              endAddress: data['sublinStartStep']['endAddress'] ??
+                  defaultValueStep.endAddress,
+              startAddress: data['sublinStartStep']['startAddress'] ??
+                  defaultValueStep.startAddress,
+              startTime: data['sublinStartStep']['startTime'] ??
+                  defaultValueStep.startTime,
+              endTime: data['sublinStartStep']['endTime'] ??
+                  defaultValueStep.endTime,
+              provider: (data['sublinStartStep']['provider'] == null)
+                  ? defaultValueStep.provider
+                  : ProviderUser(
+                      providerType: ProviderType.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'ProviderType.' +
+                                  data['sublinStartStep']['provider']
+                                      ['providerType'],
+                          orElse: () => defaultValueProviderUser.providerType),
+                      providerPlan: ProviderPlan.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'providerPlan.' +
+                                  data['sublinStartStep']['provider']
+                                      ['providerPlan'],
+                          orElse: () => defaultValueProviderUser.providerPlan),
+                      providerName: data['sublinStartStep']['provider']
+                              ['providerName'] ??
+                          defaultValueProviderUser.providerName,
+                      id: data['sublinStartStep']['provider']['id'] ??
+                          defaultValueProviderUser.id,
+                      timeStart: data['sublinStartStep']['provider']
+                              ['timeStart'] ??
+                          defaultValueProviderUser.timeStart,
+                      timeEnd: data['sublinStartStep']['provider']['timeEnd'] ??
+                          defaultValueProviderUser.timeEnd,
+                    ),
+              distance: data['sublinStartStep']['distance'] ??
+                  defaultValueStep.distance,
+              duration: data['sublinStartStep']['duration'] ??
+                  defaultValueStep.duration,
+            ),
     );
     return booking;
-  }
-
-  factory Booking.initialData() {
-    return Booking(
-        sublinEndStep: Step(
-      distance: 5,
-    ));
-  }
-}
-
-class BookingList {
-  List<Booking> bookingList;
-
-  BookingList({
-    this.bookingList,
-  });
-
-  factory BookingList.fromMap(Map data) {
-    BookingList list;
-    // for (var i = 0; i < data.length; i++) {
-    //   list = [Booking()]
-    // }
-    return list;
   }
 }

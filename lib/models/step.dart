@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Step {
   String id;
-  // bool booked;
+  bool confirmed;
   int bookedTime;
   int confirmedTime;
   int completedTime;
@@ -26,7 +26,7 @@ class Step {
 
   Step({
     this.id,
-    // this.booked,
+    this.confirmed,
     this.bookedTime,
     this.confirmedTime,
     this.completedTime,

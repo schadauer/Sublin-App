@@ -15,6 +15,7 @@ class Routing {
   String startId;
   String endAddress;
   bool endAddressAvailable;
+  bool startAddressAvailable;
   String endId;
   bool checkAddress;
   List<Step> publicSteps;
@@ -32,6 +33,7 @@ class Routing {
     this.startAddress = '',
     this.startId = '',
     this.endAddress,
+    this.startAddressAvailable = false,
     this.endAddressAvailable = false,
     this.endId = '',
     this.checkAddress = false,
@@ -50,6 +52,10 @@ class Routing {
     return Routing(
       streamingOn: true,
       id: data['id'] ?? defaultValue.id,
+      startAddressAvailable:
+          data['startAddressAvailable'] ?? defaultValue.startAddressAvailable,
+      endAddressAvailable:
+          data['endAddressAvailable'] ?? defaultValue.endAddressAvailable,
       booked: data['booked'] ?? defaultValue.booked,
       confirmed: data['confirmed'] ?? defaultValue.confirmed,
       sublinEndStep: (data['sublinEndStep'] == null)
@@ -135,8 +141,7 @@ class Routing {
       startId: data['startId'] ?? defaultValue.startId,
       startAddress: data['startAddress'] ?? defaultValue.startAddress,
       checkAddress: data['checkAddress'] ?? defaultValue.checkAddress,
-      endAddressAvailable:
-          data['endAddressAvailable'] ?? defaultValue.endAddressAvailable,
+
       // endAddress: (data['endAddress'] == null)
       //     ? defaultValueAddress
       //     : Address(

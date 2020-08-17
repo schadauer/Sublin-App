@@ -1,5 +1,7 @@
+import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/screens/provider_home_screen.dart';
+import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/screens/provider_registration_screen.dart';
 import 'package:Sublin/screens/user_home_screen.dart';
@@ -17,6 +19,7 @@ class DrawerSideNavigationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
+    final Routing routingService = Provider.of<Routing>(context);
     return Drawer(
       child: ListView(
         children: <Widget>[
@@ -36,11 +39,20 @@ class DrawerSideNavigationWidget extends StatelessWidget {
             title: Text('Persönliche Einstellungen'),
             onTap: null,
           ),
-          ListTile(
-            leading: Icon(Icons.person_outline),
-            title: Text('Fahrt suchen'),
-            onTap: () => Navigator.pushNamed(context, UserHomeScreen.routeName),
-          ),
+          if (routingService.booked == null || routingService.booked == false)
+            ListTile(
+              leading: Icon(Icons.person_outline),
+              title: Text('Fahrt suchen'),
+              onTap: () =>
+                  Navigator.pushNamed(context, UserHomeScreen.routeName),
+            ),
+          if (routingService.booked == true)
+            ListTile(
+              leading: Icon(Icons.person_outline),
+              title: Text('Zum aktuellen Reise'),
+              onTap: () =>
+                  Navigator.pushNamed(context, RoutingScreen.routeName),
+            ),
           if (user.isProvider == true)
             ListTile(
               leading: Icon(Icons.person_outline),

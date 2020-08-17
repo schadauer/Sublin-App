@@ -6,6 +6,7 @@ class AddressSearchWidget extends StatefulWidget {
   //The following types are possible: start, end, train, bus, Sublin
   final bool isStartAddress;
   final bool isEndAddress;
+  final bool showGeolocationOption;
   final String startAddress;
   final String startHintText;
   final String endAddress;
@@ -20,6 +21,7 @@ class AddressSearchWidget extends StatefulWidget {
   AddressSearchWidget({
     this.isStartAddress = false,
     this.isEndAddress = false,
+    this.showGeolocationOption = false,
     this.startAddress = '',
     this.startHintText = 'Deinen Standort finden',
     this.endAddress = '',
@@ -180,7 +182,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                         height: 40,
                         width: 40,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -207,6 +209,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                   addressInputFunction: widget.addressInputFunction,
                   isEndAddress: widget.isEndAddress,
                   isStartAddress: widget.isStartAddress,
+                  showGeolocationOption: widget.showGeolocationOption,
                   isStation: widget.isStation,
                   restrictions: widget.restrictions,
                   title: widget.isEndAddress
