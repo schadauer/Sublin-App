@@ -6,7 +6,7 @@ ThemeData themeData(context) {
     primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
     // primaryColor: Color.fromRGBO(54, 73, 88, 1),
     primaryColor: Color.fromRGBO(216, 214, 204, 1),
-    secondaryHeaderColor: Color.fromRGBO(0, 133, 74, 1),
+    secondaryHeaderColor: Color.fromRGBO(0, 174, 99, 0.6),
     brightness: Brightness.light,
     accentColor: Colors.blueGrey[100],
     accentColorBrightness: Brightness.dark,
@@ -39,15 +39,19 @@ ThemeData themeData(context) {
     // appBarTheme: AppBarTheme(textTheme: TextTh),
     textTheme: TextTheme(
       caption: TextStyle(
-        fontSize: 13,
+        fontSize: 14,
+        fontFamily: 'Lato',
         color: Colors.black,
       ),
       button: TextStyle(
         fontSize: 16,
+        fontFamily: 'Lato',
         color: Colors.black,
+        fontWeight: FontWeight.normal,
       ),
       bodyText1: TextStyle(
         fontSize: 16,
+        fontFamily: 'Lato',
         color: Colors.black,
         fontWeight: FontWeight.normal,
       ),
@@ -57,16 +61,16 @@ ThemeData themeData(context) {
         fontWeight: FontWeight.normal,
       ),
       headline1: TextStyle(
-        fontSize: 28,
+        fontSize: 18,
         color: Colors.black,
-        fontFamily: 'Open Sans',
-        fontWeight: FontWeight.normal,
+        fontFamily: 'Lato',
+        fontWeight: FontWeight.bold,
       ),
       headline2: TextStyle(
-        fontSize: 24,
+        fontSize: 16,
         color: Colors.black,
-        fontWeight: FontWeight.normal,
-        fontFamily: 'Open Sans',
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Lato',
       ),
       headline3: TextStyle(
         fontSize: 20,

@@ -31,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
         theme: themeData(context),
         home: Loading(),
       );
-    print(routingService.booked != null && routingService.booked == true);
     return MaterialApp(
       routes: {
         HomeScreen.routeName: (context) => HomeScreen(),

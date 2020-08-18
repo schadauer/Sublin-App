@@ -25,7 +25,8 @@ class ProgressIndicatorWidget extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Flexible(
-                  child: Container(color: Theme.of(context).splashColor),
+                  child:
+                      Container(color: Theme.of(context).secondaryHeaderColor),
                   flex: index,
                 ),
                 Flexible(
@@ -41,7 +42,7 @@ class ProgressIndicatorWidget extends StatelessWidget {
           SizedBox(
             height: 10,
             child: LinearProgressIndicator(
-              backgroundColor: Theme.of(context).splashColor,
+              backgroundColor: Theme.of(context).secondaryHeaderColor,
             ),
           ),
       ],

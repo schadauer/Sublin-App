@@ -40,7 +40,6 @@ class BookingService {
 
   Future<void> confirmBooking(
       {uid, String documentId, bool isSublinEndStep}) async {
-    // print(uid);
     try {
       _database
           .collection('booking')

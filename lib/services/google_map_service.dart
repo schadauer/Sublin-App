@@ -163,16 +163,6 @@ String _convertGoogleToFormattedAddress({
       Delimiter.country + _getCountryCode(terms[lengthTerms - 1]['value']);
 
   if (isAddressStreet && terms.length <= 2) isValidAddress = false;
-  // print(terms);
-  // print(types);
-  print(isValidAddress
-      ? stationPart +
-          countryPart +
-          cityPart +
-          streetPart +
-          numberPart +
-          companyPart
-      : '');
 
   return isValidAddress
       ? stationPart +

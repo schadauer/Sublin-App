@@ -50,7 +50,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.showGeolocationOption);
     return Scaffold(
       appBar: AppbarWidget(title: widget.title),
       endDrawer: DrawerSideNavigationWidget(

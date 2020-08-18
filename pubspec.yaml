@@ -92,6 +92,11 @@ flutter:
         - asset: fonts/OpenSans-Regular.ttf
         - asset: fonts/OpenSans-Bold.ttf
           weight: 700
+    - family: Lato
+      fonts:
+        - asset: fonts/Lato-Regular.ttf
+        - asset: fonts/Lato-Bold.ttf
+          weight: 700
 
   assets:     
     - assets/images/Sublin.png

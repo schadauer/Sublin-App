@@ -21,8 +21,8 @@ class StepIconWidget extends StatelessWidget {
             Container(
               margin: (isStartAddress) ? EdgeInsets.only(top: 20) : null,
               height: (isEndAddress) ? 30 : double.infinity,
-              width: 5,
-              color: Theme.of(context).accentColor,
+              width: 2,
+              color: Colors.black,
             ),
           ],
         ),
@@ -34,7 +34,7 @@ class StepIconWidget extends StatelessWidget {
               height: 40,
               width: 40,
               decoration: BoxDecoration(
-                color: Theme.of(context).accentColor,
+                color: Colors.black,
                 shape: BoxShape.circle,
               ),
               child: Icon(

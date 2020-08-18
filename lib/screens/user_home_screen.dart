@@ -38,11 +38,11 @@ class _UserHomeScreenState extends State<UserHomeScreen>
 
   @override
   void initState() {
+    print('initState');
     _localRequest.startAddress = '';
     _localRequest.startId = '';
     _localRequest.endAddress = '';
     _localRequest.endId = '';
-    // _isGeoLocationPermissionGranted();
     _getStartAddressFromGeolocastion();
     WidgetsBinding.instance.addObserver(this);
     super.initState();
@@ -51,7 +51,6 @@ class _UserHomeScreenState extends State<UserHomeScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      print('resumed');
       _getStartAddressFromGeolocastion();
     }
     // setState(() {
@@ -63,9 +62,9 @@ class _UserHomeScreenState extends State<UserHomeScreen>
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
 
-    // final ProviderUser providerUser = Provider.of<ProviderUser>(context);
+    print(_localRequest.endAddress);
     return Scaffold(
-      appBar: AppbarWidget(title: 'Home'),
+      appBar: AppbarWidget(title: 'Deine Reise suchen'),
       endDrawer: DrawerSideNavigationWidget(
         authService: AuthService(),
       ),
@@ -124,7 +123,6 @@ class _UserHomeScreenState extends State<UserHomeScreen>
                       isEndAddress: true,
                       address: _localRequest.endAddress,
                     ),
-
                     Container(
                       padding: EdgeInsets.all(5),
                       child: Row(
@@ -144,7 +142,7 @@ class _UserHomeScreenState extends State<UserHomeScreen>
                                         endId: _localRequest.endId,
                                         timestamp: DateTime.now(),
                                       );
-                                      await Navigator.pushNamed(
+                                      await Navigator.pushReplacementNamed(
                                         context,
                                         RoutingScreen.routeName,
                                         arguments: Routing(
@@ -162,12 +160,6 @@ class _UserHomeScreenState extends State<UserHomeScreen>
                         ],
                       ),
                     ),
-                    // StreamBuilder(
-                    //     stream: BookingService().streamBooking(auth.uid),
-                    //     builder: (context, snapshot) {
-                    //       print(snapshot.data);
-                    //       return Text('asdf');
-                    //     })
                   ],
                 ),
               ),
@@ -184,8 +176,6 @@ class _UserHomeScreenState extends State<UserHomeScreen>
       bool isStartAddress,
       bool isEndAddress}) {
     setState(() {
-      // print(_localRequest.startAddress);
-      // print(_localRequest.endAddress);
       if (isStartAddress) _localRequest.startAddress = input;
       if (isStartAddress) _localRequest.startId = id;
       if (isEndAddress) _localRequest.endAddress = input;
@@ -199,7 +189,6 @@ class _UserHomeScreenState extends State<UserHomeScreen>
           await GeolocationService().isGeoLocationPermissionGranted();
       Request _geolocation = await GeolocationService().getCurrentCoordinates();
       setState(() {
-        print(_geolocation);
         _geolocationStatus = geolocationStatus;
         if (_geolocation != null) {
           _localRequest = _geolocation;
@@ -209,59 +198,4 @@ class _UserHomeScreenState extends State<UserHomeScreen>
       print(e);
     }
   }
-
-  // Future<void> _getCurrentCoordinates() async {
-  //   if (_geoLocationPermissionIsGranted) {
-  //     try {
-  //       final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  //       Position position = await geolocator.getCurrentPosition(
-  //           desiredAccuracy: LocationAccuracy.bestForNavigation);
-
-  //       setState(() {
-  //         _currentLocationLatLng = position;
-  //       });
-  //       String address = await _getPlacemarkFromCoordinates(
-  //           _currentLocationLatLng.latitude, _currentLocationLatLng.longitude);
-  //       _currentLocationAutocompleteResults = await GoogleMapService()
-  //           .getGoogleAddressAutocomplete(input: address);
-  //       setState(() {
-  //         _localRequest.startAddress =
-  //             _currentLocationAutocompleteResults[0]['name'];
-  //         _localRequest.startId = _currentLocationAutocompleteResults[0]['id'];
-  //       });
-  //     } catch (e) {
-  //       print('_getCurrentCoordinates: $e');
-  //     }
-  //   }
-  // }
-
-  // Future<String> _getPlacemarkFromCoordinates(double lat, double lng) async {
-  //   try {
-  //     String address;
-  //     List<Placemark> placemark = await Geolocator()
-  //         .placemarkFromCoordinates(lat, lng, localeIdentifier: 'de_DE');
-  //     placemark.map((e) {
-  //       address = '${e.thoroughfare} ${e.subThoroughfare}, ${e.locality}';
-  //     }).toList();
-  //     return address;
-  //   } catch (e) {
-  //     print('_getPlacemarkFromCoordinates: $e');
-  //     return '';
-  //   }
-  // }
-
-  // Future<void> _isGeoLocationPermissionGranted() async {
-  //   GeolocationStatus geolocationStatus =
-  //       await Geolocator().checkGeolocationPermissionStatus();
-  //   if (geolocationStatus == GeolocationStatus.granted) {
-  //     setState(() {
-  //       _geoLocationPermissionIsGranted = true;
-  //     });
-  //     _getCurrentCoordinates();
-  //   } else {
-  //     setState(() {
-  //       _geoLocationPermissionIsGranted = false;
-  //     });
-  //   }
-  // }
 }

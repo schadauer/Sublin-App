@@ -110,12 +110,14 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                     MainAxisAlignment.spaceAround,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                    Text(
-                                      convertFormattedAddressToReadableAddress(
-                                          widget.address),
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
-                                    ),
+                                    if (widget.address != '')
+                                      Text(
+                                        convertFormattedAddressToReadableAddress(
+                                            widget.address),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
+                                      ),
                                     if (widget.isEndAddress ||
                                         widget.isStartAddress ||
                                         widget.isStation)

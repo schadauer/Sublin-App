@@ -17,9 +17,9 @@ class Booking {
     Step defaultValueStep = Step();
     Booking defaultValueBooking = Booking();
     ProviderUser defaultValueProviderUser = ProviderUser();
-    // print(data.values);
+
     data = data ?? {};
-    // print(documentId);
+
     Booking booking = Booking(
       id: data['id'] ?? defaultValueBooking.id,
       sublinEndStep: (data['sublinEndStep'] == null)

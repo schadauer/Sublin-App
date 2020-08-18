@@ -9,13 +9,14 @@ class Routing {
   String id;
   bool booked;
   bool confirmed;
-  // ProviderUser provider;
   String user;
   String startAddress;
   String startId;
   String endAddress;
   bool endAddressAvailable;
   bool startAddressAvailable;
+  bool isPubliclyAccessibleStartAddress;
+  bool isPubliclyAccessibleEndAddress;
   String endId;
   bool checkAddress;
   List<Step> publicSteps;
@@ -28,13 +29,14 @@ class Routing {
     this.id = '',
     this.booked = false,
     this.confirmed = false,
-    // this.provider,
     this.user = '',
     this.startAddress = '',
     this.startId = '',
     this.endAddress,
     this.startAddressAvailable = false,
     this.endAddressAvailable = false,
+    this.isPubliclyAccessibleStartAddress = true,
+    this.isPubliclyAccessibleEndAddress = true,
     this.endId = '',
     this.checkAddress = false,
     this.publicSteps = const [],
@@ -56,6 +58,11 @@ class Routing {
           data['startAddressAvailable'] ?? defaultValue.startAddressAvailable,
       endAddressAvailable:
           data['endAddressAvailable'] ?? defaultValue.endAddressAvailable,
+      isPubliclyAccessibleStartAddress:
+          data['isPubliclyAccessibleStartAddress'] ??
+              defaultValue.isPubliclyAccessibleStartAddress,
+      isPubliclyAccessibleEndAddress: data['isPubliclyAccessibleEndAddress'] ??
+          defaultValue.isPubliclyAccessibleEndAddress,
       booked: data['booked'] ?? defaultValue.booked,
       confirmed: data['confirmed'] ?? defaultValue.confirmed,
       sublinEndStep: (data['sublinEndStep'] == null)
@@ -67,6 +74,8 @@ class Routing {
                   defaultValueStep.startAddress,
               startTime: data['sublinEndStep']['startTime'] ??
                   defaultValueStep.startTime,
+              confirmed: data['sublinEndStep']['confirmed'] ??
+                  defaultValueStep.confirmed,
               endTime:
                   data['sublinEndStep']['endTime'] ?? defaultValueStep.endTime,
               provider: (data['sublinEndStep']['provider'] == null)
@@ -116,9 +125,6 @@ class Routing {
               provider: (data['sublinStartStep']['provider'] == null)
                   ? defaultValueStep.provider
                   : ProviderUser(
-                      // outOfWork: data['sublinStartStep']['endAddress']
-                      //         ['provider']['outOfWork'] ??
-                      // defaultValueProviderUser.outOfWork,
                       providerName: data['sublinStartStep']['provider']
                               ['providerName'] ??
                           defaultValueProviderUser.providerName,
@@ -141,24 +147,6 @@ class Routing {
       startId: data['startId'] ?? defaultValue.startId,
       startAddress: data['startAddress'] ?? defaultValue.startAddress,
       checkAddress: data['checkAddress'] ?? defaultValue.checkAddress,
-
-      // endAddress: (data['endAddress'] == null)
-      //     ? defaultValueAddress
-      //     : Address(
-      //         id: data['endAddress']['id'] ?? defaultValueAddress.id,
-      //         city: data['endAddress']['city'] ?? defaultValueAddress.city,
-      //         country:
-      //             data['endAddress']['country'] ?? defaultValueAddress.country,
-      //         district: data['endAddress']['district'] ??
-      //             defaultValueAddress.district,
-      //         postcode: data['endAddress']['postcode'] ??
-      //             defaultValueAddress.postcode,
-      //         street:
-      //             data['endAddress']['street'] ?? defaultValueAddress.street,
-      //         state: data['endAddress']['state'] ?? defaultValueAddress.state,
-      //         formattedAddress: data['endAddress']['formattedAddress'] ??
-      //             defaultValueAddress.formattedAddress,
-      //       ),
       publicSteps: (data['publicSteps'] == null)
           ? defaultValue.publicSteps
           : data['publicSteps'].map<Step>((step) {
@@ -169,7 +157,6 @@ class Routing {
                     step['startAddress'] ?? defaultValueStep.startAddress,
                 startTime: step['startTime'] ?? defaultValueStep.startTime,
                 endTime: step['endTime'] ?? defaultValueStep.endTime,
-                // provider: step['provider'] ?? defaultValueStep.provider,
                 distance: step['distance'] ?? defaultValueStep.distance,
                 duration: step['duration'] ?? defaultValueStep.duration,
               );

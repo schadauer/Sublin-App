@@ -16,7 +16,10 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
     return PreferredSize(
       preferredSize: Size.fromHeight(60.0),
       child: AppBar(
-        title: Text(this.title),
+        title: Text(
+          this.title,
+          style: Theme.of(context).textTheme.headline1,
+        ),
         elevation: 0.0,
         backgroundColor: Theme.of(context).primaryColor,
         // leading: Image.asset(
