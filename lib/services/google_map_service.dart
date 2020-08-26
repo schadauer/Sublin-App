@@ -19,9 +19,10 @@ class GoogleMapService {
     String restrictions = '',
     bool cityOnly = false,
     bool isStation = false,
+    String addressTypes = '',
   }) async {
     List output;
-    List strippedOutput;
+    List formattedOutput;
     var client = http.Client();
     try {
       input = (restrictions != '')
@@ -30,31 +31,25 @@ class GoogleMapService {
               _removeRestrictionString(input: input, restriction: restrictions)
           : input;
       var response = await client.get(
-          '$autocompleteUrl?key=$key&sessiontoken=$sessionToken&input=$input&components=country:at&language=de');
+          '$autocompleteUrl?key=$key&sessiontoken=$sessionToken&input=$input&types=$addressTypes&location&components=country:at&language=de');
       output = jsonDecode(response.body)['predictions'];
-      strippedOutput = output.map((val) {
-        String name = val['description']
-            .replaceAll(new RegExp(r"(, ?Österreich| ?\d{4} ?)"), "")
-            .toString();
-        return {
+
+      formattedOutput = output.map((val) {
+        Map output = {
           'name': _convertGoogleToFormattedAddress(
-            description: val['description'],
-            terms: val['terms'],
-            types: val['types'],
-            isStation: isStation,
-          ),
+              description: val['description'],
+              terms: val['terms'],
+              types: val['types'],
+              isStation: isStation,
+              cityOnly: cityOnly),
           'id': val['place_id'],
           'terms': val['terms'],
           'isCompany': val['types'].indexOf('establishment') != -1
         };
-        // return {
-        //   'name': name,
-        //   'id': val['place_id'],
-        //   'terms': val['terms'],
-        //   'isCompany': val['types'].indexOf('establishment') != -1
-        // };
+        return output;
       }).toList();
-      return strippedOutput;
+      formattedOutput.removeWhere((item) => item['name'] == '');
+      return formattedOutput;
     } on SocketException {
       print('No internet connection');
     } catch (e) {
@@ -62,31 +57,6 @@ class GoogleMapService {
       return null;
     }
   }
-
-  // Future<String> getFormattedAddressWithGooglePlace(
-  //   String googleId,
-  // ) async {
-  //   List output;
-  //   String formattedAddress = '';
-  //   var client = http.Client();
-  //   try {
-  //     var response = await client.get(
-  //         '$placeUrl?place_id=$googleId&fields=address_components&key=$key');
-  //     output = await jsonDecode(response.body)['result']['address_components'];
-  //     for (var i = 0; i < output.length; i++) {
-  //       if (output[i]['types'][0] == 'postal_code') {
-  //         formattedAddress = formattedAddress + '__' + output[i]['long_name'];
-  //       }
-  //       if (output[i]['types'][0] == 'route') {
-  //         formattedAddress = output[i]['long_name'] + formattedAddress;
-  //       }
-  //     }
-  //     return formattedAddress;
-  //   } catch (e) {
-  //     print(e);
-  //     return null;
-  //   }
-  // }
 }
 
 String _removeRestrictionString({String input, String restriction = ''}) {
@@ -107,7 +77,7 @@ String _convertGoogleToFormattedAddress({
   List<dynamic> terms,
   List<dynamic> types,
   bool isStation = false,
-  bool onlyCity = false,
+  bool cityOnly = false,
 }) {
   // Check if house number is given form Google address pattern
 
@@ -163,6 +133,7 @@ String _convertGoogleToFormattedAddress({
       Delimiter.country + _getCountryCode(terms[lengthTerms - 1]['value']);
 
   if (isAddressStreet && terms.length <= 2) isValidAddress = false;
+  if (cityOnly == true && terms.length > 2) isValidAddress = false;
 
   return isValidAddress
       ? stationPart +

@@ -38,42 +38,43 @@ class ProviderUser {
 
   factory ProviderUser.fromMap(Map data) {
     ProviderUser defaultValues = ProviderUser();
+
     data = data ?? {};
     return ProviderUser(
       streamingOn: true,
       providerType: ProviderType.values.firstWhere(
-          (e) => e.toString() == 'ProviderType.' + data['providerType'],
+          (e) => e.toString() == 'ProviderType.' + (data['providerType'] ?? ''),
           orElse: () => defaultValues.providerType),
       providerPlan: ProviderPlan.values.firstWhere(
-          (e) => e.toString() == 'providerPlan.' + data['providerPlan'],
+          (e) => e.toString() == 'ProviderPlan.' + (data['providerPlan'] ?? ''),
           orElse: () => defaultValues.providerPlan),
       operationRequested:
-          data['operationRequested'] ?? defaultValues.operationRequested,
+          data['operationRequLested'] ?? defaultValues.operationRequested,
       inOperation: data['inOperation'] ?? defaultValues.inOperation,
       outOfWork: data['outOfWork'] ?? defaultValues.inOperation,
       providerName: data['providerName'] ?? defaultValues.providerName,
       id: data['id'] ?? defaultValues.id,
-      targetGroup: (data['targetGroup'] == [])
+      targetGroup: (data['targetGroup'] == null)
           ? defaultValues.postcodes
           : data['targetGroup'].map<String>((targetG) {
               return targetG.toString();
             }).toList(),
-      addresses: (data['addresses'] == [])
+      addresses: (data['addresses'] == null)
           ? defaultValues.postcodes
           : data['addresses'].map<String>((address) {
               return address.toString();
             }).toList(),
-      postcodes: (data['postcodes'] == [])
+      postcodes: (data['postcodes'] == null)
           ? defaultValues.postcodes
           : data['postcodes'].map<String>((postcode) {
               return postcode.toString();
             }).toList(),
-      stations: (data['stations'] == [])
+      stations: (data['stations'] == null)
           ? defaultValues.stations
           : data['stations'].map<String>((station) {
               return station.toString();
             }).toList(),
-      partners: (data['partners'] == [])
+      partners: (data['partners'] == null)
           ? defaultValues.partners
           : data['partners'].map<String>((partner) {
               return partner.toString();
@@ -84,14 +85,13 @@ class ProviderUser {
   }
 
   Map<String, dynamic> toMap(ProviderUser data) {
-    String providerType = data.providerType.toString();
-    String providerPlan = data.providerPlan.toString();
+    String providerType =
+        data.providerType != null ? data.providerType.toString() : '';
+    String providerPlan =
+        data.providerType != null ? data.providerPlan.toString() : '';
     return {
-      // if (data.isProvider != null) 'isProvider': data.isProvider,
-      if (data.providerType != null)
-        'providerType': providerType.substring(providerType.indexOf('.') + 1),
-      if (data.providerPlan != null)
-        'providerPlan': providerPlan.substring(providerPlan.indexOf('.') + 1),
+      'providerType': providerType.substring(providerType.indexOf('.') + 1),
+      'providerPlan': providerPlan.substring(providerPlan.indexOf('.') + 1),
       if (data.operationRequested != null)
         'operationRequested': data.operationRequested,
       if (data.inOperation != null) 'inOperation': data.inOperation,

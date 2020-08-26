@@ -4,17 +4,17 @@ import 'package:Sublin/models/booking.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookingService {
-  final Firestore _database = Firestore.instance;
+  final FirebaseFirestore _database = FirebaseFirestore.instance;
 
   Stream<List<Booking>> streamOpenBookings(uid) {
     try {
       return _database
-          .collection('booking')
-          .document(uid)
+          .collection('bookings')
+          .doc(uid)
           .collection('open')
           .snapshots()
-          .map((snapshot) => snapshot.documents.map((document) {
-                return Booking.fromMap(document.data, document.documentID);
+          .map((snapshot) => snapshot.docs.map((document) {
+                return Booking.fromMap(document.data(), document.id);
               }).toList());
     } catch (e) {
       print(e);
@@ -25,12 +25,12 @@ class BookingService {
   Stream<List<Booking>> streamConfirmedBookings(uid) {
     try {
       return _database
-          .collection('booking')
-          .document(uid)
+          .collection('bookings')
+          .doc(uid)
           .collection('confirmed')
           .snapshots()
-          .map((snapshot) => snapshot.documents.map((document) {
-                return Booking.fromMap(document.data, document.documentID);
+          .map((snapshot) => snapshot.docs.map((document) {
+                return Booking.fromMap(document.data(), document.id);
               }).toList());
     } catch (e) {
       print(e);
@@ -39,18 +39,20 @@ class BookingService {
   }
 
   Future<void> confirmBooking(
-      {uid, String documentId, bool isSublinEndStep}) async {
+      {providerId, String userId, bool isSublinEndStep, int index}) async {
     try {
       _database
-          .collection('booking')
-          .document(uid)
+          .collection('bookings')
+          .doc(providerId)
           .collection('open')
-          .document(documentId)
-          .setData({
-        isSublinEndStep ? 'sublinEndStep' : "sublinStartStep": {
-          'confirmed': true,
-        }
-      }, merge: true);
+          .doc(userId)
+          .update(
+        {
+          isSublinEndStep ? 'sublinEndStep' : "sublinStartStep": {
+            'confirmed': true,
+          }
+        },
+      );
     } catch (e) {
       print(e);
     }

@@ -96,8 +96,11 @@ class _SignInState extends State<SignIn> {
                               setState(() {
                                 //isLoading = true;
                               });
-                              FirebaseUser user =
-                                  await _auth.signIn(email, password);
+                              // if (password == '')
+                              //   await _auth.signInWithEmailAndLink(email);
+                              if (password != '')
+                                await _auth.signIn(
+                                    email: email, password: password);
                               setState(() {
                                 //isLoading = false;
                               });

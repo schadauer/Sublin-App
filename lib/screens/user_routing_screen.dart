@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/screens/user_home_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/utils/get_time_format.dart';
@@ -14,13 +15,13 @@ import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:Sublin/widgets/step_widget.dart';
 
-class RoutingScreen extends StatefulWidget {
-  static const routeName = '/routingScreen';
+class UserRoutingScreen extends StatefulWidget {
+  static const routeName = '/userRoutingScreen';
   @override
-  _RoutingScreenState createState() => _RoutingScreenState();
+  _UserRoutingScreenState createState() => _UserRoutingScreenState();
 }
 
-class _RoutingScreenState extends State<RoutingScreen> {
+class _UserRoutingScreenState extends State<UserRoutingScreen> {
   Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -498,9 +499,10 @@ class _RoutingScreenState extends State<RoutingScreen> {
                                   FlatButton(
                                       onPressed: () async {
                                         // await RoutingService().removeProviderFromRoute(user.uid);
-                                        Navigator.pop(context);
+                                        Navigator.pushReplacementNamed(
+                                            context, UserHomeScreen.routeName);
                                       },
-                                      child: Text('Ädressen ändern')),
+                                      child: Text('Route ändern')),
                                   RaisedButton(
                                       onPressed: routingService.booked
                                           ? null
@@ -508,7 +510,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
                                               RoutingService()
                                                   .bookRoute(uid: auth.uid);
                                             },
-                                      child: Text('Shuttleservice bestellen'))
+                                      child: Text('Service bestellen'))
                                 ],
                               ),
                             ),

@@ -5,15 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter",
-      "request": "launch",
-      "type": "dart"
-    },
-    {
-      "name": "Android",
+      "name": "IPhone X",
       "request": "launch",
       "type": "dart",
-      "deviceId": "emulator-5556"
+      "deviceId": "00008020-001D084A3EEA002E"
+    },
+    {
+      "name": "IPhone SE",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "0F4DB757-673B-4AA7-BDFE-4AA7F85CC398"
     },
     {
       "name": "iPhone 8",

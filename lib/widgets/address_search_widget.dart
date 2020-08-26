@@ -16,6 +16,7 @@ class AddressSearchWidget extends StatefulWidget {
   final Function addressInputFunction;
   final bool isCheckOnly;
   final String restrictions;
+  final String addressTypes;
   final bool isStation;
 
   AddressSearchWidget({
@@ -31,6 +32,7 @@ class AddressSearchWidget extends StatefulWidget {
     this.addressInputFunction,
     this.isCheckOnly = false,
     this.restrictions = '',
+    this.addressTypes = '',
     this.isStation = false,
   });
 
@@ -214,6 +216,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                   showGeolocationOption: widget.showGeolocationOption,
                   isStation: widget.isStation,
                   restrictions: widget.restrictions,
+                  addressTypes: widget.addressTypes,
                   title: widget.isEndAddress
                       ? widget.endHintText
                       : widget.startHintText,

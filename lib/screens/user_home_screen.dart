@@ -38,7 +38,6 @@ class _UserHomeScreenState extends State<UserHomeScreen>
 
   @override
   void initState() {
-    print('initState');
     _localRequest.startAddress = '';
     _localRequest.startId = '';
     _localRequest.endAddress = '';
@@ -61,10 +60,8 @@ class _UserHomeScreenState extends State<UserHomeScreen>
   @override
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
-
-    print(_localRequest.endAddress);
     return Scaffold(
-      appBar: AppbarWidget(title: 'Deine Reise suchen'),
+      appBar: AppbarWidget(title: 'Deine Fahrt suchen'),
       endDrawer: DrawerSideNavigationWidget(
         authService: AuthService(),
       ),
@@ -103,8 +100,11 @@ class _UserHomeScreenState extends State<UserHomeScreen>
                                     child: FlatButton(
                                         onPressed: () => openAppSettings(),
                                         child: AutoSizeText(
-                                          'Zu den Einstellungen',
+                                          'Einschalten',
                                           maxLines: 2,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .button,
                                         )),
                                   )
                                 ],
@@ -144,7 +144,7 @@ class _UserHomeScreenState extends State<UserHomeScreen>
                                       );
                                       await Navigator.pushReplacementNamed(
                                         context,
-                                        RoutingScreen.routeName,
+                                        UserRoutingScreen.routeName,
                                         arguments: Routing(
                                           startId: _localRequest.startId,
                                           endId: _localRequest.endId,

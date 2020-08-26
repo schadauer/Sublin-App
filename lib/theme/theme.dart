@@ -44,9 +44,9 @@ ThemeData themeData(context) {
         color: Colors.black,
       ),
       button: TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         fontFamily: 'Lato',
-        color: Colors.black,
+        color: Color.fromRGBO(0, 133, 74, 1),
         fontWeight: FontWeight.normal,
       ),
       bodyText1: TextStyle(

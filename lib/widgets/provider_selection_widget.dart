@@ -1,3 +1,4 @@
+import 'package:Sublin/models/user_type.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/models/provider_plan.dart';
 import 'package:Sublin/models/provider_type.dart';
@@ -8,9 +9,9 @@ class ProviderSelectionWidget extends StatelessWidget {
   final String caption;
   final Function buttonFunction;
   final String buttonText;
-  final ProviderType providerSelection;
+  final ProviderType providerTypeSelection;
   final ProviderPlan providerPlanSelection;
-  final bool isProvider;
+  final UserType userType;
   final Function selectionFunction;
   final bool active;
   const ProviderSelectionWidget({
@@ -19,8 +20,8 @@ class ProviderSelectionWidget extends StatelessWidget {
     this.caption,
     this.buttonFunction,
     this.buttonText: '',
-    this.providerSelection,
-    this.isProvider,
+    this.providerTypeSelection,
+    this.userType,
     this.selectionFunction,
     this.providerPlanSelection,
     this.active,
@@ -33,7 +34,7 @@ class ProviderSelectionWidget extends StatelessWidget {
       child: InkWell(
         onTap: () {
           selectionFunction(
-              providerSelection ?? providerPlanSelection ?? isProvider);
+              userType ?? providerTypeSelection ?? providerPlanSelection);
         },
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 5),

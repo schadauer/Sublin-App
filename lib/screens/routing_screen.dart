@@ -1,4 +1,5 @@
 import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/screens/provider_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,19 +13,19 @@ import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/loading_widget.dart';
 
-class HomeScreen extends StatefulWidget {
+class RoutingScreen extends StatefulWidget {
   static const routeName = '/homeScreen';
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _RoutingScreenState createState() => _RoutingScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _RoutingScreenState extends State<RoutingScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<Auth>(context);
     final user = Provider.of<User>(context);
-    final providerUser = Provider.of<ProviderUser>(context);
     final Routing routingService = Provider.of<Routing>(context);
+    final providerUser = Provider.of<ProviderUser>(context);
 
     if (user.streamingOn == false && providerUser.streamingOn == false)
       return MaterialApp(
@@ -33,22 +34,22 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     return MaterialApp(
       routes: {
-        HomeScreen.routeName: (context) => HomeScreen(),
+        // HomeScreen.routeName: (context) => HomeScreen(),
         ProviderHomeScreen.routeName: (context) => ProviderHomeScreen(),
         UserHomeScreen.routeName: (context) => UserHomeScreen(),
         ProviderRegistrationScreen.routeName: (context) =>
             ProviderRegistrationScreen(),
-        RoutingScreen.routeName: (context) => RoutingScreen(),
+        UserRoutingScreen.routeName: (context) => UserRoutingScreen(),
         EmailListScreen.routeName: (context) => EmailListScreen(),
       },
       title: 'Sublin',
       theme: themeData(context),
-      home: (user.isProvider && !providerUser.inOperation)
-          ? !providerUser.operationRequested
+      home: (user.userType != UserType.user && !providerUser.inOperation)
+          ? providerUser.operationRequested
               ? ProviderRegistrationScreen()
               : ProviderHomeScreen()
           : routingService.booked != null && routingService.booked == true
-              ? RoutingScreen()
+              ? UserRoutingScreen()
               : UserHomeScreen(),
     );
   }

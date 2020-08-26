@@ -16,6 +16,7 @@ class AddressInputScreen extends StatefulWidget {
   final bool showGeolocationOption;
   final String title;
   final String restrictions;
+  final String addressTypes;
   final bool cityOnly;
   final bool isStation;
 
@@ -27,6 +28,7 @@ class AddressInputScreen extends StatefulWidget {
     this.showGeolocationOption = false,
     this.title = 'Addresse suchen',
     this.restrictions = '',
+    this.addressTypes = '',
     this.cityOnly = false,
     this.isStation = false,
   });
@@ -75,7 +77,8 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                 input: input,
                                 restrictions: widget.restrictions,
                                 cityOnly: widget.cityOnly,
-                                isStation: widget.isStation);
+                                isStation: widget.isStation,
+                                addressTypes: widget.addressTypes);
                         setState(() {
                           _autocompleteResults = result ?? [];
                         });

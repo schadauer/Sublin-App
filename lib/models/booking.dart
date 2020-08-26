@@ -4,11 +4,13 @@ import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/step.dart';
 
 class Booking {
-  String id;
+  String bookingId;
+  String userId;
   Step sublinStartStep;
   Step sublinEndStep;
   Booking({
-    this.id,
+    this.bookingId,
+    this.userId,
     this.sublinStartStep,
     this.sublinEndStep,
   });
@@ -21,7 +23,8 @@ class Booking {
     data = data ?? {};
 
     Booking booking = Booking(
-      id: data['id'] ?? defaultValueBooking.id,
+      bookingId: data['bookingId'] ?? defaultValueBooking.bookingId,
+      userId: data['userId'] ?? defaultValueBooking.userId,
       sublinEndStep: (data['sublinEndStep'] == null)
           ? defaultValueBooking.sublinEndStep
           : Step(

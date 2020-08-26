@@ -1,24 +1,25 @@
-import 'package:Sublin/widgets/provider/provider_selection_widget.dart';
+import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/widgets/provider_selection_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-import 'package:Sublin/screens/authenticate/sign_in.dart';
+import 'package:Sublin/screens/sign_in.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/utils/is_email_format.dart';
 import 'package:Sublin/utils/is_geolocation_permission_granted.dart';
 
-class Register extends StatefulWidget {
+class UserRegister extends StatefulWidget {
   @override
-  _RegisterState createState() => _RegisterState();
+  _UserRegisterState createState() => _UserRegisterState();
 }
 
-class _RegisterState extends State<Register> {
+class _UserRegisterState extends State<UserRegister> {
   final AuthService _auth = AuthService();
   String firstName = '';
   String email = '';
   String password = '';
-  String type = 'user';
+  UserType userType = UserType.user;
   String providerName = '';
   bool textFocus = false;
   bool firstNameProvided = false;
@@ -57,7 +58,7 @@ class _RegisterState extends State<Register> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
@@ -65,13 +66,23 @@ class _RegisterState extends State<Register> {
                             style: Theme.of(context).textTheme.headline1,
                             textAlign: TextAlign.left,
                           ),
-                          if (firstNameProvided)
-                            Icon(
-                              emailProvided
-                                  ? Icons.sentiment_very_satisfied
-                                  : Icons.sentiment_satisfied,
-                              size: 30,
-                            )
+                          // if (firstNameProvided)
+                          //   Icon(
+                          //     emailProvided
+                          //         ? Icons.sentiment_very_satisfied
+                          //         : Icons.sentiment_satisfied,
+                          //     size: 30,
+                          //   ),
+                          FlatButton(
+                              textColor: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignIn())),
+                              child: Text(
+                                'Bereits registriert?',
+                                style: Theme.of(context).textTheme.button,
+                              )),
                         ],
                       ),
                       SizedBox(
@@ -209,22 +220,28 @@ class _RegisterState extends State<Register> {
                               height: 10,
                             ),
                             ProviderSelectionWidget(
-                              title: 'Private Nutzung',
+                              title: 'Fahrgast',
+                              text:
+                                  'Du möchtest bequem ohne eigenes Auto überall hin mit öffentlichen Verkehr und Sublin für die "letzte Meile".',
                               selectionFunction: typeSelectionFunction,
-                              isProvider: false,
-                              active: type == 'user',
+                              userType: UserType.user,
+                              active: userType == UserType.user,
                             ),
                             ProviderSelectionWidget(
-                              title: 'Gewerbliche Nutzung',
+                              title: 'Anbieter',
+                              text:
+                                  'Du bietest Transferdienste an, zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets mit einer entsprechenden Lizenz.',
                               selectionFunction: typeSelectionFunction,
-                              isProvider: true,
-                              active: type == 'provider',
+                              userType: UserType.provider,
+                              active: userType == UserType.provider,
                             ),
                             ProviderSelectionWidget(
-                              title: 'Öffentlicher Dienst',
+                              title: 'Sponsor',
+                              text:
+                                  'Du führst selbst keine Personentransfers durch und beauftragst einen lizenzierten Fahrtendienst für eine bestimmte Adresse oder ein Gebiet. Dieser führt für dich kostenlose Transferservices für den Fahrgast an.',
                               selectionFunction: typeSelectionFunction,
-                              isProvider: true,
-                              active: type == 'provider',
+                              userType: UserType.sponsor,
+                              active: userType == UserType.sponsor,
                             ),
                             SizedBox(
                               height: 10,
@@ -240,22 +257,15 @@ class _RegisterState extends State<Register> {
                                           email: email,
                                           password: password,
                                           firstName: firstName,
-                                          type: type,
+                                          userType: userType,
                                         );
                                       }
                                     } catch (e) {
                                       print(e);
                                     }
                                   },
-                                  child: Text('Registrieren'),
+                                  child: Text('Jetzt registrieren'),
                                 ),
-                                FlatButton(
-                                    textColor: Theme.of(context).accentColor,
-                                    onPressed: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SignIn())),
-                                    child: Text('Du bist schon registriert?')),
                               ],
                             )
                           ],
@@ -268,9 +278,9 @@ class _RegisterState extends State<Register> {
             )));
   }
 
-  void typeSelectionFunction(isProvider) {
+  void typeSelectionFunction(userTypeParam) {
     setState(() {
-      type = isProvider ? 'provider' : 'user';
+      userType = userTypeParam;
     });
   }
 
@@ -295,7 +305,7 @@ class _RegisterState extends State<Register> {
       await geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.bestForNavigation);
     } catch (e) {
-      print('_getCurrentCoordinates: $e');
+      ('_getCurrentCoordinates: $e');
     }
   }
 }

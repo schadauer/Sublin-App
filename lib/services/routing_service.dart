@@ -6,16 +6,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Sublin/models/routing.dart';
 
 class RoutingService {
-  final Firestore _database = Firestore.instance;
+  final FirebaseFirestore _database = FirebaseFirestore.instance;
 
   Stream<Routing> streamRouting(uid) {
     try {
-      return _database
-          .collection('routings')
-          .document(uid)
-          .snapshots()
-          .map((snap) {
-        return Routing.fromMap(snap.data);
+      return _database.collection('routings').doc(uid).snapshots().map((snap) {
+        return Routing.fromMap(snap.data());
       });
     } on SocketException {
       print('no internet');
@@ -28,12 +24,8 @@ class RoutingService {
 
   Stream<Routing> streamCheck(uid) {
     try {
-      return _database
-          .collection('check')
-          .document(uid)
-          .snapshots()
-          .map((snap) {
-        return Routing.fromMap(snap.data);
+      return _database.collection('check').doc(uid).snapshots().map((snap) {
+        return Routing.fromMap(snap.data());
       });
     } catch (e) {
       print(e);
@@ -51,7 +43,7 @@ class RoutingService {
       timestamp}) async {
     try {
       // await _database.collection('routings').document(uid).delete();
-      await _database.collection('requests').document(uid).setData({
+      await _database.collection('requests').doc(uid).set({
         'endAddress': endAddress,
         'endId': endId,
         'startAddress': startAddress,
@@ -67,11 +59,10 @@ class RoutingService {
   }
 
   Future<void> bookRoute({uid}) async {
-    print(uid);
     try {
-      await _database.collection('routings').document(uid).setData({
+      await _database.collection('routings').doc(uid).update({
         'booked': true,
-      }, merge: true);
+      });
     } catch (e) {
       print(e);
     }
@@ -79,8 +70,8 @@ class RoutingService {
 
   Future<Routing> getRoute(uid) async {
     try {
-      _database.collection('routings').document(uid).get().then((value) {
-        return Routing.fromMap(value.data);
+      _database.collection('routings').doc(uid).get().then((value) {
+        return Routing.fromMap(value.data());
       });
     } catch (e) {
       print(e);
@@ -88,14 +79,14 @@ class RoutingService {
   }
 
   Future<bool> checkIfProviderAvailable(uid) async {
-    return _database.collection('check').document(uid).get().then((value) {
-      return value.data['providerAvailable'];
+    return _database.collection('check').doc(uid).get().then((value) {
+      return value.data()['providerAvailable'];
     });
   }
 
   Future<void> deleteCheck(uid) async {
     try {
-      _database.collection('check').document(uid).delete();
+      _database.collection('check').doc(uid).delete();
     } catch (e) {
       print(e);
     }
@@ -103,7 +94,7 @@ class RoutingService {
 
   Future<void> removeProviderFromRoute(uid) async {
     try {
-      _database.collection('routings').document(uid).setData({'provider': ''});
+      _database.collection('routings').doc(uid).set({'provider': ''});
     } catch (e) {
       print(e);
     }

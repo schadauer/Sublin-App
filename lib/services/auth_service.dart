@@ -1,7 +1,9 @@
+import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/utils/get_random_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user.dart' as sublin;
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
 
@@ -11,28 +13,31 @@ class AuthService {
   ProviderUser providerUser = ProviderUser();
 
   Stream<Auth> get userStream {
-    return _auth.onAuthStateChanged
-        .map((FirebaseUser user) => _userfromFirebseUser(user));
+    return _auth
+        .authStateChanges()
+        .map((User user) => _userfromFirebseUser(user));
   }
 
   Future<Auth> register({
     String email,
     String password,
     String firstName,
-    String type,
+    UserType userType,
 
     // String providerAddress,
     // String providerType,
   }) async {
     try {
-      final User user = User(
+      final sublin.User user = sublin.User(
         email: email,
         firstName: firstName,
-        isProvider: type == 'user' ? false : true,
+        userType: userType,
+        isRegistrationCompleted: userType == UserType.user ? true : false,
       );
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser authUser = result.user;
+
+      User authUser = result.user;
       // await Firestore.instance.collection('users').document(user.uid).setData({
       //   // 'firstName': firstName,
       //   'email': email,
@@ -40,7 +45,7 @@ class AuthService {
       await UserService().writeUserData(uid: authUser.uid, data: user);
       await authUser.sendEmailVerification();
 
-      if (type == 'provider') {
+      if (userType == UserType.provider || userType == UserType.sponsor) {
         await ProviderService()
             .updateProviderUserData(uid: authUser.uid, data: providerUser);
       }
@@ -51,17 +56,31 @@ class AuthService {
     }
   }
 
-  Future signIn(String email, String password) async {
+  Future signIn({String email, String password}) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(
+      password = password ?? getRandomString(20);
+      UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser user = result.user;
+      User user = result.user;
       return user;
     } catch (e) {
       print(e);
       return null;
     }
   }
+
+  // Future<void> signInWithEmailAndLink(String email) async {
+  //   return await _auth.sendSignInLinkToEmail(
+  //     email: email,
+  //     actionCodeSettings: null,
+  //     url: 'https://simpledesign.page.link/qL6j',
+  //     handleCodeInApp: true,
+  //     iOSBundleID: 'io.simpledesign.sublin',
+  //     androidPackageName: 'io.simpledesign.sublin',
+  //     androidInstallIfNotAvailable: true,
+  //     androidMinimumVersion: "1",
+  //   );
+  // }
 
   Future signOut() async {
     try {
@@ -71,9 +90,9 @@ class AuthService {
     }
   }
 
-  Auth _userfromFirebseUser(FirebaseUser user) {
+  Auth _userfromFirebseUser(User user) {
     if (user != null) {
-      return Auth(uid: user.uid, isEmailVerified: user.isEmailVerified);
+      return Auth(uid: user.uid, isEmailVerified: user.emailVerified);
     } else {
       return null;
     }

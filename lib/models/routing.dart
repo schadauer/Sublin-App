@@ -76,6 +76,8 @@ class Routing {
                   defaultValueStep.startTime,
               confirmed: data['sublinEndStep']['confirmed'] ??
                   defaultValueStep.confirmed,
+              completed: data['sublinEndStep']['completed'] ??
+                  defaultValueStep.completed,
               endTime:
                   data['sublinEndStep']['endTime'] ?? defaultValueStep.endTime,
               provider: (data['sublinEndStep']['provider'] == null)
@@ -120,6 +122,10 @@ class Routing {
                   defaultValueStep.startAddress,
               startTime: data['sublinStartStep']['startTime'] ??
                   defaultValueStep.startTime,
+              confirmed: data['sublinStartStep']['confirmed'] ??
+                  defaultValueStep.confirmed,
+              completed: data['sublinStartStep']['completed'] ??
+                  defaultValueStep.completed,
               endTime: data['sublinStartStep']['endTime'] ??
                   defaultValueStep.endTime,
               provider: (data['sublinStartStep']['provider'] == null)

@@ -1,4 +1,5 @@
 import 'package:Sublin/models/address.dart';
+import 'package:Sublin/models/user_type.dart';
 
 class User {
   final bool streamingOn;
@@ -6,8 +7,8 @@ class User {
   final String firstName;
   final String secondName;
   final String homeAddress;
-  final bool isProvider;
-  final bool isProviderCompleted;
+  final UserType userType;
+  final bool isRegistrationCompleted;
   final List<Address> requestedAddresses;
 
   User({
@@ -16,8 +17,8 @@ class User {
     this.firstName = '',
     this.secondName = '',
     this.homeAddress = '',
-    this.isProvider = false,
-    this.isProviderCompleted = false,
+    this.userType = UserType.user,
+    this.isRegistrationCompleted = false,
     this.requestedAddresses = const [],
   });
 
@@ -27,7 +28,7 @@ class User {
     );
   }
 
-  factory User.fromMap(Map data) {
+  factory User.fromJson(Map data) {
     final User defaultValues = User();
     final Address defaultValuesAddress = Address();
     data = data ?? {};
@@ -37,9 +38,10 @@ class User {
         firstName: data['firstName'] ?? defaultValues.firstName,
         secondName: data['secondName'] ?? defaultValues.secondName,
         homeAddress: data['homeAddress'] ?? defaultValues.homeAddress,
-        isProvider: data['isProvider'] ?? defaultValues.isProvider,
-        isProviderCompleted:
-            data['isProviderCompleted'] ?? defaultValues.isProviderCompleted,
+        userType: UserType.values.firstWhere(
+            (e) => e.toString() == 'UserType.' + (data['userType'] ?? '')),
+        isRegistrationCompleted: data['isRegistrationCompleted'] ??
+            defaultValues.isRegistrationCompleted,
         requestedAddresses: (data['requestedAddresses'] == null)
             ? defaultValues.requestedAddresses
             : data['requestedAddresses'].map<Address>((address) {
@@ -51,16 +53,27 @@ class User {
               }).toList());
   }
 
-  Map<String, dynamic> toMap(User data) {
+  Map<String, dynamic> toJson(User data) {
     User defaultValues = User();
+    String userTypeString =
+        data.userType != null ? data.userType.toString() : '';
+
     return {
-      'email': data.email ?? defaultValues.email,
-      'firstName': data.firstName ?? defaultValues.firstName,
-      'secondName': data.secondName ?? defaultValues.secondName,
-      'homeAddress': data.homeAddress ?? defaultValues.homeAddress,
-      'isProvider': data.isProvider ?? defaultValues.isProvider,
-      'requestAddresses':
-          data.requestedAddresses ?? defaultValues.requestedAddresses
+      if (data.email != null) 'email': data.email ?? defaultValues.email,
+      if (data.firstName != null)
+        'firstName': data.firstName ?? defaultValues.firstName,
+      if (data.secondName != null)
+        'secondName': data.secondName ?? defaultValues.secondName,
+      if (data.homeAddress != null)
+        'homeAddress': data.homeAddress ?? defaultValues.homeAddress,
+      if (userTypeString != '')
+        'userType': userTypeString.substring(userTypeString.indexOf('.') + 1),
+      // if (data.isProviderCompleted != null)
+      //   'isProvider':
+      //       data.isProviderCompleted ?? defaultValues.isProviderCompleted,
+      if (data.requestedAddresses != null)
+        'requestAddresses':
+            data.requestedAddresses ?? defaultValues.requestedAddresses
     };
   }
 }

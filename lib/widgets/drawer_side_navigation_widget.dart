@@ -1,5 +1,6 @@
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/screens/provider_home_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:flutter/material.dart';
@@ -49,18 +50,18 @@ class DrawerSideNavigationWidget extends StatelessWidget {
           if (routingService.booked == true)
             ListTile(
               leading: Icon(Icons.person_outline),
-              title: Text('Zum aktuellen Reise'),
+              title: Text('Zur aktuellen Reise'),
               onTap: () =>
-                  Navigator.pushNamed(context, RoutingScreen.routeName),
+                  Navigator.pushNamed(context, UserRoutingScreen.routeName),
             ),
-          if (user.isProvider == true)
+          if (user.userType != UserType.user)
             ListTile(
               leading: Icon(Icons.person_outline),
               title: Text('Meine Aufträge'),
               onTap: () =>
                   Navigator.pushNamed(context, ProviderHomeScreen.routeName),
             ),
-          if (user.isProvider == false)
+          if (user.userType == UserType.user)
             ListTile(
               leading: Icon(Icons.person_outline),
               title: Text('Als Anbieter starten'),

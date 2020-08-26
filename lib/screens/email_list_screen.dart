@@ -46,18 +46,12 @@ class _EmailListScreenState extends State<EmailListScreen> {
                 padding: const EdgeInsets.all(10.0),
                 child: Material(
                   child: SizedBox(
-                    // height: 75,
                     child: TextFormField(
                       autofocus: true,
                       onChanged: (val) {
                         setState(() {
                           _isEmail = isEmailFormat(_emailFieldController.text);
                         });
-
-                        // if (isEmailFormat(input) != _isEmail)
-                        //   setState(() {
-                        //     _isEmail = isEmailFormat(input);
-                        //   });
                       },
                       controller: _emailFieldController,
                       decoration: InputDecoration(
@@ -139,7 +133,7 @@ class _EmailListScreenState extends State<EmailListScreen> {
             ),
             title: Text(
               item,
-              style: Theme.of(context).textTheme.headline3,
+              style: Theme.of(context).textTheme.bodyText1,
             ),
             trailing: IconButton(
               icon: Icon(
