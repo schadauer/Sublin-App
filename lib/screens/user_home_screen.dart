@@ -65,106 +65,108 @@ class _UserHomeScreenState extends State<UserHomeScreen>
       endDrawer: DrawerSideNavigationWidget(
         authService: AuthService(),
       ),
-      body: SizedBox(
-          height: MediaQuery.of(context).size.height -
-              AppBar().preferredSize.height -
-              80,
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 440,
-                child: ListView(
-                  children: <Widget>[
-                    (_geolocationStatus != GeolocationStatus.granted)
-                        ? InkWell(
-                            onTap: () {
-                              openAppSettings();
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(15),
-                              height: 60,
-                              color: Color.fromRGBO(201, 228, 202, 1),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 2,
-                                    child: AutoSizeText(
-                                      'Standortbestimmung ausgeschaltet',
-                                      maxLines: 2,
+      body: SingleChildScrollView(
+        child: SizedBox(
+            height: MediaQuery.of(context).size.height -
+                AppBar().preferredSize.height -
+                80,
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 440,
+                  child: ListView(
+                    children: <Widget>[
+                      (_geolocationStatus != GeolocationStatus.granted)
+                          ? InkWell(
+                              onTap: () {
+                                openAppSettings();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(15),
+                                height: 60,
+                                color: Color.fromRGBO(201, 228, 202, 1),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 2,
+                                      child: AutoSizeText(
+                                        'Standortbestimmung ausgeschaltet',
+                                        maxLines: 2,
+                                      ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: FlatButton(
-                                        onPressed: () => openAppSettings(),
-                                        child: AutoSizeText(
-                                          'Einschalten',
-                                          maxLines: 2,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .button,
-                                        )),
-                                  )
-                                ],
+                                    Expanded(
+                                      flex: 1,
+                                      child: FlatButton(
+                                          onPressed: () => openAppSettings(),
+                                          child: AutoSizeText(
+                                            'Einschalten',
+                                            maxLines: 2,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .button,
+                                          )),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        : Container(),
-                    AddressSearchWidget(
-                      addressInputFunction: addressInputFunction,
-                      isStartAddress: true,
-                      showGeolocationOption: true,
-                      address: _localRequest.startAddress,
-                    ),
-                    AddressSearchWidget(
-                      addressInputFunction: addressInputFunction,
-                      isEndAddress: true,
-                      address: _localRequest.endAddress,
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          RaisedButton(
-                            onPressed: (_localRequest.endAddress != '' &&
-                                    _localRequest.startAddress != '')
-                                ? () async {
-                                    try {
-                                      await RoutingService().requestRoute(
-                                        uid: auth.uid,
-                                        startAddress:
-                                            _localRequest.startAddress,
-                                        startId: _localRequest.startId,
-                                        endAddress: _localRequest.endAddress,
-                                        endId: _localRequest.endId,
-                                        timestamp: DateTime.now(),
-                                      );
-                                      await Navigator.pushReplacementNamed(
-                                        context,
-                                        UserRoutingScreen.routeName,
-                                        arguments: Routing(
-                                          startId: _localRequest.startId,
-                                          endId: _localRequest.endId,
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      print(e);
-                                    }
-                                  }
-                                : null,
-                            child: Text('Deine Verbindung finden'),
-                          ),
-                        ],
+                            )
+                          : Container(),
+                      AddressSearchWidget(
+                        addressInputFunction: addressInputFunction,
+                        isStartAddress: true,
+                        showGeolocationOption: true,
+                        address: _localRequest.startAddress,
                       ),
-                    ),
-                  ],
+                      AddressSearchWidget(
+                        addressInputFunction: addressInputFunction,
+                        isEndAddress: true,
+                        address: _localRequest.endAddress,
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            RaisedButton(
+                              onPressed: (_localRequest.endAddress != '' &&
+                                      _localRequest.startAddress != '')
+                                  ? () async {
+                                      try {
+                                        await RoutingService().requestRoute(
+                                          uid: auth.uid,
+                                          startAddress:
+                                              _localRequest.startAddress,
+                                          startId: _localRequest.startId,
+                                          endAddress: _localRequest.endAddress,
+                                          endId: _localRequest.endId,
+                                          timestamp: DateTime.now(),
+                                        );
+                                        await Navigator.pushReplacementNamed(
+                                          context,
+                                          UserRoutingScreen.routeName,
+                                          arguments: Routing(
+                                            startId: _localRequest.startId,
+                                            endId: _localRequest.endId,
+                                          ),
+                                        );
+                                      } catch (e) {
+                                        print(e);
+                                      }
+                                    }
+                                  : null,
+                              child: Text('Deine Verbindung finden'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          )),
+              ],
+            )),
+      ),
     );
   }
 

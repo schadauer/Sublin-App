@@ -29,12 +29,16 @@ class Booking {
           ? defaultValueBooking.sublinEndStep
           : Step(
               id: documentId,
+              bookedTime: data['sublinEndStep']['bookedTime'] ??
+                  defaultValueStep.bookedTime,
               confirmed: data['sublinEndStep']['confirmed'] ??
                   defaultValueStep.confirmed,
               confirmedTime: data['sublinEndStep']['confirmedTime'] ??
                   defaultValueStep.confirmedTime,
               completedTime: data['sublinEndStep']['completedTime'] ??
                   defaultValueStep.completedTime,
+              noShow:
+                  data['sublinEndStep']['noShow'] ?? defaultValueStep.noShow,
               endAddress: data['sublinEndStep']['endAddress'] ??
                   defaultValueStep.endAddress,
               startAddress: data['sublinEndStep']['startAddress'] ??
@@ -80,12 +84,16 @@ class Booking {
           ? defaultValueBooking.sublinStartStep
           : Step(
               id: documentId,
+              bookedTime: data['sublinStartStep']['bookedTime'] ??
+                  defaultValueStep.bookedTime,
               confirmed: data['sublinStartStep']['confirmed'] ??
                   defaultValueStep.confirmed,
               confirmedTime: data['sublinStartStep']['confirmedTime'] ??
                   defaultValueStep.confirmedTime,
               completedTime: data['sublinStartStep']['completedTime'] ??
                   defaultValueStep.completedTime,
+              noShow:
+                  data['sublinStartStep']['noShow'] ?? defaultValueStep.noShow,
               endAddress: data['sublinStartStep']['endAddress'] ??
                   defaultValueStep.endAddress,
               startAddress: data['sublinStartStep']['startAddress'] ??

@@ -44,12 +44,6 @@
       "name": "Pixel 2 API 29",
       "request": "launch",
       "type": "dart",
-      "deviceId": "emulator-5556"
-    },
-    {
-      "name": "Pixel 3a API 29",
-      "request": "launch",
-      "type": "dart",
       "deviceId": "emulator-5554"
     }
   ],

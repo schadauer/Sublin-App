@@ -3,6 +3,7 @@ import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/screens/user_home_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
+import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
@@ -104,10 +105,6 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
           body: SafeArea(
             child: Stack(
               children: <Widget>[
-                // GoogleMap(
-                //   mapType: MapType.normal,
-                //   initialCameraPosition: _kGooglePlex,
-                // ),
                 Container(
                     width: 80,
                     height: double.infinity,
@@ -125,7 +122,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                 Container(
                     padding: EdgeInsets.only(
                       top: 140,
-                      bottom: 140,
+                      bottom: 210,
                     ),
                     height: MediaQuery.of(context).size.height,
                     child: ListView.builder(
@@ -141,7 +138,6 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                   routingService.publicSteps[index].startTime,
                               endTime:
                                   routingService.publicSteps[index].endTime,
-                              // provider: routingService.publicSteps[index].provider,
                               distance:
                                   routingService.publicSteps[index].distance,
                               duration:
@@ -158,7 +154,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: 200,
+                        height: 140,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           boxShadow: [
@@ -205,7 +201,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 AutoSizeText(
-                                                  '${routingService.sublinStartStep.startAddress}',
+                                                  '${convertFormattedAddressToReadableAddress(routingService.sublinStartStep.startAddress)}',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText1,
@@ -363,7 +359,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               AutoSizeText(
-                                                '${routingService.sublinEndStep.endAddress}',
+                                                '${convertFormattedAddressToReadableAddress(routingService.sublinEndStep.endAddress)}',
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .bodyText1,

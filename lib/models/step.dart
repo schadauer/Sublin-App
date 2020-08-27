@@ -5,9 +5,11 @@ class Step {
   String id;
   bool confirmed;
   bool completed;
+  bool noShow;
   int bookedTime;
   int confirmedTime;
   int completedTime;
+  int noShowTime;
   bool isSublin;
   bool isStart;
   bool isEnd;
@@ -29,9 +31,11 @@ class Step {
     this.id,
     this.confirmed,
     this.completed,
+    this.noShow,
     this.bookedTime,
     this.confirmedTime,
     this.completedTime,
+    this.noShowTime,
     this.isSublin = false,
     this.isStart = false,
     this.isEnd = false,

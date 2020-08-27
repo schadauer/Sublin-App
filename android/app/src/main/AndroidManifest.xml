@@ -10,7 +10,7 @@
   
     <application
         android:name=".Application"
-        android:label="sublin"
+        android:label="Sublin"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name="io.simpledesign.sublin.MainActivity"

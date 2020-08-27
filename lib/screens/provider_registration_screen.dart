@@ -87,6 +87,8 @@ class _ProviderRegistrationScreenState
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
 
+    print(ProviderUser().toMap(_providerUser));
+
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60.0),
