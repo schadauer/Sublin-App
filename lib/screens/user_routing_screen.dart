@@ -5,6 +5,8 @@ import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
+import 'package:Sublin/utils/is_route_completed.dart';
+import 'package:Sublin/utils/is_sublin_available.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:Sublin/widgets/user_step_notification_widget.dart';
@@ -42,10 +44,6 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     final Routing routingService = Provider.of<Routing>(context);
     final Auth auth = Provider.of<Auth>(context);
 
-    // final double paddingTopPublicSteps = 120;
-    // final double paddingTopEndStep =
-    //     routingService.publicSteps.length * 120 + paddingTopPublicSteps;
-
     if (args != null) {
       if (args.startId != routingService.startId ||
           args.endId != routingService.endId) {
@@ -69,15 +67,6 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
       return startAddressIsAvailable == true && endAddressIsAvailable == true;
     }
 
-    bool _isSublinAvailable(Direction direction) {
-      if (direction == Direction.start)
-        return routingService.startAddressAvailable;
-      else if (direction == Direction.end)
-        return routingService.endAddressAvailable;
-      else
-        return null;
-    }
-
     if (!_isRouteAvailable()) {
       return Scaffold(
           appBar: AppbarWidget(title: 'Meine Reiseroute'),
@@ -95,8 +84,44 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                     'Für diese Adresse gibt es leider noch kein Sublin-Service.',
                   ),
                   RaisedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
+                    onPressed: () async {
+                      try {
+                        await Navigator.pushReplacementNamed(
+                            context, UserHomeScreen.routeName);
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    child: Text('Andere Route suchen'),
+                  )
+                ],
+              ),
+            ),
+          ));
+    } else if (isRouteCompleted(routingService)) {
+      return Scaffold(
+          appBar: AppbarWidget(title: 'Meine Reiseroute'),
+          endDrawer: DrawerSideNavigationWidget(
+            authService: AuthService(),
+          ),
+          body: Center(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              width: MediaQuery.of(context).size.width,
+              height: 200,
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    'Deine Reise ist abgeschlosssen',
+                  ),
+                  RaisedButton(
+                    onPressed: () async {
+                      try {
+                        await Navigator.pushReplacementNamed(
+                            context, UserHomeScreen.routeName);
+                      } catch (e) {
+                        print(e);
+                      }
                     },
                     child: Text('Andere Route suchen'),
                   )
@@ -163,7 +188,8 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: _isSublinAvailable(Direction.start) &&
+                        height: isSublinAvailable(
+                                    Direction.start, routingService) &&
                                 routingService.booked == true
                             ? 200
                             : 140,
@@ -183,7 +209,8 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             if (routingService.booked == true &&
-                                _isSublinAvailable(Direction.start))
+                                isSublinAvailable(
+                                    Direction.start, routingService))
                               UserStepNotificationWidget(
                                   routingService: routingService,
                                   direction: Direction.start),
@@ -218,19 +245,19 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 AutoSizeText(
-                                                  '${convertFormattedAddressToReadableAddress(routingService.sublinStartStep.startAddress)}',
+                                                  '${convertFormattedAddressToReadableAddress(routingService.sublinStartStep?.startAddress)}',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText1,
                                                 ),
                                                 AutoSizeText(
-                                                  'Abholung um ca. ${getTimeFormat(routingService.sublinStartStep.startTime)}',
+                                                  'Abholung um ca. ${getTimeFormat(routingService.sublinStartStep?.startTime)}',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .headline1,
                                                 ),
                                                 AutoSizeText(
-                                                  'Kostenloses Shuttleservice von deinem Standort zum Bahnhof durch ${routingService.sublinStartStep.provider.providerName}',
+                                                  'Kostenloses Shuttleservice von deinem Standort zum Bahnhof durch ${routingService.sublinStartStep.provider?.providerName}',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .caption,
@@ -255,13 +282,13 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                                   CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 AutoSizeText(
-                                                  '${routingService.publicSteps[0].startAddress}',
+                                                  '${routingService.publicSteps[0]?.startAddress}',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .bodyText1,
                                                 ),
                                                 AutoSizeText(
-                                                  'Abfahrt um ${getTimeFormat(routingService.publicSteps[0].startTime)}',
+                                                  'Abfahrt um ${getTimeFormat(routingService.publicSteps[0]?.startTime)}',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .headline1,
@@ -412,7 +439,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                               ),
                             ),
                           if (routingService.booked == true &&
-                              _isSublinAvailable(Direction.end))
+                              isSublinAvailable(Direction.end, routingService))
                             UserStepNotificationWidget(
                                 routingService: routingService,
                                 direction: Direction.end),

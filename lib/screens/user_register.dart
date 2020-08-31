@@ -226,7 +226,7 @@ class _UserRegisterState extends State<UserRegister> {
                               active: userType == UserType.user,
                             ),
                             ProviderSelectionWidget(
-                              title: 'Anbieter',
+                              title: 'Transferdienst Anbieter',
                               text:
                                   'Du bietest Transferdienste an, zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets mit einer entsprechenden Lizenz.',
                               selectionFunction: typeSelectionFunction,
@@ -234,7 +234,7 @@ class _UserRegisterState extends State<UserRegister> {
                               active: userType == UserType.provider,
                             ),
                             ProviderSelectionWidget(
-                              title: 'Sponsor',
+                              title: 'Auftraggeber ohne eigenen Dienst',
                               text:
                                   'Du führst selbst keine Personentransfers durch und beauftragst einen lizenzierten Fahrtendienst für eine bestimmte Adresse oder ein Gebiet. Dieser führt für dich kostenlose Transferservices für den Fahrgast an.',
                               selectionFunction: typeSelectionFunction,

@@ -1,12 +1,13 @@
 import 'package:Sublin/models/booking.dart';
-import 'package:Sublin/models/step.dart';
 
 class BookingConfirmed extends Booking {
-  BookingConfirmed(
-    String bookingId,
-    String userId,
-    Step sublinStartStep,
-    Step sublinEndStep,
-    Function fromMap,
-  ) : super();
+  Booking confirmed;
+  BookingConfirmed({this.confirmed}) : super();
+
+  factory BookingConfirmed.fromJson(Map data, String documentId) {
+    data = data ?? {};
+    BookingConfirmed bookingConfirmed =
+        BookingConfirmed(confirmed: Booking.fromJson(data, documentId));
+    return bookingConfirmed;
+  }
 }

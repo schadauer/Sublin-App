@@ -35,10 +35,6 @@ class _UserHomeScreenState extends State<UserHomeScreen>
 
   @override
   void initState() {
-    _localRequest.startAddress = '';
-    _localRequest.startId = '';
-    _localRequest.endAddress = '';
-    _localRequest.endId = '';
     _getStartAddressFromGeolocastion();
     WidgetsBinding.instance.addObserver(this);
     super.initState();
@@ -49,9 +45,6 @@ class _UserHomeScreenState extends State<UserHomeScreen>
     if (state == AppLifecycleState.resumed) {
       _getStartAddressFromGeolocastion();
     }
-    // setState(() {
-    //   _notification = state;
-    // });
   }
 
   @override

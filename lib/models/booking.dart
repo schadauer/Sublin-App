@@ -15,11 +15,10 @@ class Booking {
     this.sublinEndStep,
   });
 
-  factory Booking.fromMap(Map data, String documentId) {
+  factory Booking.fromJson(Map data, String documentId) {
     Step defaultValueStep = Step();
     Booking defaultValueBooking = Booking();
     ProviderUser defaultValueProviderUser = ProviderUser();
-
     data = data ?? {};
 
     Booking booking = Booking(
@@ -33,6 +32,8 @@ class Booking {
                   defaultValueStep.bookedTime,
               confirmed: data['sublinEndStep']['confirmed'] ??
                   defaultValueStep.confirmed,
+              completed: data['sublinEndStep']['completed'] ??
+                  defaultValueStep.completed,
               confirmedTime: data['sublinEndStep']['confirmedTime'] ??
                   defaultValueStep.confirmedTime,
               completedTime: data['sublinEndStep']['completedTime'] ??
@@ -88,6 +89,8 @@ class Booking {
                   defaultValueStep.bookedTime,
               confirmed: data['sublinStartStep']['confirmed'] ??
                   defaultValueStep.confirmed,
+              completed: data['sublinStartStep']['completed'] ??
+                  defaultValueStep.completed,
               confirmedTime: data['sublinStartStep']['confirmedTime'] ??
                   defaultValueStep.confirmedTime,
               completedTime: data['sublinStartStep']['completedTime'] ??

@@ -7,9 +7,9 @@ class Request {
   DateTime timestamp;
 
   Request({
-    this.endAddress,
+    this.endAddress = '',
     this.endId,
-    this.startAddress,
+    this.startAddress = '',
     this.startId,
     this.checkAddress,
     this.timestamp,

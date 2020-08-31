@@ -1,6 +1,7 @@
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/screens/provider_home_screen.dart';
+import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/provider_user.dart';
@@ -46,7 +47,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
           ? providerUser.operationRequested
               ? ProviderRegistrationScreen()
               : ProviderHomeScreen()
-          : routingService.booked != null && routingService.booked == true
+          : routingService.booked == true && !isRouteCompleted(routingService)
               ? UserRoutingScreen()
               : UserHomeScreen(),
     );
