@@ -16,9 +16,6 @@ class ProgressIndicatorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        // SizedBox(
-        //   height: 1,
-        // ),
         if (!showProgressIndicator)
           SizedBox(
             height: 10,

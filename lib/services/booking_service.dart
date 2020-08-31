@@ -39,7 +39,10 @@ class BookingService {
   }
 
   Future<void> confirmBooking(
-      {providerId, String userId, bool isSublinEndStep, int index}) async {
+      {String providerId,
+      String userId,
+      bool isSublinEndStep,
+      int index}) async {
     try {
       _database
           .collection('bookings')

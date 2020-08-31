@@ -3,7 +3,6 @@ import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/screens/provider_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
@@ -22,7 +21,6 @@ class RoutingScreen extends StatefulWidget {
 class _RoutingScreenState extends State<RoutingScreen> {
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<Auth>(context);
     final user = Provider.of<User>(context);
     final Routing routingService = Provider.of<Routing>(context);
     final providerUser = Provider.of<ProviderUser>(context);

@@ -44,7 +44,7 @@ class _ProviderRegistrationScreenState
   PageController _pageViewController = PageController(initialPage: 0);
   TextEditingController _providerNameFormFieldController =
       TextEditingController();
-  TextEditingController _stationFormFieldController = TextEditingController();
+  // TextEditingController _stationFormFieldController = TextEditingController();
   // TextEditingController _postcodeFormFieldController = TextEditingController();
   // _providerUser is the object that we will fill with user data
   ProviderUser _providerUser = ProviderUser();

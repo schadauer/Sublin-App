@@ -1,8 +1,6 @@
-import 'package:Sublin/models/provider_user.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/utils/get_email_initials.dart';
 import 'package:Sublin/utils/is_email_format.dart';
-import 'package:provider/provider.dart';
 
 class EmailListScreen extends StatefulWidget {
   final List<String> targetGroup;

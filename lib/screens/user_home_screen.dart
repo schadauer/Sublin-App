@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:Sublin/services/booking_service.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -13,7 +12,6 @@ import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/request.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
-import 'package:Sublin/services/google_map_service.dart';
 import 'package:Sublin/services/routing_service.dart';
 
 import 'package:Sublin/models/routing.dart';
@@ -28,12 +26,11 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen>
     with WidgetsBindingObserver {
-  final AuthService _auth = AuthService();
   Request _localRequest = Request();
   GeolocationStatus _geolocationStatus;
-  bool _geoLocationPermissionIsGranted = false;
-  Position _currentLocationLatLng;
-  List _currentLocationAutocompleteResults;
+  // bool _geoLocationPermissionIsGranted = false;
+  // Position _currentLocationLatLng;
+  // List _currentLocationAutocompleteResults;
   // AppLifecycleState _notification;
 
   @override

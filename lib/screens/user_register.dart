@@ -1,13 +1,11 @@
-import 'package:Sublin/models/user_type.dart';
-import 'package:Sublin/widgets/provider_selection_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
+import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/widgets/provider_selection_widget.dart';
 import 'package:Sublin/screens/sign_in.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/utils/is_email_format.dart';
-import 'package:Sublin/utils/is_geolocation_permission_granted.dart';
 
 class UserRegister extends StatefulWidget {
   @override
@@ -284,28 +282,28 @@ class _UserRegisterState extends State<UserRegister> {
     });
   }
 
-  Icon _checked(context) {
-    return Icon(
-      Icons.check_box,
-      // color: Theme.of(context).accentColor,
-    );
-  }
+  // Icon _checked(context) {
+  //   return Icon(
+  //     Icons.check_box,
+  //     // color: Theme.of(context).accentColor,
+  //   );
+  // }
 
-  Icon _unchecked(context) {
-    return Icon(
-      Icons.check_box_outline_blank,
-      color: Theme.of(context).accentColor,
-    );
-  }
+  // Icon _unchecked(context) {
+  //   return Icon(
+  //     Icons.check_box_outline_blank,
+  //     color: Theme.of(context).accentColor,
+  //   );
+  // }
 
-  Future<void> _getCurrentCoordinates() async {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-    try {
-      // print(await isLocationPermissionGranted());
-      await geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.bestForNavigation);
-    } catch (e) {
-      ('_getCurrentCoordinates: $e');
-    }
-  }
+  // Future<void> _getCurrentCoordinates() async {
+  //   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  //   try {
+  //     // print(await isLocationPermissionGranted());
+  //     await geolocator.getCurrentPosition(
+  //         desiredAccuracy: LocationAccuracy.bestForNavigation);
+  //   } catch (e) {
+  //     ('_getCurrentCoordinates: $e');
+  //   }
+  // }
 }

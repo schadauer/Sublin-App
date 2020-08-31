@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/models/direction.dart';
 import 'package:Sublin/screens/user_home_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
@@ -7,11 +7,10 @@ import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart'
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
-import 'package:Sublin/widgets/progress_indicator_widget.dart';
+import 'package:Sublin/widgets/user_step_notification_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:Sublin/widgets/step_widget.dart';
@@ -23,18 +22,19 @@ class UserRoutingScreen extends StatefulWidget {
 }
 
 class _UserRoutingScreenState extends State<UserRoutingScreen> {
-  Completer<GoogleMapController> _controller = Completer();
+  // Completer<GoogleMapController> _controller = Completer();
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(48.1652731, 16.3165917),
-    zoom: 14,
-  );
+  // static final CameraPosition _kGooglePlex = CameraPosition(
+  //   target: LatLng(48.1652731, 16.3165917),
+  //   zoom: 14,
+  // );
 
-  static final CameraPosition _kLake = CameraPosition(
-      // bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+  // static final CameraPosition _kLake = CameraPosition(
+  //   // bearing: 192.8334901395799,
+  //   target: LatLng(37.43296265331129, -122.08832357078792),
+  //   tilt: 59.440717697143555,
+  //   zoom: 19.151926040649414,
+  // );
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +42,9 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     final Routing routingService = Provider.of<Routing>(context);
     final Auth auth = Provider.of<Auth>(context);
 
-    final double paddingTopPublicSteps = 120;
-    final double paddingTopEndStep =
-        routingService.publicSteps.length * 120 + paddingTopPublicSteps;
+    // final double paddingTopPublicSteps = 120;
+    // final double paddingTopEndStep =
+    //     routingService.publicSteps.length * 120 + paddingTopPublicSteps;
 
     if (args != null) {
       if (args.startId != routingService.startId ||
@@ -56,7 +56,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
       }
     }
 
-    bool _routeIsAvailable() {
+    bool _isRouteAvailable() {
       bool startAddressIsAvailable =
           routingService.startAddressAvailable == true &&
                   routingService.isPubliclyAccessibleStartAddress == false ||
@@ -69,7 +69,16 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
       return startAddressIsAvailable == true && endAddressIsAvailable == true;
     }
 
-    if (!_routeIsAvailable()) {
+    bool _isSublinAvailable(Direction direction) {
+      if (direction == Direction.start)
+        return routingService.startAddressAvailable;
+      else if (direction == Direction.end)
+        return routingService.endAddressAvailable;
+      else
+        return null;
+    }
+
+    if (!_isRouteAvailable()) {
       return Scaffold(
           appBar: AppbarWidget(title: 'Meine Reiseroute'),
           endDrawer: DrawerSideNavigationWidget(
@@ -154,7 +163,10 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: 140,
+                        height: _isSublinAvailable(Direction.start) &&
+                                routingService.booked == true
+                            ? 200
+                            : 140,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           boxShadow: [
@@ -170,6 +182,11 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
+                            if (routingService.booked == true &&
+                                _isSublinAvailable(Direction.start))
+                              UserStepNotificationWidget(
+                                  routingService: routingService,
+                                  direction: Direction.start),
                             Container(
                               color: routingService.startAddressAvailable
                                   ? Theme.of(context).secondaryHeaderColor
@@ -259,50 +276,6 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                 ],
                               ),
                             ),
-                            if (routingService.booked == true &&
-                                routingService.sublinStartStep.confirmed ==
-                                    false)
-                              Container(
-                                color: Theme.of(context).secondaryHeaderColor,
-                                height: 200,
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: 60,
-                                          child: Center(
-                                            child: Icon(Icons.error),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Container(
-                                          height: 60,
-                                          padding: EdgeInsets.all(5),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              70,
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: AutoSizeText(
-                                              'Wir benachrichten dich sobald ${routingService.sublinStartStep.provider.providerName} deine Abholung bestätigt hat.',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .caption,
-                                              maxLines: 2,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
                           ],
                         ),
                       ),
@@ -439,52 +412,10 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                               ),
                             ),
                           if (routingService.booked == true &&
-                              routingService.sublinEndStep.confirmed == false)
-                            Container(
-                              color: Theme.of(context).secondaryHeaderColor,
-                              height: 70,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 70,
-                                        child: Center(
-                                          child: Icon(
-                                            Icons.alarm,
-                                            size: 40.0,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 60,
-                                        padding: EdgeInsets.all(5),
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                70,
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: AutoSizeText(
-                                            'Wir benachrichten dich, sobald ${routingService.sublinEndStep.provider.providerName} deine Abholung bestätigt hat.',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption,
-                                            maxLines: 2,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  ProgressIndicatorWidget(
-                                    index: 1,
-                                    elements: 4,
-                                    showProgressIndicator: true,
-                                  ),
-                                ],
-                              ),
-                            ),
+                              _isSublinAvailable(Direction.end))
+                            UserStepNotificationWidget(
+                                routingService: routingService,
+                                direction: Direction.end),
                           if (routingService.booked == false)
                             Container(
                               height: 70,
@@ -521,8 +452,8 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     }
   }
 
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
+  // Future<void> _goToTheLake() async {
+  //   final GoogleMapController controller = await _controller.future;
+  //   controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+  // }
 }

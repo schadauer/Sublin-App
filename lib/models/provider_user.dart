@@ -107,9 +107,4 @@ class ProviderUser {
       if (data.timeEnd != null) 'timeEnd': data.timeEnd,
     };
   }
-
-  DateTime _intToDateTime(int time) {
-    // Todo
-    return DateTime.now();
-  }
 }

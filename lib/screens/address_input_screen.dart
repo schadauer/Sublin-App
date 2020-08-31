@@ -6,7 +6,6 @@ import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
-import 'package:geolocator/geolocator.dart';
 
 class AddressInputScreen extends StatefulWidget {
   final Function addressInputFunction;

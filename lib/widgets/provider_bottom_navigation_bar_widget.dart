@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:Sublin/screens/provider_registration_screen.dart';
 
 class ProviderBottomNavigationBarWidget extends StatefulWidget {
   // const ProviderBottomNavigationBarWidget({
   //   Key key,
   // }) : super(key: key);
-  Function onItemTappedProvider;
-  int providerSelectedItem;
-  Function showProviderMenu;
+  final Function onItemTappedProvider;
+  final int providerSelectedItem;
+  final Function showProviderMenu;
 
   ProviderBottomNavigationBarWidget(
     this.onItemTappedProvider,

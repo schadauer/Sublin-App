@@ -52,6 +52,7 @@ class GoogleMapService {
       return formattedOutput;
     } on SocketException {
       print('No internet connection');
+      return null;
     } catch (e) {
       print(e);
       return null;

@@ -5,6 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Android",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "emulator-5554"
+    },
+    {
       "name": "IPhone X",
       "request": "launch",
       "type": "dart",
@@ -40,12 +46,6 @@
       "type": "dart",
       "deviceId": "R58N32RAT7N"
     },
-    {
-      "name": "Pixel 2 API 29",
-      "request": "launch",
-      "type": "dart",
-      "deviceId": "emulator-5554"
-    }
   ],
   "compounds": [
     {

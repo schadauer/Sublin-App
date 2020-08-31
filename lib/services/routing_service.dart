@@ -70,11 +70,12 @@ class RoutingService {
 
   Future<Routing> getRoute(uid) async {
     try {
-      _database.collection('routings').doc(uid).get().then((value) {
+      return _database.collection('routings').doc(uid).get().then((value) {
         return Routing.fromMap(value.data());
       });
     } catch (e) {
       print(e);
+      return null;
     }
   }
 
