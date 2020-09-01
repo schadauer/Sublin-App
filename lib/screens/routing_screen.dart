@@ -1,6 +1,7 @@
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user_type.dart';
-import 'package:Sublin/screens/provider_home_screen.dart';
+import 'package:Sublin/screens/provider_booking_screen.dart';
+import 'package:Sublin/screens/user_profile_screen.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,8 @@ class _RoutingScreenState extends State<RoutingScreen> {
     return MaterialApp(
       routes: {
         // HomeScreen.routeName: (context) => HomeScreen(),
-        ProviderHomeScreen.routeName: (context) => ProviderHomeScreen(),
+        ProviderBookingScreen.routeName: (context) => ProviderBookingScreen(),
+        UserProfileScreen.routeName: (context) => UserProfileScreen(),
         UserHomeScreen.routeName: (context) => UserHomeScreen(),
         ProviderRegistrationScreen.routeName: (context) =>
             ProviderRegistrationScreen(),
@@ -45,8 +47,8 @@ class _RoutingScreenState extends State<RoutingScreen> {
       theme: themeData(context),
       home: (user.userType != UserType.user && !providerUser.inOperation)
           ? providerUser.operationRequested
-              ? ProviderRegistrationScreen()
-              : ProviderHomeScreen()
+              ? ProviderBookingScreen()
+              : ProviderRegistrationScreen()
           : routingService.booked == true && !isRouteCompleted(routingService)
               ? UserRoutingScreen()
               : UserHomeScreen(),

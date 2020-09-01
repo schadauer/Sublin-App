@@ -10,18 +10,19 @@ import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart'
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
+import 'package:Sublin/widgets/bottom_navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/step.dart' as step;
 
-class ProviderHomeScreen extends StatefulWidget {
-  static const routeName = './providerHomeScreen';
+class ProviderBookingScreen extends StatefulWidget {
+  static const routeName = './providerBookingScreen';
   @override
-  _ProviderHomeScreenState createState() => _ProviderHomeScreenState();
+  _ProviderBookingScreenState createState() => _ProviderBookingScreenState();
 }
 
-class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
+class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
   int _selectedIndex = 0;
   // static const TextStyle optionStyle =
   //     TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -29,10 +30,18 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   int _now;
   // Timer _timer;
 
+  PersistentBottomSheetController _controller;
+
   @override
   void initState() {
     super.initState();
     _now = DateTime.now().millisecondsSinceEpoch;
+  }
+
+  void _bottomSheet() {
+    _controller = showBottomSheet(
+        context: context,
+        builder: (context) => Container(child: Text('asdfs')));
   }
 
   @override
@@ -43,58 +52,91 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     final completedBookings = Provider.of<List<BookingCompleted>>(context);
 
     return Scaffold(
-      appBar: AppbarWidget(title: 'Meine Aufträge'),
-      endDrawer: DrawerSideNavigationWidget(
-        authService: AuthService(),
-      ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            (() {
-              switch (_selectedIndex) {
-                case 0:
-                  return Expanded(
-                    child: _bookingList(openBookings),
-                  );
-                  break;
-                case 1:
-                  return Expanded(
-                    child: _bookingList(confirmedBookings),
-                  );
-                  break;
-                case 2:
-                  return Expanded(
-                    child: _bookingList(completedBookings),
-                  );
-                  break;
-              }
-            }()),
-          ],
+        appBar: AppbarWidget(title: 'Meine Aufträge'),
+        endDrawer: DrawerSideNavigationWidget(
+          authService: AuthService(),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment_late),
-            title: Text('Aufträge'),
+        body: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectedIndex = 0;
+                            });
+                          },
+                          child: _BookingFilterOption(
+                            bookings: openBookings,
+                            title: 'Offene',
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectedIndex = 1;
+                            });
+                          },
+                          child: _BookingFilterOption(
+                            bookings: confirmedBookings,
+                            title: 'Bestätigte',
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectedIndex = 2;
+                            });
+                          },
+                          child: _BookingFilterOption(
+                            bookings: completedBookings,
+                            title: 'Erledigte',
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
+              (() {
+                switch (_selectedIndex) {
+                  case 0:
+                    return Expanded(
+                      flex: 10,
+                      child: _bookingList(openBookings),
+                    );
+                    break;
+                  case 1:
+                    return Expanded(
+                      child: _bookingList(confirmedBookings),
+                    );
+                    break;
+                  case 2:
+                    return Expanded(
+                      child: _bookingList(completedBookings),
+                    );
+                    // return BottomSheetNavigation();
+                    break;
+                  case 3:
+                    return Expanded(
+                      child: Text('3'),
+                    );
+                    break;
+                }
+              }()),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment_turned_in),
-            title: Text('Bestätigte'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            title: Text('Vergangene'),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-    );
+        ),
+        bottomNavigationBar: BottomNavigationBarWidget(isProvider: true));
   }
 
   ProviderUser _getProviderUser(Booking booking) {
@@ -111,16 +153,9 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     }
   }
 
-  ListView _bookingList(List<dynamic> bookings) {
-    print(bookings);
+  Widget _bookingList(List<dynamic> bookings) {
     return bookings.isEmpty
-        ? ListView(padding: const EdgeInsets.all(8), children: <Widget>[
-            Container(
-              height: 50,
-              color: Colors.amber[600],
-              child: const Center(child: Text('Keine Aufträge')),
-            ),
-          ])
+        ? Center(child: Text('Keine Aufträge'))
         : ListView.builder(
             itemCount: bookings.length,
             itemBuilder: (BuildContext context, int index) {
@@ -364,3 +399,72 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     });
   }
 }
+
+class _BookingFilterOption extends StatelessWidget {
+  const _BookingFilterOption({
+    Key key,
+    @required this.title,
+    @required this.bookings,
+  }) : super(key: key);
+
+  final String title;
+  final List<dynamic> bookings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Theme.of(context).primaryColor,
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Row(
+          children: [
+            Container(
+              width: 35,
+              height: 35,
+              decoration: BoxDecoration(
+                color: Theme.of(context).backgroundColor,
+                shape: BoxShape.circle,
+              ),
+              child: Center(child: Text(bookings.length.toString())),
+            ),
+            AutoSizeText(
+              title,
+              style: Theme.of(context).textTheme.caption,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// class BottomSheetNavigation extends StatefulWidget {
+//   @override
+//   _BottomSheetNavigationState createState() => _BottomSheetNavigationState();
+// }
+
+// class _BottomSheetNavigationState extends State<BottomSheetNavigation> {
+//   PersistentBottomSheetController _controller;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       _controller = showBottomSheet(
+//           context: context,
+//           builder: (context) => Container(child: Text('asdfs')));
+//     });
+//   }
+
+//   // @override
+//   // void dispose() {
+//   //   _controller.close;
+//   //   super.dispose();
+//   // }
+
+//   @override
+//   PersistentBottomSheetController build(BuildContext context) {
+//     return Scaffold.of(context).showBottomSheet((context) => null)
+
+//   }
+// }

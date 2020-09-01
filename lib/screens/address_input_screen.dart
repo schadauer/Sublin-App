@@ -78,9 +78,11 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                 cityOnly: widget.cityOnly,
                                 isStation: widget.isStation,
                                 addressTypes: widget.addressTypes);
-                        setState(() {
-                          _autocompleteResults = result ?? [];
-                        });
+                        if (this.mounted) {
+                          setState(() {
+                            _autocompleteResults = result ?? [];
+                          });
+                        }
                       },
                       controller: _textFormFieldController,
                       decoration: InputDecoration(
@@ -151,7 +153,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
   Future<void> _getStartAddressFromGeolocastion() async {
     try {
       Request _geolocation = await GeolocationService().getCurrentCoordinates();
-      if (_geolocation != null) {
+      if (_geolocation != null && this.mounted) {
         setState(() {
           _autocompleteResults = [
             {

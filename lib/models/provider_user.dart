@@ -49,7 +49,7 @@ class ProviderUser {
           (e) => e.toString() == 'ProviderPlan.' + (data['providerPlan'] ?? ''),
           orElse: () => defaultValues.providerPlan),
       operationRequested:
-          data['operationRequLested'] ?? defaultValues.operationRequested,
+          data['operationRequested'] ?? defaultValues.operationRequested,
       inOperation: data['inOperation'] ?? defaultValues.inOperation,
       outOfWork: data['outOfWork'] ?? defaultValues.inOperation,
       providerName: data['providerName'] ?? defaultValues.providerName,

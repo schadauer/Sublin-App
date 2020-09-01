@@ -26,7 +26,7 @@ import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
-import 'package:Sublin/widgets/input/time_field_widget.dart';
+import 'package:Sublin/widgets/time_field_widget.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:Sublin/widgets/provider_selection_widget.dart';
 
@@ -86,8 +86,6 @@ class _ProviderRegistrationScreenState
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
-
-    print(ProviderUser().toMap(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(

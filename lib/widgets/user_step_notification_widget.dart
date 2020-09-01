@@ -20,6 +20,7 @@ class UserStepNotificationWidget extends StatelessWidget {
     sublin.Step step = direction == Direction.start
         ? routingService.sublinStartStep
         : routingService.sublinEndStep;
+
     return Container(
       color: Theme.of(context).secondaryHeaderColor,
       height: 60,
@@ -55,7 +56,9 @@ class UserStepNotificationWidget extends StatelessWidget {
                   child: AutoSizeText(
                     (step.confirmed == false)
                         ? 'Wir benachrichten dich, sobald ${step.provider?.providerName} deine Abholung bestätigt hat.'
-                        : '${step.provider?.providerName} hat deine Abholung bestätigt.',
+                        : step.completed == false
+                            ? '${step.provider?.providerName} hat deine Abholung bestätigt.'
+                            : '${step.provider?.providerName} hat deine Abholung ab abgeschlossen.',
                     style: Theme.of(context).textTheme.caption,
                     maxLines: 2,
                   ),

@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
+import 'package:Sublin/widgets/bottom_navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -50,7 +53,11 @@ class _UserHomeScreenState extends State<UserHomeScreen>
   @override
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
+    final User user = Provider.of<User>(context);
+
     return Scaffold(
+      bottomNavigationBar: BottomNavigationBarWidget(
+          isProvider: user.userType == UserType.provider),
       appBar: AppbarWidget(title: 'Deine Fahrt suchen'),
       endDrawer: DrawerSideNavigationWidget(
         authService: AuthService(),

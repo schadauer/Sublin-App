@@ -34,6 +34,7 @@ class _UserRegisterState extends State<UserRegister> {
 
   @override
   Widget build(BuildContext context) {
+    print(emailProvided);
     return Scaffold(
         body: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -193,6 +194,7 @@ class _UserRegisterState extends State<UserRegister> {
                                     password = val;
                                   });
                                 },
+                                obscureText: true,
                                 decoration: InputDecoration(
                                   hintText: 'Passwort',
                                   filled: Theme.of(context)

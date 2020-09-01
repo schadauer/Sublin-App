@@ -1,7 +1,7 @@
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/models/user_type.dart';
-import 'package:Sublin/screens/provider_home_screen.dart';
+import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/screens/provider_registration_screen.dart';
@@ -59,7 +59,7 @@ class DrawerSideNavigationWidget extends StatelessWidget {
               leading: Icon(Icons.person_outline),
               title: Text('Meine Aufträge'),
               onTap: () =>
-                  Navigator.pushNamed(context, ProviderHomeScreen.routeName),
+                  Navigator.pushNamed(context, ProviderBookingScreen.routeName),
             ),
           if (user.userType == UserType.user)
             ListTile(

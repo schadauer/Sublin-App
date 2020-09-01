@@ -31,6 +31,17 @@ class ProviderService {
     }
   }
 
+  Future<void> setProviderUserData({String uid, ProviderUser data}) async {
+    try {
+      await _database
+          .collection('providers')
+          .doc(uid)
+          .set(ProviderUser().toMap(data));
+    } catch (e) {
+      print('updateProviderUser: $e');
+    }
+  }
+
   Future<void> updateProviderUserData({String uid, ProviderUser data}) async {
     try {
       await _database

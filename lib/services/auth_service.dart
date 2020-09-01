@@ -45,9 +45,12 @@ class AuthService {
       await UserService().writeUserData(uid: authUser.uid, data: user);
       await authUser.sendEmailVerification();
 
+      print(authUser.uid);
+      print(providerUser);
+
       if (userType == UserType.provider || userType == UserType.sponsor) {
         await ProviderService()
-            .updateProviderUserData(uid: authUser.uid, data: providerUser);
+            .setProviderUserData(uid: authUser.uid, data: providerUser);
       }
       return _userfromFirebseUser(authUser);
     } catch (e) {

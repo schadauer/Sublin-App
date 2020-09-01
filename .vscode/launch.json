@@ -11,10 +11,10 @@
       "deviceId": "emulator-5554"
     },
     {
-      "name": "IPhone X",
+      "name": "IPhone 11",
       "request": "launch",
       "type": "dart",
-      "deviceId": "00008020-001D084A3EEA002E"
+      "deviceId": "2A71DEF5-3F94-456F-B394-F2A060D6C045"
     },
     {
       "name": "IPhone SE",
