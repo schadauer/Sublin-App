@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const Color backgroundColor = Color.fromRGBO(245, 245, 245, 1);
+
 ThemeData themeData(context) {
   return ThemeData(
     primarySwatch: Colors.blueGrey,
@@ -8,7 +10,7 @@ ThemeData themeData(context) {
     primaryColor: Color.fromRGBO(216, 214, 204, 1),
     secondaryHeaderColor: Color.fromRGBO(0, 174, 99, 0.6),
     brightness: Brightness.light,
-    accentColor: Colors.blueGrey[100],
+    accentColor: backgroundColor,
     accentColorBrightness: Brightness.dark,
     splashColor: Color.fromRGBO(3, 174, 99, 1),
     buttonTheme: ButtonTheme.of(context).copyWith(
@@ -26,7 +28,7 @@ ThemeData themeData(context) {
     canvasColor: Colors.white,
     errorColor: Colors.red[400],
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: Color.fromRGBO(245, 245, 245, 1),
+      fillColor: backgroundColor,
       filled: true,
       contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       border: OutlineInputBorder(),
@@ -41,6 +43,7 @@ ThemeData themeData(context) {
       caption: TextStyle(
         fontSize: 14,
         fontFamily: 'Lato',
+        height: 1.3,
         color: Colors.black,
       ),
       button: TextStyle(
@@ -53,6 +56,7 @@ ThemeData themeData(context) {
         fontSize: 16,
         fontFamily: 'Lato',
         color: Colors.black,
+        height: 1.3,
         fontWeight: FontWeight.normal,
       ),
       bodyText2: TextStyle(

@@ -31,6 +31,7 @@ class ProviderSelectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Theme.of(context).accentColor,
       child: InkWell(
         onTap: () {
           selectionFunction(
@@ -56,7 +57,10 @@ class ProviderSelectionWidget extends StatelessWidget {
                       children: <Widget>[
                         Text(title,
                             maxLines: 2,
-                            style: Theme.of(context).textTheme.bodyText1),
+                            style: Theme.of(context).textTheme.headline1),
+                        SizedBox(
+                          height: 4,
+                        ),
                         if (text != '')
                           Text(text,
                               style: Theme.of(context).textTheme.caption),

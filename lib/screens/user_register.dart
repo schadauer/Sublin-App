@@ -1,9 +1,10 @@
+import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/widgets/provider_selection_widget.dart';
-import 'package:Sublin/screens/sign_in.dart';
+import 'package:Sublin/screens/user_sign_in.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/utils/is_email_format.dart';
 
@@ -24,258 +25,351 @@ class _UserRegisterState extends State<UserRegister> {
   bool emailProvided = false;
   bool passwordProvided = false;
   bool providerChecked = false;
+  PageController _pageViewController = PageController(initialPage: 0);
+  TextEditingController _emailTextController = TextEditingController();
+  TextEditingController _passwortTextController = TextEditingController();
+  TextEditingController _firstNameTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  int _pageStep = 0;
 
   @override
   void initState() {
-    // _getCurrentCoordinates();
     super.initState();
   }
 
   @override
+  void dispose() {
+    _pageViewController ?? _pageViewController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print(emailProvided);
     return Scaffold(
-        body: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              FocusScope.of(context).unfocus();
-              setState(() {
-                textFocus = false;
-              });
-            },
-            child: Stack(
-              children: <Widget>[
-                SizedBox(
-                  height: 40,
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 70, left: 15, right: 15),
-                  width: MediaQuery.of(context).size.width,
-                  height: 300,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+        body: SafeArea(
+      child: PageView(
+        controller: _pageViewController,
+        children: [
+          if (_pageStep >= 0)
+            GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  setState(() {
+                    textFocus = false;
+                  });
+                },
+                child: Stack(
+                  children: <Widget>[
+                    ProgressIndicatorWidget(
+                      index: 1,
+                      elements: 2,
+                      showProgressIndicator: false,
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(top: 50, left: 15, right: 15),
+                      width: MediaQuery.of(context).size.width,
+                      height: 300,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          Text(
-                            'Hallo $firstName ',
-                            style: Theme.of(context).textTheme.headline1,
-                            textAlign: TextAlign.left,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Hallo $firstName ',
+                                style: Theme.of(context).textTheme.headline1,
+                                textAlign: TextAlign.left,
+                              ),
+                              // if (firstNameProvided)
+                              //   Icon(
+                              //     emailProvided
+                              //         ? Icons.sentiment_very_satisfied
+                              //         : Icons.sentiment_satisfied,
+                              //     size: 30,
+                              //   ),
+                            ],
                           ),
-                          // if (firstNameProvided)
-                          //   Icon(
-                          //     emailProvided
-                          //         ? Icons.sentiment_very_satisfied
-                          //         : Icons.sentiment_satisfied,
-                          //     size: 30,
-                          //   ),
-                          FlatButton(
-                              textColor: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignIn())),
-                              child: Text(
-                                'Bereits registriert?',
-                                style: Theme.of(context).textTheme.button,
-                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          AutoSizeText(
+                            'Diese App soll dir in der Zukunft ermöglichen, bequem ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase. Melde dich an und gib deine Plätze bekannt, die du ohne eigenes Auto erreichen willst. Damit können wir gezielter dort nach Anbietern suchen, wo du sie benötigst.',
+                            style: Theme.of(context).textTheme.bodyText1,
+                            maxLines: 8,
+                          ),
                         ],
+                      ),
+                    ),
+                    AnimatedContainer(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                      ),
+                      margin: EdgeInsets.only(top: (textFocus) ? 90 : 260),
+                      duration: Duration(milliseconds: 100),
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                TextFormField(
+                                    validator: (val) => val.length < 2
+                                        ? 'Bitte gib deinen Vornamen an'
+                                        : null,
+                                    onTap: () {
+                                      textFocus = true;
+                                    },
+                                    controller: _firstNameTextController,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        _pageStep = 0;
+                                        firstName = val;
+                                        if (val.length > 0) {
+                                          firstNameProvided = true;
+                                        } else {
+                                          firstNameProvided = false;
+                                        }
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: 'Dein Vorname',
+                                      prefixIcon: Icon(Icons.person,
+                                          color: firstNameProvided
+                                              ? Theme.of(context).accentColor
+                                              : null),
+                                    )),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TextFormField(
+                                    validator: (val) => val.length < 2 ||
+                                            !isEmailFormat(val)
+                                        ? 'Bitte gib eine gültige E-Mailadresse an'
+                                        : null,
+                                    onTap: () {
+                                      setState(() {
+                                        textFocus = true;
+                                      });
+                                    },
+                                    controller: _emailTextController,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        _pageStep = 0;
+                                        email = val;
+                                        if (isEmailFormat(val)) {
+                                          emailProvided = true;
+                                        } else {
+                                          emailProvided = false;
+                                        }
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: 'Deine Email Adresse',
+                                      filled: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .filled,
+                                      border: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .border,
+                                      focusedBorder: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .focusedBorder,
+                                      fillColor: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .fillColor,
+                                      prefixIcon: Icon(
+                                        Icons.email,
+                                        color: emailProvided
+                                            ? Theme.of(context).accentColor
+                                            : null,
+                                      ),
+                                    )),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TextFormField(
+                                    validator: (val) => val.length < 6
+                                        ? 'Das Passwort muss eine Mindeslänge von 6 Zeichen haben'
+                                        : null,
+                                    onTap: () {
+                                      setState(() {
+                                        textFocus = true;
+                                      });
+                                    },
+                                    controller: _passwortTextController,
+                                    onChanged: (val) {
+                                      setState(() {
+                                        _pageStep = 0;
+                                        password = val;
+                                      });
+                                    },
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                      hintText: 'Passwort',
+                                      filled: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .filled,
+                                      border: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .border,
+                                      focusedBorder: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .focusedBorder,
+                                      fillColor: Theme.of(context)
+                                          .inputDecorationTheme
+                                          .fillColor,
+                                      prefixIcon: Icon(
+                                        Icons.lock,
+                                        color: emailProvided
+                                            ? Theme.of(context).accentColor
+                                            : null,
+                                      ),
+                                    )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    FlatButton(
+                                        textColor: Theme.of(context)
+                                            .secondaryHeaderColor,
+                                        onPressed: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UserSignIn())),
+                                        child: Text(
+                                          'Bereits registriert?',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .button,
+                                        )),
+                                    RaisedButton(
+                                      onPressed: () {
+                                        if (_formKey.currentState.validate()) {
+                                          FocusScope.of(context).unfocus();
+                                          setState(() {
+                                            _pageStep = 1;
+                                          });
+                                          _pageViewController.nextPage(
+                                              duration:
+                                                  Duration(milliseconds: 300),
+                                              curve: Curves.easeOut);
+                                        }
+                                      },
+                                      child: Text('Weiter'),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+          // Second Page ------------------------------- 2 ----------------------------------
+          if (_pageStep >= 1)
+            SingleChildScrollView(
+                child: Column(
+              children: [
+                ProgressIndicatorWidget(
+                  index: 2,
+                  elements: 2,
+                  showProgressIndicator: false,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              '$firstName, du meldest dich an als: ',
+                              style: Theme.of(context).textTheme.headline1,
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      ProviderSelectionWidget(
+                        title: 'Fahrgast',
+                        text:
+                            'Du möchtest bequem ohne eigenes Auto überall hin mit öffentlichen Verkehr und Sublin für die "letzte Meile".',
+                        selectionFunction: typeSelectionFunction,
+                        userType: UserType.user,
+                        active: userType == UserType.user,
+                      ),
+                      ProviderSelectionWidget(
+                        title: 'Anbieter',
+                        text:
+                            'Du bietest Transferdienste an, zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets mit einer entsprechenden Lizenz.',
+                        selectionFunction: typeSelectionFunction,
+                        userType: UserType.provider,
+                        active: userType == UserType.provider,
+                      ),
+                      ProviderSelectionWidget(
+                        title: 'Auftraggeber',
+                        text:
+                            'Du führst selbst keine Personentransfers durch und beauftragst einen lizenzierten Fahrtendienst für eine bestimmte Adresse oder ein Gebiet. Dieser führt für den Fahrgast kostenlose Transferservices durch.',
+                        selectionFunction: typeSelectionFunction,
+                        userType: UserType.sponsor,
+                        active: userType == UserType.sponsor,
                       ),
                       SizedBox(
                         height: 10,
                       ),
-                      AutoSizeText(
-                        'Diese App soll dir in der Zukunft ermöglichen, bequem ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase. Melde dich an und gib deine Plätze bekannt, die du ohne eigenes Auto erreichen willst. Damit können wir gezielter dort nach Anbietern suchen, wo du sie benötigst.',
-                        style: Theme.of(context).textTheme.bodyText1,
-                        maxLines: 8,
-                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          RaisedButton(
+                            onPressed: () async {
+                              try {
+                                print(_formKey);
+
+                                await _auth.register(
+                                  email: email,
+                                  password: password,
+                                  firstName: firstName,
+                                  userType: userType,
+                                );
+                              } catch (e) {
+                                print(e);
+                              }
+                            },
+                            child: Text('Jetzt registrieren'),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ),
-                AnimatedContainer(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  margin: EdgeInsets.only(top: (textFocus) ? 120 : 300),
-                  duration: Duration(milliseconds: 100),
-                  child: SingleChildScrollView(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            TextFormField(
-                                validator: (val) => val.length < 2
-                                    ? 'Bitte gib deinen Vornamen an'
-                                    : null,
-                                onTap: () {
-                                  textFocus = true;
-                                },
-                                onChanged: (val) {
-                                  setState(() {
-                                    firstName = val;
-                                    if (val.length > 0) {
-                                      firstNameProvided = true;
-                                    } else {
-                                      firstNameProvided = false;
-                                    }
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Dein Vorname',
-                                  prefixIcon: Icon(Icons.person,
-                                      color: firstNameProvided
-                                          ? Theme.of(context).accentColor
-                                          : null),
-                                )),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            TextFormField(
-                                validator: (val) => val.length < 2
-                                    ? 'Bitte gib eine gültige E-Mailadresse an'
-                                    : null,
-                                onTap: () {
-                                  setState(() {
-                                    textFocus = true;
-                                  });
-                                },
-                                onChanged: (val) {
-                                  setState(() {
-                                    email = val;
-                                    if (isEmailFormat(val)) {
-                                      emailProvided = true;
-                                    } else {
-                                      emailProvided = false;
-                                    }
-                                  });
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Deine Email Adresse',
-                                  filled: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .filled,
-                                  border: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .border,
-                                  focusedBorder: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .focusedBorder,
-                                  fillColor: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .fillColor,
-                                  prefixIcon: Icon(
-                                    Icons.email,
-                                    color: emailProvided
-                                        ? Theme.of(context).accentColor
-                                        : null,
-                                  ),
-                                )),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            TextFormField(
-                                validator: (val) => val.length < 6
-                                    ? 'Das Passwort muss eine Mindeslänge von 6 Zeichen haben'
-                                    : null,
-                                onTap: () {
-                                  setState(() {
-                                    textFocus = true;
-                                  });
-                                },
-                                onChanged: (val) {
-                                  setState(() {
-                                    password = val;
-                                  });
-                                },
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  hintText: 'Passwort',
-                                  filled: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .filled,
-                                  border: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .border,
-                                  focusedBorder: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .focusedBorder,
-                                  fillColor: Theme.of(context)
-                                      .inputDecorationTheme
-                                      .fillColor,
-                                  prefixIcon: Icon(
-                                    Icons.lock,
-                                    color: emailProvided
-                                        ? Theme.of(context).accentColor
-                                        : null,
-                                  ),
-                                )),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ProviderSelectionWidget(
-                              title: 'Fahrgast',
-                              text:
-                                  'Du möchtest bequem ohne eigenes Auto überall hin mit öffentlichen Verkehr und Sublin für die "letzte Meile".',
-                              selectionFunction: typeSelectionFunction,
-                              userType: UserType.user,
-                              active: userType == UserType.user,
-                            ),
-                            ProviderSelectionWidget(
-                              title: 'Transferdienst Anbieter',
-                              text:
-                                  'Du bietest Transferdienste an, zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets mit einer entsprechenden Lizenz.',
-                              selectionFunction: typeSelectionFunction,
-                              userType: UserType.provider,
-                              active: userType == UserType.provider,
-                            ),
-                            ProviderSelectionWidget(
-                              title: 'Auftraggeber ohne eigenen Dienst',
-                              text:
-                                  'Du führst selbst keine Personentransfers durch und beauftragst einen lizenzierten Fahrtendienst für eine bestimmte Adresse oder ein Gebiet. Dieser führt für dich kostenlose Transferservices für den Fahrgast an.',
-                              selectionFunction: typeSelectionFunction,
-                              userType: UserType.sponsor,
-                              active: userType == UserType.sponsor,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                RaisedButton(
-                                  onPressed: () async {
-                                    try {
-                                      if (_formKey.currentState.validate()) {
-                                        await _auth.register(
-                                          email: email,
-                                          password: password,
-                                          firstName: firstName,
-                                          userType: userType,
-                                        );
-                                      }
-                                    } catch (e) {
-                                      print(e);
-                                    }
-                                  },
-                                  child: Text('Jetzt registrieren'),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
               ],
-            )));
+            ))
+        ],
+      ),
+    ));
   }
 
   void typeSelectionFunction(userTypeParam) {
