@@ -57,7 +57,7 @@ class DrawerSideNavigationWidget extends StatelessWidget {
           if (user.userType != UserType.user)
             ListTile(
               leading: Icon(Icons.person_outline),
-              title: Text('Meine Aufträge'),
+              title: Text('Aufträge'),
               onTap: () =>
                   Navigator.pushNamed(context, ProviderBookingScreen.routeName),
             ),

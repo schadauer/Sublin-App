@@ -26,11 +26,12 @@ class _UserRegisterState extends State<UserRegister> {
   bool passwordProvided = false;
   bool providerChecked = false;
   PageController _pageViewController = PageController(initialPage: 0);
+  // To controll which pages can be accessed
+  int _pageStep = 0;
   TextEditingController _emailTextController = TextEditingController();
   TextEditingController _passwortTextController = TextEditingController();
   TextEditingController _firstNameTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  int _pageStep = 0;
 
   @override
   void initState() {
@@ -40,6 +41,9 @@ class _UserRegisterState extends State<UserRegister> {
   @override
   void dispose() {
     _pageViewController ?? _pageViewController.dispose();
+    _emailTextController ?? _emailTextController.dispose();
+    _passwortTextController ?? _passwortTextController.dispose();
+    _firstNameTextController ?? _firstNameTextController.dispose();
     super.dispose();
   }
 
@@ -85,13 +89,6 @@ class _UserRegisterState extends State<UserRegister> {
                                 style: Theme.of(context).textTheme.headline1,
                                 textAlign: TextAlign.left,
                               ),
-                              // if (firstNameProvided)
-                              //   Icon(
-                              //     emailProvided
-                              //         ? Icons.sentiment_very_satisfied
-                              //         : Icons.sentiment_satisfied,
-                              //     size: 30,
-                              //   ),
                             ],
                           ),
                           SizedBox(
@@ -140,12 +137,10 @@ class _UserRegisterState extends State<UserRegister> {
                                       });
                                     },
                                     decoration: InputDecoration(
-                                      hintText: 'Dein Vorname',
-                                      prefixIcon: Icon(Icons.person,
-                                          color: firstNameProvided
-                                              ? Theme.of(context).accentColor
-                                              : null),
-                                    )),
+                                        hintText: 'Dein Vorname',
+                                        prefixIcon: Icon(
+                                          Icons.person,
+                                        ))),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -187,9 +182,6 @@ class _UserRegisterState extends State<UserRegister> {
                                           .fillColor,
                                       prefixIcon: Icon(
                                         Icons.email,
-                                        color: emailProvided
-                                            ? Theme.of(context).accentColor
-                                            : null,
                                       ),
                                     )),
                                 SizedBox(
@@ -228,9 +220,6 @@ class _UserRegisterState extends State<UserRegister> {
                                           .fillColor,
                                       prefixIcon: Icon(
                                         Icons.lock,
-                                        color: emailProvided
-                                            ? Theme.of(context).accentColor
-                                            : null,
                                       ),
                                     )),
                                 SizedBox(

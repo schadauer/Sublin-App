@@ -52,7 +52,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
     final completedBookings = Provider.of<List<BookingCompleted>>(context);
 
     return Scaffold(
-        appBar: AppbarWidget(title: 'Meine Aufträge'),
+        appBar: AppbarWidget(title: 'Aufträge'),
         endDrawer: DrawerSideNavigationWidget(
           authService: AuthService(),
         ),
@@ -155,7 +155,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
 
   Widget _bookingList(List<dynamic> bookings) {
     return bookings.isEmpty
-        ? Center(child: Text('Keine Aufträge'))
+        ? Center(child: Text('Derzeit keine Aufträge'))
         : ListView.builder(
             itemCount: bookings.length,
             itemBuilder: (BuildContext context, int index) {

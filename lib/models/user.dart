@@ -68,9 +68,9 @@ class User {
         'homeAddress': data.homeAddress ?? defaultValues.homeAddress,
       if (userTypeString != '')
         'userType': userTypeString.substring(userTypeString.indexOf('.') + 1),
-      // if (data.isProviderCompleted != null)
-      //   'isProvider':
-      //       data.isProviderCompleted ?? defaultValues.isProviderCompleted,
+      if (data.isRegistrationCompleted != null)
+        'isProvider': data.isRegistrationCompleted ??
+            defaultValues.isRegistrationCompleted,
       if (data.requestedAddresses != null)
         'requestAddresses':
             data.requestedAddresses ?? defaultValues.requestedAddresses

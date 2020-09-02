@@ -245,10 +245,10 @@ class _ProviderRegistrationScreenState
                                           : '${_checkRoutingData.sublinEndStep.provider.providerName} führt Transfers zwischen dem Bahnhof und den Privatadressen des Gemeindegebiets ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       caption: '',
                                       providerTypeSelection:
-                                          ProviderType.taxiShuttle,
+                                          ProviderType.sponsor,
                                       selectionFunction:
                                           providerSelectionFunction,
-                                      active: ProviderType.taxiShuttle ==
+                                      active: ProviderType.sponsor ==
                                           _providerUser.providerType,
                                     ),
                                   if (_checkRoutingData.endAddressAvailable &&
@@ -261,10 +261,10 @@ class _ProviderRegistrationScreenState
                                           : '${_checkRoutingData.sublinEndStep.provider.providerName} führt Transfers zwischen dem Bahnhof und den Privatadressen des Gemeindegebiets ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       caption: '',
                                       providerTypeSelection:
-                                          ProviderType.taxiShuttle,
+                                          ProviderType.sponsor,
                                       selectionFunction:
                                           providerSelectionFunction,
-                                      active: ProviderType.taxiShuttle ==
+                                      active: ProviderType.sponsor ==
                                           _providerUser.providerType,
                                     ),
                                   if (!_checkRoutingData.endAddressAvailable)
@@ -285,10 +285,10 @@ class _ProviderRegistrationScreenState
                                           ? 'Du bietest ein Shuttleservice zwischen Bahnhof und deiner Adresse an.'
                                           : '${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.company)} bietet ein eigenes Transferservice zwischen Bahnhof und den Privatadressen des Gemeindegebiets ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       providerTypeSelection:
-                                          ProviderType.ownShuttle,
+                                          ProviderType.shuttle,
                                       selectionFunction:
                                           providerSelectionFunction,
-                                      active: ProviderType.ownShuttle ==
+                                      active: ProviderType.shuttle ==
                                           _providerUser.providerType,
                                     ),
                                 ],
@@ -305,7 +305,7 @@ class _ProviderRegistrationScreenState
                                         ? () {
                                             _providerUser.partners =
                                                 _providerUser.providerType ==
-                                                        ProviderType.taxiShuttle
+                                                        ProviderType.sponsor
                                                     ? [
                                                         _checkRoutingData
                                                             .sublinEndStep
@@ -603,8 +603,8 @@ class _ProviderRegistrationScreenState
                       ]))),
             // Fourth Page ------------------------------- 4 ----------------------------------
             if (_pageSteps >= 3 &&
-                    _providerUser.providerType == ProviderType.ownShuttle ||
-                _providerUser.providerType == ProviderType.taxiShuttle)
+                    _providerUser.providerType == ProviderType.shuttle ||
+                _providerUser.providerType == ProviderType.sponsor)
               SingleChildScrollView(
                 child: Container(
                     width: MediaQuery.of(context).size.width,

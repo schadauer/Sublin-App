@@ -1,5 +1,5 @@
 enum ProviderType {
   taxi,
-  taxiShuttle,
-  ownShuttle,
+  sponsor,
+  shuttle,
 }

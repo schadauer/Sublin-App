@@ -109,6 +109,8 @@ class Routing {
                       timeEnd: data['sublinEndStep']['provider']['timeEnd'] ??
                           defaultValueProviderUser.timeEnd,
                     ),
+              sponsor:
+                  data['sublinEndStep']['sponsor'] ?? defaultValueStep.sponsor,
               distance: data['sublinEndStep']['distance'] ??
                   defaultValueStep.distance,
               duration: data['sublinEndStep']['duration'] ??
@@ -145,6 +147,8 @@ class Routing {
                       timeEnd: data['sublinStartStep']['provider']['timeEnd'] ??
                           defaultValueProviderUser.timeEnd,
                     ),
+              sponsor: data['sublinStartStep']['sponsor'] ??
+                  defaultValueStep.sponsor,
               distance: data['sublinStartStep']['distance'] ??
                   defaultValueStep.distance,
               duration: data['sublinStartStep']['duration'] ??
