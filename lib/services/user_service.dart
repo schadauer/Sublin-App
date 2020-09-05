@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/utils/logging.dart';
+import 'package:flutter/foundation.dart' as Foundation;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:Sublin/models/user.dart';
@@ -9,6 +13,9 @@ class UserService {
 
   Stream<User> streamUser(uid) {
     try {
+      // if (!Foundation.kReleaseMode) {
+      //   sublinLogging(Preferences.intLoggingUsers);
+      // }
       return _database.collection('users').doc(uid).snapshots().map((snap) {
         return User.fromJson(snap.data());
       });
@@ -18,8 +25,38 @@ class UserService {
     }
   }
 
+  Future<void> updateHomeAddress({String uid, String address}) async {
+    try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingUsers);
+      }
+      await _database.collection('users').doc(uid).set({
+        'homeAddress': address,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<User> getUser(String uid) async {
+    try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingUsers);
+      }
+      return await _database.collection('users').doc(uid).get().then((value) {
+        return User.fromJson(value.data());
+      });
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   Future<void> writeUserData({String uid, User data}) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingUsers);
+      }
       await _database.collection('users').doc(uid).set(
             User().toJson(data),
           );

@@ -21,7 +21,7 @@ class Step {
   String stationAddress;
   String stationName;
   ProviderUser provider;
-  String sponsor;
+  ProviderUser sponsor;
   int startTime;
   int endTime;
   int duration;

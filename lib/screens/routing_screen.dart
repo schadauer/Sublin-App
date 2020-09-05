@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
@@ -6,7 +7,6 @@ import 'package:Sublin/screens/provider_target_group_screen.dart';
 import 'package:Sublin/screens/user_profile_screen.dart';
 import 'package:Sublin/screens/user_free_ride_screen.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user.dart';

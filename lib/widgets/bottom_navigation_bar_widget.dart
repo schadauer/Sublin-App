@@ -1,4 +1,4 @@
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/preferences.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/provider_partner_screen.dart';
 import 'package:Sublin/screens/provider_target_group_screen.dart';
@@ -6,8 +6,8 @@ import 'package:Sublin/screens/user_home_screen.dart';
 import 'package:Sublin/screens/user_profile_screen.dart';
 import 'package:Sublin/screens/user_free_ride_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
+import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   final bool isProvider;
@@ -26,30 +26,35 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    final Routing routingService = Provider.of<Routing>(context);
+    // final Routing routingService = Provider.of<Routing>(context);
 
+    print('BottomNavigation');
     return widget.isProvider
         ? BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             // This is the bottom navigation for providers
-            onTap: (int) {
-              if (int == 0)
-                Navigator.of(context)
-                    .push(_createRoute(ProviderBookingScreen()));
-              if (int == 1) {
-                Navigator.of(context)
-                    .push(_createRoute(ProviderPartnerScreen()));
+            onTap: (index) async {
+              try {
+                if (index == 0)
+                  Navigator.of(context)
+                      .push(_createRoute(ProviderBookingScreen()));
+                if (index == 1) {
+                  Navigator.of(context)
+                      .push(_createRoute(ProviderPartnerScreen()));
+                }
+                if (index == 2) {
+                  Navigator.of(context)
+                      .push(_createRoute(ProviderTargetGroupScreen()));
+                }
+                if (index == 3) {
+                  Navigator.of(context).push(_createRoute(UserProfileScreen()));
+                }
+                setState(() {
+                  _currentIndex = index;
+                });
+              } catch (e) {
+                print(e);
               }
-              if (int == 2) {
-                Navigator.of(context)
-                    .push(_createRoute(ProviderTargetGroupScreen()));
-              }
-              if (int == 3) {
-                Navigator.of(context).push(_createRoute(UserProfileScreen()));
-              }
-              setState(() {
-                _currentIndex = int;
-              });
             },
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -65,7 +70,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                 title: Text('Zielgruppe'),
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.assignment),
+                icon: Icon(Icons.settings),
                 title: Text('Profil'),
               ),
             ],
@@ -74,19 +79,28 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
           )
         : BottomNavigationBar(
             // This is the navigation for user -------------------------------------
-            onTap: (int) {
-              if (int == 0) {
-                Navigator.of(context).push(_createRoute(UserHomeScreen()));
+            onTap: (index) async {
+              try {
+                if (index == 0) {
+                  if (await getBoolValuesSF(Preferences.boolHasRatedTrip))
+                    Navigator.of(context).push(_createRoute(UserHomeScreen()));
+                  else
+                    Navigator.of(context)
+                        .push(_createRoute(UserRoutingScreen()));
+                }
+                if (index == 1) {
+                  Navigator.of(context)
+                      .push(_createRoute(UserFreeRideScreen()));
+                }
+                if (index == 2) {
+                  Navigator.of(context).push(_createRoute(UserProfileScreen()));
+                }
+                setState(() {
+                  _currentIndex = index;
+                });
+              } catch (e) {
+                print(e);
               }
-              if (int == 1) {
-                Navigator.of(context).push(_createRoute(UserFreeRideScreen()));
-              }
-              if (int == 2) {
-                Navigator.of(context).push(_createRoute(UserProfileScreen()));
-              }
-              setState(() {
-                _currentIndex = int;
-              });
             },
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(

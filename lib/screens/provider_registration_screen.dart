@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:Sublin/models/delimiter.dart';
 import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/services/autocomplete_stations_service.dart';
+import 'package:Sublin/utils/get_city_formatted_address.dart';
 import 'package:Sublin/utils/get_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -44,20 +46,22 @@ class _ProviderRegistrationScreenState
   PageController _pageViewController = PageController(initialPage: 0);
   TextEditingController _providerNameFormFieldController =
       TextEditingController();
-  // TextEditingController _stationFormFieldController = TextEditingController();
-  // TextEditingController _postcodeFormFieldController = TextEditingController();
   // _providerUser is the object that we will fill with user data
   ProviderUser _providerUser = ProviderUser();
+  // We need an instance to check if fields are already provided
   ProviderUser _defaultProviderUser = ProviderUser();
   Routing _defaultValueRouting = Routing();
+  // We check if there is already taxi service available for the user address
   Routing _checkRoutingData;
+  // We make a dummy request which is marked as check
   Request _request = Request();
   bool _showProgressIndicator = false;
   String _previousDataId;
   // Button active or disabled
   bool _addressFound = false;
-  StreamSubscription<Routing> _subscription;
+  StreamSubscription<Routing> _routingStream;
   int _pageSteps = 1;
+  // This is the station information coming from the autocomplete. We need to format it before we can save it to _providerUser
   String _station = '';
 
   DateFormat format = DateFormat('HHmm');
@@ -78,7 +82,7 @@ class _ProviderRegistrationScreenState
   @override
   void dispose() {
     _pageViewController ?? _pageViewController.dispose();
-    _subscription ?? _subscription.cancel();
+    _routingStream ?? _routingStream.cancel();
     super.dispose();
   }
 
@@ -86,6 +90,8 @@ class _ProviderRegistrationScreenState
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
+
+    print(ProviderUser().toMap(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -160,6 +166,9 @@ class _ProviderRegistrationScreenState
                                     ? () async {
                                         try {
                                           setState(() {
+                                            _providerNameFormFieldController
+                                                .text = '';
+                                            _station = '';
                                             _showProgressIndicator = true;
                                             _providerUser = ProviderUser();
                                             _providerUser.addresses = [
@@ -239,25 +248,25 @@ class _ProviderRegistrationScreenState
                                       user.userType == UserType.sponsor)
                                     ProviderSelectionWidget(
                                       title:
-                                          'Gesamtes Gemeindegebiet ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
+                                          'Zwischen Bahnhof und deiner Betriebsaddresse',
                                       text: user.userType == UserType.provider
-                                          ? 'Du übernimmst die Kosten für Transfers zwischen dem Bahnhof von ${_checkRoutingData.sublinEndStep.provider.providerName} durchgeführt.'
+                                          ? 'Transfers werden zwischen deiner Address und dem Bahnhof von ${_checkRoutingData.sublinEndStep.provider.providerName} durchgeführt.'
                                           : '${_checkRoutingData.sublinEndStep.provider.providerName} führt Transfers zwischen dem Bahnhof und den Privatadressen des Gemeindegebiets ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       caption: '',
                                       providerTypeSelection:
-                                          ProviderType.sponsor,
+                                          ProviderType.sponsorShuttle,
                                       selectionFunction:
                                           providerSelectionFunction,
-                                      active: ProviderType.sponsor ==
+                                      active: ProviderType.sponsorShuttle ==
                                           _providerUser.providerType,
                                     ),
                                   if (_checkRoutingData.endAddressAvailable &&
                                       user.userType == UserType.sponsor)
                                     ProviderSelectionWidget(
                                       title:
-                                          'Zwischen Bahnhof und deiner Betriebsaddresse',
+                                          'Gesamtes Gemeindegebiet ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
                                       text: user.userType == UserType.provider
-                                          ? 'Transfers werden zwischen deiner Address und dem Bahnhof von ${_checkRoutingData.sublinEndStep.provider.providerName} durchgeführt.'
+                                          ? 'Du übernimmst die Kosten für Transfers zwischen dem Bahnhof von ${_checkRoutingData.sublinEndStep.provider.providerName} durchgeführt.'
                                           : '${_checkRoutingData.sublinEndStep.provider.providerName} führt Transfers zwischen dem Bahnhof und den Privatadressen des Gemeindegebiets ${getPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       caption: '',
                                       providerTypeSelection:
@@ -303,9 +312,15 @@ class _ProviderRegistrationScreenState
                                     onPressed: _providerUser.providerType !=
                                             null
                                         ? () {
+                                            // Add the taxi partner
                                             _providerUser.partners =
                                                 _providerUser.providerType ==
-                                                        ProviderType.sponsor
+                                                            ProviderType
+                                                                .sponsor ||
+                                                        _providerUser
+                                                                .providerType ==
+                                                            ProviderType
+                                                                .sponsorShuttle
                                                     ? [
                                                         _checkRoutingData
                                                             .sublinEndStep
@@ -313,6 +328,21 @@ class _ProviderRegistrationScreenState
                                                             .id
                                                       ]
                                                     : [];
+                                            // If sponsor than add the city address
+                                            String cityFormattedAddress =
+                                                getCityFormattedAddress(
+                                                    _checkRoutingData
+                                                        .endAddress);
+                                            if (_providerUser.providerType ==
+                                                    ProviderType.sponsor &&
+                                                cityFormattedAddress != '' &&
+                                                !_providerUser.addresses
+                                                    .contains(
+                                                        cityFormattedAddress))
+                                              _providerUser.addresses.add(
+                                                  getCityFormattedAddress(
+                                                      _checkRoutingData
+                                                          .endAddress));
                                             _pageViewController.nextPage(
                                                 duration:
                                                     Duration(milliseconds: 300),
@@ -374,8 +404,8 @@ class _ProviderRegistrationScreenState
                                           child: Column(children: <Widget>[
                                             TextFormField(
                                                 validator: (val) => val.length <
-                                                        4
-                                                    ? 'Bitte gib hier deinen Betriebsnamen ein'
+                                                        3
+                                                    ? 'Bitte gib hier deinen Unternehmensnamen ein'
                                                     : null,
                                                 controller:
                                                     _providerNameFormFieldController,
@@ -465,18 +495,34 @@ class _ProviderRegistrationScreenState
                                                             .providerName)
                                                     ? () async {
                                                         try {
+                                                          print(ProviderUser()
+                                                              .toMap(
+                                                                  _providerUser));
                                                           _providerNameFormFieldController
                                                                   .text =
                                                               _providerUser
                                                                   .providerName;
-                                                          _pageSteps = 4;
+                                                          setState(() {
+                                                            _pageSteps = _providerUser
+                                                                            .providerType ==
+                                                                        ProviderType
+                                                                            .sponsor ||
+                                                                    _providerUser
+                                                                            .providerType ==
+                                                                        ProviderType
+                                                                            .sponsorShuttle
+                                                                ? 5
+                                                                : 4;
+                                                          });
                                                           _pageViewController.nextPage(
                                                               duration: Duration(
                                                                   milliseconds:
                                                                       300),
                                                               curve: Curves
                                                                   .easeOut);
-                                                        } catch (e) {}
+                                                        } catch (e) {
+                                                          print(e);
+                                                        }
                                                       }
                                                     : null,
                                             child: Text('Weiter'),
@@ -488,8 +534,10 @@ class _ProviderRegistrationScreenState
                         ],
                       ))),
             // Fourth Page ------------------------------- 4 ----------------------------------
-            if (_pageSteps >= 3 &&
-                _providerUser.providerType == ProviderType.taxi)
+            if (_providerUser.providerType == ProviderType.taxi &&
+                    _pageSteps >= 3 ||
+                _providerUser.providerType == ProviderType.shuttle &&
+                    _pageSteps >= 4)
               SingleChildScrollView(
                   child: Container(
                       width: MediaQuery.of(context).size.width,
@@ -537,7 +585,9 @@ class _ProviderRegistrationScreenState
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    if (_providerUser.stations.length > 0)
+                                    if (_providerUser.stations.length > 0 &&
+                                        _providerUser.providerType ==
+                                            ProviderType.taxi)
                                       Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -592,19 +642,40 @@ class _ProviderRegistrationScreenState
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    RegisterNowWidget(
-                                      providerUser: _providerUser,
-                                      auth: auth,
-                                      isActive:
-                                          _providerUser.stations.length > 0,
-                                    )
+                                    if (_providerUser.providerType ==
+                                        ProviderType.taxi)
+                                      RegisterNowWidget(
+                                        providerUser: _providerUser,
+                                        auth: auth,
+                                        isActive:
+                                            _providerUser.stations.length > 0,
+                                      ),
+                                    if (_providerUser.providerType ==
+                                        ProviderType.shuttle)
+                                      RaisedButton(
+                                        onPressed: (_providerUser
+                                                    .stations.length !=
+                                                0)
+                                            ? () async {
+                                                try {
+                                                  _pageSteps = 4;
+                                                  _pageViewController.nextPage(
+                                                      duration: Duration(
+                                                          milliseconds: 300),
+                                                      curve: Curves.easeOut);
+                                                } catch (e) {}
+                                              }
+                                            : null,
+                                        child: Text('Weiter'),
+                                      )
                                   ])
                             ]))
                       ]))),
             // Fourth Page ------------------------------- 4 ----------------------------------
-            if (_pageSteps >= 3 &&
+            if (_pageSteps >= 4 &&
                     _providerUser.providerType == ProviderType.shuttle ||
-                _providerUser.providerType == ProviderType.sponsor)
+                _providerUser.providerType == ProviderType.sponsor ||
+                _providerUser.providerType == ProviderType.sponsorShuttle)
               SingleChildScrollView(
                 child: Container(
                     width: MediaQuery.of(context).size.width,
@@ -714,10 +785,10 @@ class _ProviderRegistrationScreenState
   }
 
   void addressSelectionFunction({
+    String userUid,
     String input,
     String id,
     bool isCompany,
-    List<dynamic> terms,
     bool isStartAddress,
     bool isEndAddress,
   }) {
@@ -729,10 +800,10 @@ class _ProviderRegistrationScreenState
   }
 
   void stationSelectionFunction(
-      {String input,
+      {String userUid,
+      String input,
       String id,
       bool isCompany,
-      List<dynamic> terms,
       bool isStartAddress,
       bool isEndAddress}) {
     _station = input;
@@ -743,10 +814,10 @@ class _ProviderRegistrationScreenState
   }
 
   void citySelectionFunction({
+    String userUid,
     String input,
     String id,
     bool isCompany,
-    List<dynamic> terms,
     bool isStartAddress,
     bool isEndAddress,
   }) {
@@ -756,7 +827,7 @@ class _ProviderRegistrationScreenState
   Future<void> _checkAddressStatus(String uid) async {
     try {
       final myStream = RoutingService().streamCheck(uid);
-      _subscription = myStream.listen((data) {
+      _routingStream = myStream.listen((data) {
         if (data.id != _defaultValueRouting.id && data.id != _previousDataId) {
           setState(() {
             _checkRoutingData = data;
@@ -767,7 +838,7 @@ class _ProviderRegistrationScreenState
           });
           _previousDataId = data.id;
           RoutingService().deleteCheck(uid);
-          //_subscription.cancel();
+          //_routingStream.cancel();
         }
       });
     } catch (e) {
@@ -780,17 +851,19 @@ class _ProviderRegistrationScreenState
     String station = '',
     bool remove = false,
   }) {
-    String scope = _providerUser.addresses[0];
+    String userAddress = _providerUser.addresses[0];
     // If Taxi the scope is the postcode
     // If not Taxi the scope is the full address
     if (_providerUser.providerType == ProviderType.taxi)
-      scope = getPartOfFormattedAddress(_providerUser.addresses[0], delimiter);
+      userAddress =
+          getPartOfFormattedAddress(_providerUser.addresses[0], delimiter);
     setState(() {
       if (station != '')
         _providerUser.stations = [
-          Delimiter.country + 'AT' + delimiter + scope + station,
+          userAddress + station,
         ];
-      _providerUser.addresses.add(Delimiter.country + 'AT' + delimiter + scope);
+      _providerUser.addresses
+          .add(Delimiter.country + 'AT' + delimiter + userAddress);
     });
   }
 

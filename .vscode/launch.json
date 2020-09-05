@@ -51,8 +51,8 @@
     {
       "name": "All Devices",
       "configurations": [
-        "Android",
-        "iPhone 8",
+        "iPhone 6",
+        "iPhone 11",
         "Samsung A10"
       ]
     }

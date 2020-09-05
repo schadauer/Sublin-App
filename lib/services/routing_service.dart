@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/utils/logging.dart';
+import 'package:flutter/foundation.dart' as Foundation;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:Sublin/models/routing.dart';
@@ -10,6 +14,9 @@ class RoutingService {
 
   Stream<Routing> streamRouting(uid) {
     try {
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingRoutings);
+      }
       return _database.collection('routings').doc(uid).snapshots().map((snap) {
         return Routing.fromMap(snap.data());
       });
@@ -24,6 +31,9 @@ class RoutingService {
 
   Stream<Routing> streamCheck(uid) {
     try {
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingRoutings);
+      }
       return _database.collection('check').doc(uid).snapshots().map((snap) {
         return Routing.fromMap(snap.data());
       });
@@ -42,6 +52,9 @@ class RoutingService {
       checkAddress = false,
       timestamp}) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingRoutings);
+      }
       // await _database.collection('routings').document(uid).delete();
       await _database.collection('requests').doc(uid).set({
         'endAddress': endAddress,
@@ -60,6 +73,9 @@ class RoutingService {
 
   Future<void> bookRoute({uid}) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingRoutings);
+      }
       await _database.collection('routings').doc(uid).update({
         'booked': true,
       });
@@ -70,6 +86,9 @@ class RoutingService {
 
   Future<Routing> getRoute(uid) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingRoutings);
+      }
       return _database.collection('routings').doc(uid).get().then((value) {
         return Routing.fromMap(value.data());
       });
@@ -80,24 +99,38 @@ class RoutingService {
   }
 
   Future<bool> checkIfProviderAvailable(uid) async {
-    return _database.collection('check').doc(uid).get().then((value) {
-      return value.data()['providerAvailable'];
-    });
+    try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingRoutings);
+      }
+      return _database.collection('check').doc(uid).get().then((value) {
+        return value.data()['providerAvailable'];
+      });
+    } catch (e) {
+      print('checkIfProviderAvailable catch' + e);
+      return null;
+    }
   }
 
   Future<void> deleteCheck(uid) async {
     try {
-      _database.collection('check').doc(uid).delete();
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingRoutings);
+      }
+      // _database.collection('check').doc(uid).delete();
     } catch (e) {
-      print(e);
+      print('deleteCheck catch' + e);
     }
   }
 
   Future<void> removeProviderFromRoute(uid) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingRoutings);
+      }
       _database.collection('routings').doc(uid).set({'provider': ''});
     } catch (e) {
-      print(e);
+      print('removeProviderFromRoute catch ' + e);
     }
   }
 }

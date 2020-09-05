@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:Sublin/models/delimiter.dart';
+import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/utils/logging.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
 import 'dart:convert';
+import 'package:flutter/foundation.dart' as Foundation;
 
 class GoogleMapService {
   final int sessionToken = new Random().hashCode;
@@ -25,6 +28,9 @@ class GoogleMapService {
     List formattedOutput;
     var client = http.Client();
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingAutocomplete);
+      }
       input = (restrictions != '')
           ? restrictions +
               ' ' +

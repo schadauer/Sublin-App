@@ -4,6 +4,7 @@ import 'package:Sublin/screens/address_input_screen.dart';
 
 class AddressSearchWidget extends StatefulWidget {
   //The following types are possible: start, end, train, bus, Sublin
+  final String userUid;
   final bool isStartAddress;
   final bool isEndAddress;
   final bool showGeolocationOption;
@@ -20,6 +21,7 @@ class AddressSearchWidget extends StatefulWidget {
   final bool isStation;
 
   AddressSearchWidget({
+    this.userUid,
     this.isStartAddress = false,
     this.isEndAddress = false,
     this.showGeolocationOption = false,
@@ -210,6 +212,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
         context,
         MaterialPageRoute(
             builder: (context) => AddressInputScreen(
+                  userUid: widget.userUid,
                   addressInputFunction: widget.addressInputFunction,
                   isEndAddress: widget.isEndAddress,
                   isStartAddress: widget.isStartAddress,

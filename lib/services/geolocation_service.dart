@@ -1,6 +1,9 @@
+import 'package:Sublin/models/preferences.dart';
 import 'package:Sublin/models/request.dart';
 import 'package:Sublin/services/google_map_service.dart';
+import 'package:Sublin/utils/logging.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart' as Foundation;
 
 class GeolocationService {
   Request _localRequest;
@@ -12,8 +15,10 @@ class GeolocationService {
     _geoLocationPermissionStatus = await isGeoLocationPermissionGranted();
     if (_geoLocationPermissionStatus == GeolocationStatus.granted) {
       try {
+        if (!Foundation.kReleaseMode) {
+          await sublinLogging(Preferences.intLoggingCoordinats);
+        }
         final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
         Position position = await geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.bestForNavigation);
         _currentLocationLatLng = position;
@@ -38,6 +43,9 @@ class GeolocationService {
 
   Future<String> _getPlacemarkFromCoordinates(double lat, double lng) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingCoordinats);
+      }
       String address;
       List<Placemark> placemark = await Geolocator()
           .placemarkFromCoordinates(lat, lng, localeIdentifier: 'de_DE');
@@ -53,6 +61,9 @@ class GeolocationService {
 
   Future<GeolocationStatus> isGeoLocationPermissionGranted() async {
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingCoordinats);
+      }
       GeolocationStatus geolocationStatus =
           await Geolocator().checkGeolocationPermissionStatus();
       return geolocationStatus;

@@ -109,8 +109,34 @@ class Routing {
                       timeEnd: data['sublinEndStep']['provider']['timeEnd'] ??
                           defaultValueProviderUser.timeEnd,
                     ),
-              sponsor:
-                  data['sublinEndStep']['sponsor'] ?? defaultValueStep.sponsor,
+              sponsor: (data['sublinEndStep']['sponsor'] == null)
+                  ? defaultValueStep.provider
+                  : ProviderUser(
+                      providerType: ProviderType.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'ProviderType.' +
+                                  data['sublinEndStep']['sponsor']
+                                      ['providerType'],
+                          orElse: () => defaultValueProviderUser.providerType),
+                      providerPlan: ProviderPlan.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'providerPlan.' +
+                                  data['sublinEndStep']['sponsor']
+                                      ['providerPlan'],
+                          orElse: () => defaultValueProviderUser.providerPlan),
+                      providerName: data['sublinEndStep']['sponsor']
+                              ['providerName'] ??
+                          defaultValueProviderUser.providerName,
+                      id: data['sublinEndStep']['sponsor']['id'] ??
+                          defaultValueProviderUser.id,
+                      timeStart: data['sublinEndStep']['sponsor']
+                              ['timeStart'] ??
+                          defaultValueProviderUser.timeStart,
+                      timeEnd: data['sublinEndStep']['sponsor']['timeEnd'] ??
+                          defaultValueProviderUser.timeEnd,
+                    ),
               distance: data['sublinEndStep']['distance'] ??
                   defaultValueStep.distance,
               duration: data['sublinEndStep']['duration'] ??
@@ -147,8 +173,34 @@ class Routing {
                       timeEnd: data['sublinStartStep']['provider']['timeEnd'] ??
                           defaultValueProviderUser.timeEnd,
                     ),
-              sponsor: data['sublinStartStep']['sponsor'] ??
-                  defaultValueStep.sponsor,
+              sponsor: (data['sublinStartStep']['sponsor'] == null)
+                  ? defaultValueStep.provider
+                  : ProviderUser(
+                      providerType: ProviderType.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'ProviderType.' +
+                                  data['sublinStartStep']['sponsor']
+                                      ['providerType'],
+                          orElse: () => defaultValueProviderUser.providerType),
+                      providerPlan: ProviderPlan.values.firstWhere(
+                          (e) =>
+                              e.toString() ==
+                              'providerPlan.' +
+                                  data['sublinStartStep']['sponsor']
+                                      ['providerPlan'],
+                          orElse: () => defaultValueProviderUser.providerPlan),
+                      providerName: data['sublinStartStep']['sponsor']
+                              ['providerName'] ??
+                          defaultValueProviderUser.providerName,
+                      id: data['sublinStartStep']['sponsor']['id'] ??
+                          defaultValueProviderUser.id,
+                      timeStart: data['sublinStartStep']['sponsor']
+                              ['timeStart'] ??
+                          defaultValueProviderUser.timeStart,
+                      timeEnd: data['sublinStartStep']['sponsor']['timeEnd'] ??
+                          defaultValueProviderUser.timeEnd,
+                    ),
               distance: data['sublinStartStep']['distance'] ??
                   defaultValueStep.distance,
               duration: data['sublinStartStep']['duration'] ??

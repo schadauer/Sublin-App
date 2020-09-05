@@ -1,21 +1,27 @@
+import 'package:Sublin/models/error.dart';
+import 'package:Sublin/models/preferences.dart';
 import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/utils/get_random_string.dart';
+import 'package:Sublin/utils/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user.dart' as sublin;
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
+import 'package:flutter/foundation.dart' as Foundation;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String errorMessage;
 
   ProviderUser providerUser = ProviderUser();
+  UserCredential userCredential;
 
   Stream<Auth> get userStream {
-    return _auth
-        .authStateChanges()
-        .map((User user) => _userfromFirebseUser(user));
+    return _auth.authStateChanges().map((User user) {
+      return _userfromFirebseUser(user);
+    });
   }
 
   Future<Auth> register({
@@ -34,19 +40,24 @@ class AuthService {
         userType: userType,
         isRegistrationCompleted: userType == UserType.user ? true : false,
       );
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      dynamic result =
+          await registerWithEmailAndPassword(email: email, password: password);
+      if (result is UserCredential)
+        userCredential = result;
+      else {
+        return null;
+      }
 
-      User authUser = result.user;
+      User authUser = userCredential.user;
       // await Firestore.instance.collection('users').document(user.uid).setData({
       //   // 'firstName': firstName,
       //   'email': email,
       // });
       await UserService().writeUserData(uid: authUser.uid, data: user);
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingUsers);
+      }
       await authUser.sendEmailVerification();
-
-      print(authUser.uid);
-      print(providerUser);
 
       if (userType == UserType.provider || userType == UserType.sponsor) {
         await ProviderService()
@@ -54,9 +65,29 @@ class AuthService {
       }
       return _userfromFirebseUser(authUser);
     } catch (e) {
-      print(e);
+      print(e.code);
       return null;
     }
+  }
+
+  Future<dynamic> registerWithEmailAndPassword(
+      {String email, String password}) async {
+    dynamic userCredential;
+    try {
+      print('register function');
+      userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (signUpError) {
+      print('Error email');
+      print(signUpError.code);
+      if (signUpError.code == 'email-already-in-use') {
+        userCredential = SublinError.emailAlreadyInUse;
+        print(userCredential);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return userCredential;
   }
 
   Future signIn({String email, String password}) async {
@@ -64,6 +95,9 @@ class AuthService {
       password = password ?? getRandomString(20);
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingUsers);
+      }
       User user = result.user;
       return user;
     } catch (e) {
@@ -88,6 +122,9 @@ class AuthService {
   Future signOut() async {
     try {
       await _auth.signOut();
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingAuth);
+      }
     } catch (e) {
       return null;
     }

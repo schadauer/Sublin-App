@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:Sublin/models/preferences.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/services/geolocation_service.dart';
+import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/bottom_navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -131,6 +133,11 @@ class _UserHomeScreenState extends State<UserHomeScreen>
                                       _localRequest.startAddress != '')
                                   ? () async {
                                       try {
+                                        await addBoolToSF(
+                                            Preferences.boolHasRatedTrip,
+                                            false);
+                                        await addBoolToSF(
+                                            Preferences.boolActiveRoute, true);
                                         await RoutingService().requestRoute(
                                           uid: auth.uid,
                                           startAddress:
@@ -168,7 +175,8 @@ class _UserHomeScreenState extends State<UserHomeScreen>
   }
 
   void addressInputFunction(
-      {String input,
+      {String userUid,
+      String input,
       String id,
       bool isCompany,
       List<dynamic> terms,

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
 
 class AddressInputScreen extends StatefulWidget {
+  final String userUid;
   final Function addressInputFunction;
   final String address;
   final bool isStartAddress;
@@ -20,6 +21,7 @@ class AddressInputScreen extends StatefulWidget {
   final bool isStation;
 
   AddressInputScreen({
+    this.userUid = '',
     this.addressInputFunction,
     this.address = '',
     this.isStartAddress = false,
@@ -78,6 +80,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                 cityOnly: widget.cityOnly,
                                 isStation: widget.isStation,
                                 addressTypes: widget.addressTypes);
+
                         if (this.mounted) {
                           setState(() {
                             _autocompleteResults = result ?? [];
@@ -119,11 +122,11 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                             return GestureDetector(
                               onTap: () {
                                 widget.addressInputFunction(
+                                    userUid: widget.userUid,
                                     input: _autocompleteResults[index]['name'],
                                     id: _autocompleteResults[index]['id'],
                                     isCompany: _autocompleteResults[index]
                                         ['isCompany'],
-                                    terms: _autocompleteResults[index]['terms'],
                                     isStartAddress: widget.isStartAddress,
                                     isEndAddress: widget.isEndAddress);
                                 Navigator.of(context).pop();

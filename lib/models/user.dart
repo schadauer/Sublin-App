@@ -9,6 +9,7 @@ class User {
   final String homeAddress;
   final UserType userType;
   final bool isRegistrationCompleted;
+  final List<dynamic> preferredAddresses;
   final List<Address> requestedAddresses;
 
   User({
@@ -19,6 +20,7 @@ class User {
     this.homeAddress = '',
     this.userType = UserType.user,
     this.isRegistrationCompleted = false,
+    this.preferredAddresses = const [],
     this.requestedAddresses = const [],
   });
 
@@ -42,6 +44,8 @@ class User {
             (e) => e.toString() == 'UserType.' + (data['userType'] ?? '')),
         isRegistrationCompleted: data['isRegistrationCompleted'] ??
             defaultValues.isRegistrationCompleted,
+        preferredAddresses:
+            data['preferredAddresses'] ?? defaultValues.preferredAddresses,
         requestedAddresses: (data['requestedAddresses'] == null)
             ? defaultValues.requestedAddresses
             : data['requestedAddresses'].map<Address>((address) {
@@ -71,6 +75,9 @@ class User {
       if (data.isRegistrationCompleted != null)
         'isProvider': data.isRegistrationCompleted ??
             defaultValues.isRegistrationCompleted,
+      if (data.preferredAddresses != null)
+        'preferredAddresses':
+            data.preferredAddresses ?? defaultValues.preferredAddresses,
       if (data.requestedAddresses != null)
         'requestAddresses':
             data.requestedAddresses ?? defaultValues.requestedAddresses

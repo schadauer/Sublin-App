@@ -3,10 +3,12 @@ import 'package:Sublin/screens/stream_provider_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:Sublin/services/auth_service.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import './models/auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // SharedPreferences.setMockInitialValues({});
   await Firebase.initializeApp();
   runApp(MyApp());
 }

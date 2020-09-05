@@ -30,23 +30,15 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
   int _now;
   // Timer _timer;
 
-  PersistentBottomSheetController _controller;
-
   @override
   void initState() {
     super.initState();
     _now = DateTime.now().millisecondsSinceEpoch;
   }
 
-  void _bottomSheet() {
-    _controller = showBottomSheet(
-        context: context,
-        builder: (context) => Container(child: Text('asdfs')));
-  }
-
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<Auth>(context);
+    // final auth = Provider.of<Auth>(context);
     final openBookings = Provider.of<List<BookingOpen>>(context);
     final confirmedBookings = Provider.of<List<BookingConfirmed>>(context);
     final completedBookings = Provider.of<List<BookingCompleted>>(context);

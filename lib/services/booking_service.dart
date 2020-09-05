@@ -3,13 +3,19 @@ import 'dart:async';
 import 'package:Sublin/models/booking_completed.dart';
 import 'package:Sublin/models/booking_confirmed.dart';
 import 'package:Sublin/models/booking_open.dart';
+import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/utils/logging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart' as Foundation;
 
 class BookingService {
   final FirebaseFirestore _database = FirebaseFirestore.instance;
 
   Stream<List<BookingOpen>> streamOpenBookings(uid) {
     try {
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingBookings);
+      }
       return _database
           .collection('bookings')
           .doc(uid)
@@ -26,6 +32,9 @@ class BookingService {
 
   Stream<List<BookingConfirmed>> streamConfirmedBookings(uid) {
     try {
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingBookings);
+      }
       return _database
           .collection('bookings')
           .doc(uid)
@@ -42,6 +51,9 @@ class BookingService {
 
   Stream<List<BookingCompleted>> streamCompletedBookings(uid) {
     try {
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingBookings);
+      }
       return _database
           .collection('bookings')
           .doc(uid)
@@ -63,6 +75,9 @@ class BookingService {
     int index,
   }) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingBookings);
+      }
       _database
           .collection('bookings')
           .doc(providerId)
@@ -85,6 +100,9 @@ class BookingService {
     int index,
   }) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingBookings);
+      }
       _database
           .collection('bookings')
           .doc(providerId)
@@ -104,6 +122,9 @@ class BookingService {
   Future<void> noShowBooking(
       {providerId, String userId, bool isSublinEndStep, int index}) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        sublinLogging(Preferences.intLoggingBookings);
+      }
       _database
           .collection('bookings')
           .doc(providerId)

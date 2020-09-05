@@ -1,5 +1,7 @@
+import 'package:Sublin/models/error.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Sublin/models/user_type.dart';
@@ -31,6 +33,7 @@ class _UserRegisterState extends State<UserRegister> {
   TextEditingController _emailTextController = TextEditingController();
   TextEditingController _passwortTextController = TextEditingController();
   TextEditingController _firstNameTextController = TextEditingController();
+  bool _emailAlreadyInUse = false;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -148,7 +151,9 @@ class _UserRegisterState extends State<UserRegister> {
                                     validator: (val) => val.length < 2 ||
                                             !isEmailFormat(val)
                                         ? 'Bitte gib eine gültige E-Mailadresse an'
-                                        : null,
+                                        : _emailAlreadyInUse
+                                            ? 'Email existiert bereits'
+                                            : null,
                                     onTap: () {
                                       setState(() {
                                         textFocus = true;
@@ -244,16 +249,41 @@ class _UserRegisterState extends State<UserRegister> {
                                               .button,
                                         )),
                                     RaisedButton(
-                                      onPressed: () {
-                                        if (_formKey.currentState.validate()) {
-                                          FocusScope.of(context).unfocus();
-                                          setState(() {
-                                            _pageStep = 1;
-                                          });
-                                          _pageViewController.nextPage(
-                                              duration:
-                                                  Duration(milliseconds: 300),
-                                              curve: Curves.easeOut);
+                                      onPressed: () async {
+                                        try {
+                                          if (_formKey.currentState
+                                              .validate()) {
+                                            FocusScope.of(context).unfocus();
+                                            // dynamic register = await AuthService()
+                                            //     .registerWithEmailAndPassword(
+                                            //         email: _emailTextController
+                                            //             .text,
+                                            //         password:
+                                            //             _passwortTextController
+                                            //                 .text);
+
+                                            setState(() {
+                                              _pageStep = 1;
+                                            });
+                                            _pageViewController.nextPage(
+                                                duration:
+                                                    Duration(milliseconds: 300),
+                                                curve: Curves.easeOut);
+
+                                            // if (register is UserCredential) {
+                                            // } else if (register ==
+                                            //     SublinError.emailAlreadyInUse) {
+                                            //   setState(() {
+                                            //     _emailAlreadyInUse = true;
+                                            //   });
+                                            //   print(
+                                            //       'Email ist bereits vorhanden');
+                                            // } else {
+                                            //   print('something Went wrong');
+                                            // }
+                                          }
+                                        } catch (e) {
+                                          print(e);
                                         }
                                       },
                                       child: Text('Weiter'),

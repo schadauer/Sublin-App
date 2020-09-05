@@ -1,11 +1,12 @@
 import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/direction.dart';
+import 'package:Sublin/models/preferences.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/models/user_type.dart';
-import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/screens/user_home_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
+import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
@@ -105,6 +106,8 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
           ));
     } else if (isRouteCompleted(routingService)) {
       return Scaffold(
+          bottomNavigationBar: BottomNavigationBarWidget(
+              isProvider: user.userType == UserType.provider),
           appBar: AppbarWidget(title: 'Fahrt abgeschlossen'),
           endDrawer: DrawerSideNavigationWidget(
             authService: AuthService(),
@@ -117,7 +120,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'Deine Fahrt ist abgeschlosssen',
+                    'Deine letzte Fahrt ist abgeschlossen',
                   ),
                   SizedBox(
                     height: 10,
@@ -125,6 +128,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                   RaisedButton(
                     onPressed: () async {
                       try {
+                        addBoolToSF(Preferences.boolHasRatedTrip, true);
                         await Navigator.pushReplacementNamed(
                             context, UserHomeScreen.routeName);
                       } catch (e) {

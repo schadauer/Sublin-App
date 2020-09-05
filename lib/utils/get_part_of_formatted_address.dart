@@ -1,6 +1,7 @@
 // The address pattern is [address]__[postcode]___[station]
 import 'package:Sublin/utils/get_next_delimiter.dart';
 
+// Returns only the part which is requested
 String getPartOfFormattedAddress(String formattedAddress, String delimiter) {
   if (formattedAddress != '' &&
       formattedAddress != null &&
