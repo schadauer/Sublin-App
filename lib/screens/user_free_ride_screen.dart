@@ -1,8 +1,9 @@
 import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/services/provider_service.dart';
 import 'package:Sublin/services/user_service.dart';
-import 'package:Sublin/widgets/address_search_widget.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/bottom_navigation_bar_widget.dart';
 import 'package:Sublin/widgets/city_selector.dart';
@@ -35,38 +36,40 @@ class _UserFreeRideScreenState extends State<UserFreeRideScreen> {
       bottomNavigationBar:
           BottomNavigationBarWidget(isProvider: user.userType != UserType.user),
       appBar: AppbarWidget(title: 'Deine Freifahrten'),
-      floatingActionButton: MyFloatingActionButton(),
+      floatingActionButton: MyFloatingActionButton(user: user),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    if (user.homeAddress == '')
-                      AutoSizeText(
-                        'Bitte gib deine Orte an, die du gerne ohne eigenes Auto besuchen möchtest. Sobald Angebote für diese Orte verfügbar sind, wirst du hier benachrichtigt',
-                        style: Theme.of(context).textTheme.bodyText1,
-                        maxLines: 8,
-                      ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                child: FutureBuilder<List<ProviderUser>>(
+                    future: ProviderService().getProviders(user.communes),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        snapshot.data
+                            .map((e) => print(e.providerName))
+                            .toList();
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            // if (user.homeAddress == '')
+                            AutoSizeText(
+                              'Bitte gib deine Orte an, die du gerne ohne eigenes Auto besuchen möchtest. Sobald Angebote für diese Orte verfügbar sind, wirst du hier benachrichtigt',
+                              style: Theme.of(context).textTheme.bodyText1,
+                              maxLines: 8,
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
 
-                    // AddressSearchWidget(
-                    //   userUid: auth.uid,
-                    //   addressInputFunction: addressInputFunction,
-                    //   isEndAddress: false,
-                    //   isStartAddress: true,
-                    //   isCheckOnly: true,
-                    //   addressTypes: '',
-                    //   address: user.homeAddress,
-                    //   endHintText: 'Deine Wohnadresse',
-                    // ),
-                  ],
-                ),
+                            // ),
+                          ],
+                        );
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    }),
               ),
             ],
           ),
@@ -104,7 +107,11 @@ class MyFloatingActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
-      label: Text('Orte hinzufügen'),
+      label: Text(
+        'Orte hinzufügen',
+        style: Theme.of(context).textTheme.headline1,
+      ),
+      elevation: 1.0,
       icon: Icon(Icons.add),
       backgroundColor: Theme.of(context).secondaryHeaderColor,
       onPressed: () {
@@ -112,7 +119,8 @@ class MyFloatingActionButton extends StatelessWidget {
             context: context,
             builder: (context) => Container(
                   child: CitySelector(
-                      addresses: user.preferredAddresses, stations: []),
+                    providerAddress: false,
+                  ),
                 ));
       },
     );

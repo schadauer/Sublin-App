@@ -7,7 +7,7 @@ import 'package:Sublin/models/preferences.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:Sublin/models/provider_user.dart';
 
-class ProviderService {
+class ProviderUserService {
   final FirebaseFirestore _database = FirebaseFirestore.instance;
 
   Stream<ProviderUser> streamProviderUserData(String uid) {

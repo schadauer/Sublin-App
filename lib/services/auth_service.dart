@@ -34,12 +34,6 @@ class AuthService {
     // String providerType,
   }) async {
     try {
-      final sublin.User user = sublin.User(
-        email: email,
-        firstName: firstName,
-        userType: userType,
-        isRegistrationCompleted: userType == UserType.user ? true : false,
-      );
       dynamic result =
           await registerWithEmailAndPassword(email: email, password: password);
       if (result is UserCredential)
@@ -47,12 +41,16 @@ class AuthService {
       else {
         return null;
       }
-
       User authUser = userCredential.user;
-      // await Firestore.instance.collection('users').document(user.uid).setData({
-      //   // 'firstName': firstName,
-      //   'email': email,
-      // });
+
+      final sublin.User user = sublin.User(
+        uid: authUser.uid,
+        email: email,
+        firstName: firstName,
+        userType: userType,
+        isRegistrationCompleted: userType == UserType.user ? true : false,
+      );
+
       await UserService().writeUserData(uid: authUser.uid, data: user);
       if (!Foundation.kReleaseMode) {
         sublinLogging(Preferences.intLoggingUsers);
@@ -60,7 +58,7 @@ class AuthService {
       await authUser.sendEmailVerification();
 
       if (userType == UserType.provider || userType == UserType.sponsor) {
-        await ProviderService()
+        await ProviderUserService()
             .setProviderUserData(uid: authUser.uid, data: providerUser);
       }
       return _userfromFirebseUser(authUser);

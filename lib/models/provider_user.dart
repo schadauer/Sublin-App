@@ -11,7 +11,7 @@ class ProviderUser {
   String providerName;
   String id;
   List<String> targetGroup;
-  List<String> addresses;
+  List<String> communes;
   List<String> postcodes;
   List<String> stations;
   List<String> partners;
@@ -28,7 +28,7 @@ class ProviderUser {
     this.providerName: '',
     this.id: '',
     this.targetGroup: const [],
-    this.addresses: const [],
+    this.communes: const [],
     this.postcodes: const [],
     this.stations: const [],
     this.partners: const [],
@@ -59,9 +59,9 @@ class ProviderUser {
           : data['targetGroup'].map<String>((targetG) {
               return targetG.toString();
             }).toList(),
-      addresses: (data['addresses'] == null)
+      communes: (data['communes'] == null)
           ? defaultValues.postcodes
-          : data['addresses'].map<String>((address) {
+          : data['communes'].map<String>((address) {
               return address.toString();
             }).toList(),
       postcodes: (data['postcodes'] == null)
@@ -99,7 +99,7 @@ class ProviderUser {
       if (data.providerName != null) 'providerName': data.providerName,
       if (data.id != null) 'id': data.id,
       if (data.targetGroup != null) 'targetGroup': data.targetGroup,
-      if (data.addresses != null) 'addresses': data.addresses,
+      if (data.communes != null) 'communes': data.communes,
       if (data.postcodes != null) 'postcodes': data.postcodes,
       if (data.stations != null) 'stations': data.stations,
       if (data.partners != null) 'partners': data.partners,

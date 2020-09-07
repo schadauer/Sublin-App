@@ -18,6 +18,10 @@ ThemeData themeData(context) {
       textTheme: ButtonTextTheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: Color.fromRGBO(0, 133, 74, 1),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+    ),
     dividerTheme: DividerThemeData(
       space: 70,
       thickness: 1,

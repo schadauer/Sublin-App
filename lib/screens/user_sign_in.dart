@@ -101,17 +101,17 @@ class _UserSignInState extends State<UserSignIn> {
                                 child: Text('Noch nicht registriert?')),
                             RaisedButton(
                               onPressed: () async {
-                                setState(() {
-                                  //isLoading = true;
-                                });
+                                // setState(() {
+                                //   //isLoading = true;
+                                // });
                                 // if (password == '')
                                 //   await _auth.signInWithEmailAndLink(email);
                                 if (password != '')
                                   await _auth.signIn(
                                       email: email, password: password);
-                                setState(() {
-                                  //isLoading = false;
-                                });
+                                // setState(() {
+                                //   //isLoading = false;
+                                // });
                               },
                               child: Text('Einloggen'),
                             ),

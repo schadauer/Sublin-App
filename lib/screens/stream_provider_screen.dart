@@ -62,7 +62,7 @@ class AuthScreen extends StatelessWidget {
         ),
         StreamProvider<ProviderUser>.value(
           initialData: ProviderUser(),
-          value: ProviderService().streamProviderUserData(user.uid),
+          value: ProviderUserService().streamProviderUserData(user.uid),
           lazy: true,
         )
       ], child: RoutingScreen());

@@ -2,6 +2,7 @@ import 'package:Sublin/models/address.dart';
 import 'package:Sublin/models/user_type.dart';
 
 class User {
+  final String uid;
   final bool streamingOn;
   final String email;
   final String firstName;
@@ -9,10 +10,11 @@ class User {
   final String homeAddress;
   final UserType userType;
   final bool isRegistrationCompleted;
-  final List<dynamic> preferredAddresses;
+  final List<dynamic> communes;
   final List<Address> requestedAddresses;
 
   User({
+    this.uid = '',
     this.streamingOn,
     this.email = '',
     this.firstName = '',
@@ -20,7 +22,7 @@ class User {
     this.homeAddress = '',
     this.userType = UserType.user,
     this.isRegistrationCompleted = false,
-    this.preferredAddresses = const [],
+    this.communes = const [],
     this.requestedAddresses = const [],
   });
 
@@ -36,6 +38,7 @@ class User {
     data = data ?? {};
     return User(
         streamingOn: true,
+        uid: data['uid'] ?? defaultValues.uid,
         email: data['email'] ?? defaultValues.email,
         firstName: data['firstName'] ?? defaultValues.firstName,
         secondName: data['secondName'] ?? defaultValues.secondName,
@@ -44,8 +47,7 @@ class User {
             (e) => e.toString() == 'UserType.' + (data['userType'] ?? '')),
         isRegistrationCompleted: data['isRegistrationCompleted'] ??
             defaultValues.isRegistrationCompleted,
-        preferredAddresses:
-            data['preferredAddresses'] ?? defaultValues.preferredAddresses,
+        communes: data['communes'] ?? defaultValues.communes,
         requestedAddresses: (data['requestedAddresses'] == null)
             ? defaultValues.requestedAddresses
             : data['requestedAddresses'].map<Address>((address) {
@@ -63,6 +65,7 @@ class User {
         data.userType != null ? data.userType.toString() : '';
 
     return {
+      if (data.uid != null) 'uid': data.uid ?? defaultValues.uid,
       if (data.email != null) 'email': data.email ?? defaultValues.email,
       if (data.firstName != null)
         'firstName': data.firstName ?? defaultValues.firstName,
@@ -73,13 +76,12 @@ class User {
       if (userTypeString != '')
         'userType': userTypeString.substring(userTypeString.indexOf('.') + 1),
       if (data.isRegistrationCompleted != null)
-        'isProvider': data.isRegistrationCompleted ??
+        'isRegistrationCompleted': data.isRegistrationCompleted ??
             defaultValues.isRegistrationCompleted,
-      if (data.preferredAddresses != null)
-        'preferredAddresses':
-            data.preferredAddresses ?? defaultValues.preferredAddresses,
+      if (data.communes != null)
+        'communes': data.communes ?? defaultValues.communes,
       if (data.requestedAddresses != null)
-        'requestAddresses':
+        'requestedAddresses':
             data.requestedAddresses ?? defaultValues.requestedAddresses
     };
   }

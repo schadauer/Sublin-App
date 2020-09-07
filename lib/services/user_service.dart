@@ -52,6 +52,20 @@ class UserService {
     }
   }
 
+  // Future<List<String>> getPreferredAddresses(String uid) async {
+  //   try {
+  //     if (!Foundation.kReleaseMode) {
+  //       await sublinLogging(Preferences.intLoggingUsers);
+  //     }
+  //     return await _database.collection('users').doc(uid).get().then((value) {
+  //       return User.fromJson(value.data());
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //     return null;
+  //   }
+  // }
+
   Future<void> writeUserData({String uid, User data}) async {
     try {
       if (!Foundation.kReleaseMode) {

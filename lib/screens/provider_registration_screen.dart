@@ -109,7 +109,7 @@ class _ProviderRegistrationScreenState
           controller: _pageViewController,
           children: <Widget>[
             // First Page ------------------------------- 1 ----------------------------------
-            // 1. 'addressInputFunction' sets the 'addresses' field of the '_userProvider' object
+            // 1. 'addressInputFunction' sets the 'communes' field of the '_userProvider' object
             // 2. when the user clicks the button a call to RoutingService().requestRoute is sent that
             // triggers a 'routing' service in the backend
             // 3. '_checkAddressStatus opens a stream 'RoutingService().streamCheck(uid)' to check for the route in the 'check' collection of the database
@@ -171,7 +171,7 @@ class _ProviderRegistrationScreenState
                                             _station = '';
                                             _showProgressIndicator = true;
                                             _providerUser = ProviderUser();
-                                            _providerUser.addresses = [
+                                            _providerUser.communes = [
                                               _request.endAddress
                                             ];
                                           });
@@ -336,10 +336,10 @@ class _ProviderRegistrationScreenState
                                             if (_providerUser.providerType ==
                                                     ProviderType.sponsor &&
                                                 cityFormattedAddress != '' &&
-                                                !_providerUser.addresses
+                                                !_providerUser.communes
                                                     .contains(
                                                         cityFormattedAddress))
-                                              _providerUser.addresses.add(
+                                              _providerUser.communes.add(
                                                   getCityFormattedAddress(
                                                       _checkRoutingData
                                                           .endAddress));
@@ -724,8 +724,8 @@ class _ProviderRegistrationScreenState
                               ProviderSelectionWidget(
                                 title: 'Alle',
                                 text: user.userType == UserType.provider
-                                    ? 'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getPartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beautragen.'
-                                    : 'Alle Personen, die den Transferservice zwischen Bahnhof und den Adressen des Gemeindegebiets ${getPartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beauftragen',
+                                    ? 'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getPartOfFormattedAddress(_providerUser.communes[0], Delimiter.city)} beautragen.'
+                                    : 'Alle Personen, die den Transferservice zwischen Bahnhof und den Adressen des Gemeindegebiets ${getPartOfFormattedAddress(_providerUser.communes[0], Delimiter.city)} beauftragen',
                                 providerPlanSelection: ProviderPlan.all,
                                 selectionFunction:
                                     providerPlanSelectionFunction,
@@ -851,18 +851,18 @@ class _ProviderRegistrationScreenState
     String station = '',
     bool remove = false,
   }) {
-    String userAddress = _providerUser.addresses[0];
+    String userAddress = _providerUser.communes[0];
     // If Taxi the scope is the postcode
     // If not Taxi the scope is the full address
     if (_providerUser.providerType == ProviderType.taxi)
       userAddress =
-          getPartOfFormattedAddress(_providerUser.addresses[0], delimiter);
+          getPartOfFormattedAddress(_providerUser.communes[0], delimiter);
     setState(() {
       if (station != '')
         _providerUser.stations = [
           userAddress + station,
         ];
-      _providerUser.addresses
+      _providerUser.communes
           .add(Delimiter.country + 'AT' + delimiter + userAddress);
     });
   }
@@ -882,7 +882,7 @@ class _ProviderRegistrationScreenState
     if (cityExists == false) {
       setState(() {
         _providerUser.stations.add(formattedAddress + _station);
-        _providerUser.addresses.add(formattedAddress);
+        _providerUser.communes.add(formattedAddress);
       });
     }
   }
@@ -926,19 +926,19 @@ class _ProviderRegistrationScreenState
     return timeDate;
   }
 
-  Widget _getCitiesFromStationsWidget(List<String> addresses) {
-    if (addresses != null && addresses.length > 0) {
+  Widget _getCitiesFromStationsWidget(List<String> communes) {
+    if (communes != null && communes.length > 0) {
       return Wrap(
           direction: Axis.horizontal,
           alignment: WrapAlignment.spaceBetween,
           spacing: 8.0,
-          children: addresses.map((address) {
+          children: communes.map((address) {
             String city = getPartOfFormattedAddress(address, Delimiter.city);
             return Chip(
               label: Text(city),
               onDeleted: city ==
                       getPartOfFormattedAddress(
-                          _providerUser.addresses[0], Delimiter.city)
+                          _providerUser.communes[0], Delimiter.city)
                   ? null
                   : () => _removeCityFromStation(city),
             );
@@ -971,7 +971,7 @@ class RegisterNowWidget extends StatelessWidget {
           onPressed: isActive
               ? () {
                   _providerUser.operationRequested = true;
-                  ProviderService().updateProviderUserData(
+                  ProviderUserService().updateProviderUserData(
                       uid: auth.uid, data: _providerUser);
                 }
               : null,
