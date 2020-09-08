@@ -2,7 +2,7 @@
 import 'package:Sublin/models/delimiter.dart';
 import 'package:Sublin/utils/get_next_delimiter.dart';
 
-// Returns only the part which is requested
+// Returns only the name of the city as string
 String getCityFormattedAddress(String formattedAddress) {
   if (formattedAddress != '' &&
       formattedAddress != null &&
@@ -14,7 +14,6 @@ String getCityFormattedAddress(String formattedAddress) {
         ? formattedAddress.indexOf(getNextDelimiter(
             delimiter: Delimiter.city, formattedAddress: formattedAddress))
         : formattedAddress.length;
-    print(formattedAddress.substring(0, nextDelimiterIndex));
     return formattedAddress.substring(0, nextDelimiterIndex);
   } else {
     return '';

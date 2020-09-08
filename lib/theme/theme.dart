@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
-const Color backgroundColor = Color.fromRGBO(245, 245, 245, 1);
+class ThemeConstants {
+  static Color backgroundColor = Color.fromRGBO(245, 245, 245, 1);
+  static Color sublinMainColor = Color.fromRGBO(0, 133, 74, 1);
+  static Color sublinMainBackgroundColor = Color.fromRGBO(0, 174, 99, 1);
+  static TextStyle mainButton = TextStyle(
+    fontSize: 16,
+    fontFamily: 'Lato',
+    color: Colors.white,
+    fontWeight: FontWeight.normal,
+  );
+}
 
 ThemeData themeData(context) {
   return ThemeData(
@@ -10,11 +20,11 @@ ThemeData themeData(context) {
     primaryColor: Color.fromRGBO(216, 214, 204, 1),
     secondaryHeaderColor: Color.fromRGBO(0, 174, 99, 0.6),
     brightness: Brightness.light,
-    accentColor: backgroundColor,
+    accentColor: ThemeConstants.backgroundColor,
     accentColorBrightness: Brightness.dark,
     splashColor: Color.fromRGBO(3, 174, 99, 1),
     buttonTheme: ButtonTheme.of(context).copyWith(
-      buttonColor: Color.fromRGBO(0, 133, 74, 1),
+      buttonColor: ThemeConstants.sublinMainColor,
       textTheme: ButtonTextTheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     ),
@@ -32,7 +42,7 @@ ThemeData themeData(context) {
     canvasColor: Colors.white,
     errorColor: Colors.red[400],
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: backgroundColor,
+      fillColor: ThemeConstants.backgroundColor,
       filled: true,
       contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       border: OutlineInputBorder(),
@@ -50,12 +60,7 @@ ThemeData themeData(context) {
         height: 1.3,
         color: Colors.black,
       ),
-      button: TextStyle(
-        fontSize: 18,
-        fontFamily: 'Lato',
-        color: Color.fromRGBO(0, 133, 74, 1),
-        fontWeight: FontWeight.normal,
-      ),
+      button: ThemeConstants.mainButton,
       bodyText1: TextStyle(
         fontSize: 16,
         fontFamily: 'Lato',
@@ -65,6 +70,7 @@ ThemeData themeData(context) {
       ),
       bodyText2: TextStyle(
         fontSize: 16,
+        fontFamily: 'Lato',
         color: Colors.black,
         fontWeight: FontWeight.normal,
       ),
@@ -81,15 +87,16 @@ ThemeData themeData(context) {
         fontFamily: 'Lato',
       ),
       headline3: TextStyle(
-        fontSize: 20,
+        fontSize: 16,
         color: Colors.black,
         fontWeight: FontWeight.normal,
-        fontFamily: 'Open Sans',
+        fontFamily: 'Lato',
       ),
       headline4: TextStyle(
         fontSize: 16,
         color: Colors.black,
         fontWeight: FontWeight.bold,
+        fontFamily: 'Lato',
       ),
     ),
     fontFamily: 'Open Sans',

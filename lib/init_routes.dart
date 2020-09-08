@@ -5,25 +5,25 @@ import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/provider_partner_screen.dart';
 import 'package:Sublin/screens/provider_target_group_screen.dart';
 import 'package:Sublin/screens/user_profile_screen.dart';
-import 'package:Sublin/screens/user_free_ride_screen.dart';
+import 'package:Sublin/screens/user_my_sublin_screen.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
 import 'package:Sublin/screens/provider_registration_screen.dart';
-import 'package:Sublin/screens/user_home_screen.dart';
+import 'package:Sublin/screens/user_request_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/loading_widget.dart';
 
-class RoutingScreen extends StatefulWidget {
+class InitRoutes extends StatefulWidget {
   static const routeName = '/homeScreen';
   @override
-  _RoutingScreenState createState() => _RoutingScreenState();
+  _InitRoutesState createState() => _InitRoutesState();
 }
 
-class _RoutingScreenState extends State<RoutingScreen> {
+class _InitRoutesState extends State<InitRoutes> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -42,9 +42,9 @@ class _RoutingScreenState extends State<RoutingScreen> {
         ProviderPartnerScreen.routeName: (context) => ProviderPartnerScreen(),
         ProviderTargetGroupScreen.routeName: (context) =>
             ProviderTargetGroupScreen(),
-        UserHomeScreen.routeName: (context) => UserHomeScreen(),
+        UserRequestScreen.routeName: (context) => UserRequestScreen(),
         UserProfileScreen.routeName: (context) => UserProfileScreen(),
-        UserFreeRideScreen.routeName: (context) => UserFreeRideScreen(),
+        UserMySublinScreen.routeName: (context) => UserMySublinScreen(),
         ProviderRegistrationScreen.routeName: (context) =>
             ProviderRegistrationScreen(),
         UserRoutingScreen.routeName: (context) => UserRoutingScreen(),
@@ -58,7 +58,7 @@ class _RoutingScreenState extends State<RoutingScreen> {
               : ProviderRegistrationScreen()
           : routingService.booked == true && !isRouteCompleted(routingService)
               ? UserRoutingScreen()
-              : UserHomeScreen(),
+              : UserRequestScreen(),
     );
   }
 

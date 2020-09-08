@@ -3,7 +3,7 @@ import 'package:Sublin/models/direction.dart';
 import 'package:Sublin/models/preferences.dart';
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/models/user_type.dart';
-import 'package:Sublin/screens/user_home_screen.dart';
+import 'package:Sublin/screens/user_request_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
@@ -93,7 +93,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                     onPressed: () async {
                       try {
                         await Navigator.pushReplacementNamed(
-                            context, UserHomeScreen.routeName);
+                            context, UserRequestScreen.routeName);
                       } catch (e) {
                         print(e);
                       }
@@ -130,7 +130,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                       try {
                         addBoolToSF(Preferences.boolHasRatedTrip, true);
                         await Navigator.pushReplacementNamed(
-                            context, UserHomeScreen.routeName);
+                            context, UserRequestScreen.routeName);
                       } catch (e) {
                         print(e);
                       }
@@ -479,7 +479,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                           // await RoutingService().removeProviderFromRoute(user.uid);
                                           Navigator.pushReplacementNamed(
                                               context,
-                                              UserHomeScreen.routeName);
+                                              UserRequestScreen.routeName);
                                         },
                                         child: Text('Route ändern')),
                                     RaisedButton(

@@ -5,7 +5,7 @@ import 'package:Sublin/models/user.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
-import 'package:Sublin/utils/get_part_of_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +53,7 @@ class _CitySelectorState extends State<CitySelector> {
                           spacing: 10.0,
                           children:
                               snapshot.data.communes.map<Widget>((address) {
-                            String city = getPartOfFormattedAddress(
+                            String city = getReadablePartOfFormattedAddress(
                                 address, Delimiter.city);
                             return Chip(
                                 padding: EdgeInsets.all(8.0),
@@ -174,9 +174,9 @@ class _CitySelectorState extends State<CitySelector> {
     bool cityExists = false;
     providerUser.stations.map((station) {
       String cityFromFormattedAddress =
-          getPartOfFormattedAddress(formattedAddress, Delimiter.city);
+          getReadablePartOfFormattedAddress(formattedAddress, Delimiter.city);
       String cityFromStation =
-          getPartOfFormattedAddress(station, Delimiter.city);
+          getReadablePartOfFormattedAddress(station, Delimiter.city);
 
       if (cityFromFormattedAddress == cityFromStation) {
         cityExists = true;

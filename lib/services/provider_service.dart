@@ -1,13 +1,19 @@
 import 'dart:async';
 
+import 'package:Sublin/models/preferences.dart';
 import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/utils/logging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart' as Foundation;
 
 class ProviderService {
   final FirebaseFirestore _database = FirebaseFirestore.instance;
 
-  Future<List<ProviderUser>> getProviders(List<dynamic> communes) {
+  Future<List<ProviderUser>> getProviders(List<dynamic> communes) async {
     try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingProviderUser);
+      }
       return _database
           .collection('providers')
           .where('addresses', arrayContainsAny: communes)

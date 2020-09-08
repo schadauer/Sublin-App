@@ -1,6 +1,7 @@
 enum Preferences {
   boolHasRatedTrip,
   boolActiveRoute,
+  intCurrentScreen,
   intLoggingAuth,
   intLoggingUsers,
   intLoggingRoutings,
@@ -9,4 +10,5 @@ enum Preferences {
   intLoggingBookings,
   intLoggingAutocomplete,
   intLoggingCoordinats,
+  intLoggingProviderUser,
 }

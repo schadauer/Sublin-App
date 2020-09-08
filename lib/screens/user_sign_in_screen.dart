@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:Sublin/widgets/loading_widget.dart';
 import 'package:Sublin/services/auth_service.dart';
 
-class UserSignIn extends StatefulWidget {
-  static const routeName = '/signIn';
+class UserSignInScreen extends StatefulWidget {
+  static const routeName = '/signInScreen';
   @override
-  _UserSignInState createState() => _UserSignInState();
+  _UserSignInScreenState createState() => _UserSignInScreenState();
 }
 
-class _UserSignInState extends State<UserSignIn> {
+class _UserSignInScreenState extends State<UserSignInScreen> {
   bool isLoading = false;
   bool textFocus = false;
   final AuthService _auth = AuthService();

@@ -1,20 +1,21 @@
 import 'package:Sublin/models/delimiter.dart';
-import 'package:Sublin/utils/get_part_of_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 
 String convertFormattedAddressToReadableAddress(String formattedAddress) {
   if (formattedAddress != '') {
     String station =
-        getPartOfFormattedAddress(formattedAddress, Delimiter.station);
+        getReadablePartOfFormattedAddress(formattedAddress, Delimiter.station);
     station = station != '' ? station + ', ' : '';
     String company =
-        getPartOfFormattedAddress(formattedAddress, Delimiter.company);
+        getReadablePartOfFormattedAddress(formattedAddress, Delimiter.company);
     company = company != '' ? company + ', ' : '';
     String street =
-        getPartOfFormattedAddress(formattedAddress, Delimiter.street);
+        getReadablePartOfFormattedAddress(formattedAddress, Delimiter.street);
     String number =
-        getPartOfFormattedAddress(formattedAddress, Delimiter.number);
+        getReadablePartOfFormattedAddress(formattedAddress, Delimiter.number);
     street = number != '' ? street + ' ' : street;
-    String city = getPartOfFormattedAddress(formattedAddress, Delimiter.city);
+    String city =
+        getReadablePartOfFormattedAddress(formattedAddress, Delimiter.city);
     city = street != '' ? ', ' + city : city;
     return station + company + street + number + city;
   } else {

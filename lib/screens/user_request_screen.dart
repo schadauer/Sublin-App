@@ -23,20 +23,16 @@ import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 
-class UserHomeScreen extends StatefulWidget {
-  static const routeName = '/userHomeScreen';
+class UserRequestScreen extends StatefulWidget {
+  static const routeName = '/userRequestScreen';
   @override
-  _UserHomeScreenState createState() => _UserHomeScreenState();
+  _UserRequestScreenState createState() => _UserRequestScreenState();
 }
 
-class _UserHomeScreenState extends State<UserHomeScreen>
+class _UserRequestScreenState extends State<UserRequestScreen>
     with WidgetsBindingObserver {
   Request _localRequest = Request();
   GeolocationStatus _geolocationStatus;
-  // bool _geoLocationPermissionIsGranted = false;
-  // Position _currentLocationLatLng;
-  // List _currentLocationAutocompleteResults;
-  // AppLifecycleState _notification;
 
   @override
   void initState() {

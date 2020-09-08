@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 
 import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/widgets/provider_selection_widget.dart';
-import 'package:Sublin/screens/user_sign_in.dart';
+import 'package:Sublin/screens/user_sign_in_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/utils/is_email_format.dart';
 
-class UserRegister extends StatefulWidget {
+class UserRegisterScreen extends StatefulWidget {
   @override
-  _UserRegisterState createState() => _UserRegisterState();
+  _UserRegisterScreenState createState() => _UserRegisterScreenState();
 }
 
-class _UserRegisterState extends State<UserRegister> {
+class _UserRegisterScreenState extends State<UserRegisterScreen> {
   final AuthService _auth = AuthService();
   String firstName = '';
   String email = '';
@@ -241,7 +241,7 @@ class _UserRegisterState extends State<UserRegister> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    UserSignIn())),
+                                                    UserSignInScreen())),
                                         child: Text(
                                           'Bereits registriert?',
                                           style: Theme.of(context)
@@ -343,15 +343,15 @@ class _UserRegisterState extends State<UserRegister> {
                       ProviderSelectionWidget(
                         title: 'Anbieter',
                         text:
-                            'Du bietest Transferdienste an, zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets mit einer entsprechenden Lizenz.',
+                            'Du bietest Transferdienste an, entweder zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets.',
                         selectionFunction: typeSelectionFunction,
                         userType: UserType.provider,
                         active: userType == UserType.provider,
                       ),
                       ProviderSelectionWidget(
-                        title: 'Auftraggeber',
+                        title: 'Auftraggeber/Sponsor',
                         text:
-                            'Du führst selbst keine Personentransfers durch und beauftragst einen lizenzierten Fahrtendienst für eine bestimmte Adresse oder ein Gebiet. Dieser führt für den Fahrgast kostenlose Transferservices durch.',
+                            'Du führst selbst keine Personentransfers durch und beauftragst einen Fahrtendienst.',
                         selectionFunction: typeSelectionFunction,
                         userType: UserType.sponsor,
                         active: userType == UserType.sponsor,

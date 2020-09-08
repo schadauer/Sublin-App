@@ -13,15 +13,15 @@ class BookingService {
 
   Stream<List<BookingOpen>> streamOpenBookings(uid) {
     try {
-      if (!Foundation.kReleaseMode) {
-        sublinLogging(Preferences.intLoggingBookings);
-      }
       return _database
           .collection('bookings')
           .doc(uid)
           .collection('open')
           .snapshots()
           .map((snapshot) => snapshot.docs.map((document) {
+                if (!Foundation.kReleaseMode) {
+                  sublinLogging(Preferences.intLoggingBookings);
+                }
                 return BookingOpen.fromJson(document.data(), document.id);
               }).toList());
     } catch (e) {

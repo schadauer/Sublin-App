@@ -5,7 +5,7 @@ import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/screens/provider_registration_screen.dart';
-import 'package:Sublin/screens/user_home_screen.dart';
+import 'package:Sublin/screens/user_request_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +45,7 @@ class DrawerSideNavigationWidget extends StatelessWidget {
               leading: Icon(Icons.person_outline),
               title: Text('Fahrt suchen'),
               onTap: () =>
-                  Navigator.pushNamed(context, UserHomeScreen.routeName),
+                  Navigator.pushNamed(context, UserRequestScreen.routeName),
             ),
           if (routingService.booked == true)
             ListTile(

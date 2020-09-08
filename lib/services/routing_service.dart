@@ -31,10 +31,10 @@ class RoutingService {
 
   Stream<Routing> streamCheck(uid) {
     try {
-      if (!Foundation.kReleaseMode) {
-        sublinLogging(Preferences.intLoggingRoutings);
-      }
       return _database.collection('check').doc(uid).snapshots().map((snap) {
+        if (!Foundation.kReleaseMode) {
+          sublinLogging(Preferences.intLoggingRoutings);
+        }
         return Routing.fromMap(snap.data());
       });
     } catch (e) {
@@ -52,9 +52,6 @@ class RoutingService {
       checkAddress = false,
       timestamp}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingRoutings);
-      }
       // await _database.collection('routings').document(uid).delete();
       await _database.collection('requests').doc(uid).set({
         'endAddress': endAddress,
@@ -64,6 +61,9 @@ class RoutingService {
         'checkAddress': checkAddress,
         'timestamp': timestamp,
       });
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingRoutings);
+      }
     } on SocketException {
       print('no internet');
     } catch (e) {
