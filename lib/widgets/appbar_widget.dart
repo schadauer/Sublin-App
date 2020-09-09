@@ -1,3 +1,4 @@
+import 'package:Sublin/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
@@ -20,12 +21,29 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           this.title,
           style: Theme.of(context).textTheme.headline1,
         ),
-        elevation: 0.0,
         backgroundColor: Theme.of(context).primaryColor,
-        // leading: Image.asset(
-        //   'assets/images/Sublin.png',
-        //   scale: 1.2,
-        // ),
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(
+                Icons.account_circle,
+                size: 35,
+              ),
+              // Container(
+              //   width: 40,
+              //   height: 40,
+              //   decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       image: DecorationImage(
+              //           fit: BoxFit.fill,
+              //           image: NetworkImage(
+              //               "https://dev.gemeindeserver.net/media/seitenstetten/1524150647-img-0151-jpg.jpeg"))),
+              // ),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            ),
+          ),
+        ],
       ),
     );
   }

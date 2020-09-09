@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 
 class AddressSearchWidget extends StatefulWidget {
-  //The following types are possible: start, end, train, bus, Sublin
   final String userUid;
   final bool isStartAddress;
   final bool isEndAddress;
@@ -56,7 +55,6 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                // margin: EdgeInsets.all(15),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[

@@ -55,9 +55,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppbarWidget(title: widget.title),
-      endDrawer: DrawerSideNavigationWidget(
-        authService: AuthService(),
-      ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height -
             AppBar().preferredSize.height -

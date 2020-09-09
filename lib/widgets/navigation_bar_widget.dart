@@ -10,20 +10,19 @@ import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:flutter/material.dart';
 
-class BottomNavigationBarWidget extends StatefulWidget {
+class NavigationBarWidget extends StatefulWidget {
   final bool isProvider;
 
-  const BottomNavigationBarWidget({
+  const NavigationBarWidget({
     this.isProvider = false,
     Key key,
   }) : super(key: key);
 
   @override
-  _BottomNavigationBarWidgetState createState() =>
-      _BottomNavigationBarWidgetState();
+  _NavigationBarWidgetState createState() => _NavigationBarWidgetState();
 }
 
-class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
+class _NavigationBarWidgetState extends State<NavigationBarWidget> {
   int _currentIndex;
 
   @override
@@ -118,11 +117,11 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                 },
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.assignment),
+                    icon: Icon(Icons.turned_in_not),
                     title: Text('Mein Sublin'),
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.assignment_late),
+                    icon: Icon(Icons.search),
                     title: Text('Fahrt suchen'),
                   ),
                   BottomNavigationBarItem(

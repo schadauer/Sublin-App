@@ -1,12 +1,14 @@
 import 'package:Sublin/models/provider_plan.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/routing_status.dart';
 import 'package:Sublin/models/step.dart';
 
 class Routing {
   final bool streamingOn;
   String id;
   bool booked;
+  RoutingStatus status;
   bool confirmed;
   String user;
   String startAddress;
@@ -21,12 +23,13 @@ class Routing {
   List<Step> publicSteps;
   Step sublinEndStep;
   Step sublinStartStep;
-  DateTime timestamp;
+  int timestamp;
 
   Routing({
     this.streamingOn = false,
     this.id = '',
     this.booked = false,
+    this.status = RoutingStatus.initial,
     this.confirmed = false,
     this.user = '',
     this.startAddress = '',
@@ -46,13 +49,15 @@ class Routing {
 
   factory Routing.fromMap(Map data) {
     Routing defaultValue = Routing();
-    // Address defaultValueAddress = Address();
     Step defaultValueStep = Step();
     ProviderUser defaultValueProviderUser = ProviderUser();
     data = data ?? {};
     return Routing(
       streamingOn: true,
       id: data['id'] ?? defaultValue.id,
+      status: RoutingStatus.values.firstWhere(
+          (e) => e.toString() == 'RoutingStatus.' + data['status'],
+          orElse: () => defaultValue.status),
       startAddressAvailable:
           data['startAddressAvailable'] ?? defaultValue.startAddressAvailable,
       endAddressAvailable:
@@ -226,6 +231,7 @@ class Routing {
                 duration: step['duration'] ?? defaultValueStep.duration,
               );
             }).toList(),
+      timestamp: data['timestamp'] ?? defaultValue.timestamp,
     );
   }
 }

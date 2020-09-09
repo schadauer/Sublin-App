@@ -11,7 +11,8 @@ class ProviderUser {
   bool outOfWork;
   String providerName;
   String id;
-  List<String> targetGroup;
+  List<String>
+      targetGroup; // This value is sha256 hashed - find the readable email in user type
   List<String> communes;
   List<String> addresses;
   List<String> stations;

@@ -1,4 +1,5 @@
 import 'package:Sublin/models/error.dart';
+import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -309,7 +310,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                   showProgressIndicator: false,
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: ThemeConstants.mediumPadding,
                   child: Column(
                     children: [
                       SizedBox(

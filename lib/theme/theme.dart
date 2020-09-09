@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 class ThemeConstants {
   static Color backgroundColor = Color.fromRGBO(245, 245, 245, 1);
   static Color sublinMainColor = Color.fromRGBO(0, 133, 74, 1);
-  static Color sublinMainBackgroundColor = Color.fromRGBO(0, 174, 99, 1);
+  static Color sublinMainBackgroundColor = Color.fromRGBO(0, 174, 99, 0.6);
+  static EdgeInsetsGeometry smallPadding = const EdgeInsets.all(4.0);
+  static EdgeInsetsGeometry mediumPadding = EdgeInsets.all(8.0);
+  static EdgeInsetsGeometry largePadding = const EdgeInsets.all(16.0);
   static TextStyle mainButton = TextStyle(
     fontSize: 16,
     fontFamily: 'Lato',

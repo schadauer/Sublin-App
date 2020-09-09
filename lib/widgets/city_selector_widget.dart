@@ -5,31 +5,24 @@ import 'package:Sublin/models/user.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
+import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CitySelector extends StatefulWidget {
+class CitySelectorWidget extends StatefulWidget {
   bool providerAddress = false;
   String station = '';
-  CitySelector({
+  CitySelectorWidget({
     this.providerAddress,
     this.station,
   });
   @override
-  _CitySelectorState createState() => _CitySelectorState();
+  _CitySelectorWidgetState createState() => _CitySelectorWidgetState();
 }
 
-class _CitySelectorState extends State<CitySelector> {
-  User _user;
+class _CitySelectorWidgetState extends State<CitySelectorWidget> {
   bool _isLoading = false;
-
-  @override
-  void initState() {
-    // _addresses = widget.addresses;
-    // _stations = widget.stations;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +34,7 @@ class _CitySelectorState extends State<CitySelector> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done && !_isLoading) {
             return Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: ThemeConstants.mediumPadding,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +49,7 @@ class _CitySelectorState extends State<CitySelector> {
                             String city = getReadablePartOfFormattedAddress(
                                 address, Delimiter.city);
                             return Chip(
-                                padding: EdgeInsets.all(8.0),
+                                padding: ThemeConstants.mediumPadding,
                                 label: Text(city),
                                 onDeleted: () {
                                   _removeCityFromCommunes(auth.uid, address);

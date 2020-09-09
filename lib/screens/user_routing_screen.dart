@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:Sublin/models/auth.dart';
 import 'package:Sublin/models/direction.dart';
 import 'package:Sublin/models/preferences.dart';
@@ -7,13 +9,14 @@ import 'package:Sublin/screens/user_request_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
+import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/utils/is_sublin_available.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
-import 'package:Sublin/widgets/bottom_navigation_bar_widget.dart';
+import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:Sublin/widgets/user_step_notification_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +32,7 @@ class UserRoutingScreen extends StatefulWidget {
 }
 
 class _UserRoutingScreenState extends State<UserRoutingScreen> {
+  Timer _timer;
   // Completer<GoogleMapController> _controller = Completer();
 
   // static final CameraPosition _kGooglePlex = CameraPosition(
@@ -53,6 +57,10 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     if (args != null) {
       if (args.startId != routingService.startId ||
           args.endId != routingService.endId) {
+        // _timer = Timer.periodic(Duration(seconds: 10), (timer) {
+        //   timer.cancel();
+        //   Navigator.pushReplacementNamed(context, UserRequestScreen.routeName);
+        // });
         return Scaffold(
             body: Center(
           child: Text('Deine Route wird neu berechnet'),
@@ -74,6 +82,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     }
 
     if (!_isRouteAvailable()) {
+      // if (_timer != null) _timer.cancel();
       return Scaffold(
           appBar: AppbarWidget(title: 'Meine Reiseroute'),
           endDrawer: DrawerSideNavigationWidget(
@@ -105,8 +114,9 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
             ),
           ));
     } else if (isRouteCompleted(routingService)) {
+      // if (_timer != null) _timer.cancel();
       return Scaffold(
-          bottomNavigationBar: BottomNavigationBarWidget(
+          bottomNavigationBar: NavigationBarWidget(
               isProvider: user.userType == UserType.provider),
           appBar: AppbarWidget(title: 'Fahrt abgeschlossen'),
           endDrawer: DrawerSideNavigationWidget(
@@ -143,8 +153,9 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
           ));
     } else {
       // If route is available - either start or end or both
+      // if (_timer != null) _timer.cancel();
       return Scaffold(
-          bottomNavigationBar: BottomNavigationBarWidget(
+          bottomNavigationBar: NavigationBarWidget(
               isProvider: user.userType == UserType.provider),
           // appBar: AppbarWidget(title: 'Meine Reiseroute'),
           // endDrawer: DrawerSideNavigationWidget(
@@ -233,7 +244,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                     direction: Direction.start),
                               Container(
                                 color: routingService.startAddressAvailable
-                                    ? Theme.of(context).secondaryHeaderColor
+                                    ? ThemeConstants.sublinMainBackgroundColor
                                     : Theme.of(context).primaryColor,
                                 width: MediaQuery.of(context).size.width,
                                 height: 140,

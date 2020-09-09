@@ -6,11 +6,12 @@ import 'package:Sublin/models/booking_open.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/booking_service.dart';
+import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
-import 'package:Sublin/widgets/bottom_navigation_bar_widget.dart';
+import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -128,7 +129,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: BottomNavigationBarWidget(isProvider: true));
+        bottomNavigationBar: NavigationBarWidget(isProvider: true));
   }
 
   ProviderUser _getProviderUser(Booking booking) {
@@ -184,7 +185,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                 return Card(
                   margin: EdgeInsets.all(5.0),
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: ThemeConstants.mediumPadding,
                     child: Column(
                       children: [
                         Container(

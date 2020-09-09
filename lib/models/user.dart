@@ -11,6 +11,7 @@ class User {
   final UserType userType;
   final bool isRegistrationCompleted;
   final List<dynamic> communes;
+  final List<dynamic> targetGroup;
   final List<Address> requestedAddresses;
 
   User({
@@ -23,6 +24,7 @@ class User {
     this.userType = UserType.user,
     this.isRegistrationCompleted = false,
     this.communes = const [],
+    this.targetGroup = const [],
     this.requestedAddresses = const [],
   });
 
@@ -48,6 +50,7 @@ class User {
         isRegistrationCompleted: data['isRegistrationCompleted'] ??
             defaultValues.isRegistrationCompleted,
         communes: data['communes'] ?? defaultValues.communes,
+        targetGroup: data['targetGroup'] ?? defaultValues.targetGroup,
         requestedAddresses: (data['requestedAddresses'] == null)
             ? defaultValues.requestedAddresses
             : data['requestedAddresses'].map<Address>((address) {
@@ -80,6 +83,8 @@ class User {
             defaultValues.isRegistrationCompleted,
       if (data.communes != null)
         'communes': data.communes ?? defaultValues.communes,
+      if (data.targetGroup != null)
+        'targetGroup': data.targetGroup ?? defaultValues.targetGroup,
       if (data.requestedAddresses != null)
         'requestedAddresses':
             data.requestedAddresses ?? defaultValues.requestedAddresses

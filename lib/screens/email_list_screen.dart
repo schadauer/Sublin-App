@@ -1,3 +1,4 @@
+import 'package:Sublin/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/utils/get_email_initials.dart';
 import 'package:Sublin/utils/is_email_format.dart';
@@ -41,7 +42,7 @@ class _EmailListScreenState extends State<EmailListScreen> {
         child: Column(
           children: <Widget>[
             Container(
-                padding: const EdgeInsets.all(10.0),
+                padding: ThemeConstants.mediumPadding,
                 child: Material(
                   child: SizedBox(
                     child: TextFormField(

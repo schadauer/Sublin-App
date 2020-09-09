@@ -6,7 +6,7 @@ import 'package:Sublin/models/user_type.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
-import 'package:Sublin/widgets/bottom_navigation_bar_widget.dart';
+import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -54,9 +54,9 @@ class _UserRequestScreenState extends State<UserRequestScreen>
     final User user = Provider.of<User>(context);
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBarWidget(
-          isProvider: user.userType == UserType.provider),
-      appBar: AppbarWidget(title: 'Deine Fahrt suchen'),
+      bottomNavigationBar:
+          NavigationBarWidget(isProvider: user.userType == UserType.provider),
+      appBar: AppbarWidget(title: 'Meine Fahrt'),
       endDrawer: DrawerSideNavigationWidget(
         authService: AuthService(),
       ),

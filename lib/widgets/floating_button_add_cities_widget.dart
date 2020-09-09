@@ -1,20 +1,19 @@
 import 'package:Sublin/models/user.dart';
 import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/widgets/city_selector.dart';
+import 'package:Sublin/widgets/city_selector_widget.dart';
 import 'package:flutter/material.dart';
 
-class FloatingActionButtonAddCities extends StatefulWidget {
+class FloatingButtonAddCities extends StatefulWidget {
   final User user;
   final Function isBottomSheetClosedCallback;
-  FloatingActionButtonAddCities({this.user, this.isBottomSheetClosedCallback});
+  FloatingButtonAddCities({this.user, this.isBottomSheetClosedCallback});
 
   @override
-  _FloatingActionButtonAddCitiesState createState() =>
-      _FloatingActionButtonAddCitiesState();
+  _FloatingButtonAddCitiesState createState() =>
+      _FloatingButtonAddCitiesState();
 }
 
-class _FloatingActionButtonAddCitiesState
-    extends State<FloatingActionButtonAddCities> {
+class _FloatingButtonAddCitiesState extends State<FloatingButtonAddCities> {
   bool showFAB = true;
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class _FloatingActionButtonAddCitiesState
               var bottomSheetController = showBottomSheet(
                   context: context,
                   builder: (context) => Container(
-                        child: CitySelector(
+                        child: CitySelectorWidget(
                           providerAddress: false,
                         ),
                       ));

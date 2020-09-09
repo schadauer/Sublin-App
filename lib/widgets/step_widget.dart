@@ -1,3 +1,4 @@
+import 'package:Sublin/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:Sublin/utils/get_time_format.dart';
@@ -56,7 +57,7 @@ class _StepWidgetState extends State<StepWidget> {
                   ),
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.all(10),
+                      padding: ThemeConstants.mediumPadding,
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.start,
