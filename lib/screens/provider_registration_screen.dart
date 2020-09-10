@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:Sublin/models/delimiter.dart';
-import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/models/delimiter_class.dart';
+import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/services/autocomplete_stations_service.dart';
 import 'package:Sublin/utils/get_city_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
@@ -12,14 +12,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:Sublin/models/auth.dart';
-import 'package:Sublin/models/provider_plan.dart';
+import 'package:Sublin/models/auth_class.dart';
+import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/request.dart';
+import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/timespan.dart';
-import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
 import 'package:Sublin/services/auth_service.dart';

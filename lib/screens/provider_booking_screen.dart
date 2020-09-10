@@ -1,8 +1,8 @@
-import 'package:Sublin/models/auth.dart';
-import 'package:Sublin/models/booking.dart';
-import 'package:Sublin/models/booking_completed.dart';
-import 'package:Sublin/models/booking_confirmed.dart';
-import 'package:Sublin/models/booking_open.dart';
+import 'package:Sublin/models/auth_class.dart';
+import 'package:Sublin/models/booking_class.dart';
+import 'package:Sublin/models/booking_completed_class.dart';
+import 'package:Sublin/models/booking_confirmed_class.dart';
+import 'package:Sublin/models/booking_open_class.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/booking_service.dart';

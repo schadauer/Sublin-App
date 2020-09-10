@@ -1,4 +1,4 @@
-import 'package:Sublin/models/request.dart';
+import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';

@@ -1,4 +1,4 @@
-import 'package:Sublin/models/delimiter.dart';
+import 'package:Sublin/models/delimiter_class.dart';
 
 String getNextDelimiter({String formattedAddress, String delimiter}) {
   String nextDelimiter = '__NODELIMITER__';

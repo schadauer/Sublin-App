@@ -1,4 +1,4 @@
-import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/city_selector_widget.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
-import 'package:Sublin/models/user.dart';
-import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/models/user_class.dart';
+import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';

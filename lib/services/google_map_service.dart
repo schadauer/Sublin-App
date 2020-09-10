@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:Sublin/models/delimiter.dart';
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/delimiter_class.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';

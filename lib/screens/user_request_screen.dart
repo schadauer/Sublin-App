@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:Sublin/models/preferences.dart';
-import 'package:Sublin/models/user.dart';
-import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/models/preferences_enum.dart';
+import 'package:Sublin/models/user_class.dart';
+import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
@@ -13,8 +13,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:Sublin/models/auth.dart';
-import 'package:Sublin/models/request.dart';
+import 'package:Sublin/models/auth_class.dart';
+import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';

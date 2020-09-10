@@ -3,7 +3,7 @@ import 'package:Sublin/stream_providers.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:Sublin/services/auth_service.dart';
-import './models/auth.dart';
+import 'models/auth_class.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 final String appVersion = '1.0.0';

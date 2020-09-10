@@ -1,4 +1,4 @@
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/provider_partner_screen.dart';
 import 'package:Sublin/screens/provider_target_group_screen.dart';
@@ -122,11 +122,11 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.search),
-                    title: Text('Fahrt suchen'),
+                    title: Text('Meine Fahrt'),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.assignment),
-                    title: Text('Profil'),
+                    title: Text('Meine Freunde'),
                   ),
                 ],
                 currentIndex: _currentIndex,

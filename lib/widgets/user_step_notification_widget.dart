@@ -1,4 +1,4 @@
-import 'package:Sublin/models/direction.dart';
+import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/step.dart' as sublin;
 import 'package:Sublin/widgets/progress_indicator_widget.dart';

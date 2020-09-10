@@ -1,8 +1,8 @@
-import 'package:Sublin/models/booking_completed.dart';
-import 'package:Sublin/models/booking_confirmed.dart';
-import 'package:Sublin/models/booking_open.dart';
+import 'package:Sublin/models/booking_completed_class.dart';
+import 'package:Sublin/models/booking_confirmed_class.dart';
+import 'package:Sublin/models/booking_open_class.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/init_routes.dart';
 import 'package:Sublin/screens/user_register_screen.dart';
 import 'package:Sublin/services/booking_service.dart';
@@ -11,11 +11,11 @@ import 'package:Sublin/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/routing.dart';
-import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/theme/theme.dart';
 
-import 'models/auth.dart';
+import 'models/auth_class.dart';
 
 class StreamProviders extends StatelessWidget {
   static const routeName = '/wrapper';

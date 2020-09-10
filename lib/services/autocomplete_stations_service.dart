@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:Sublin/models/delimiter.dart';
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/delimiter_class.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' as Foundation;

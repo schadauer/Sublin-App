@@ -1,5 +1,5 @@
 // The address pattern is [address]__[postcode]___[station]
-import 'package:Sublin/models/delimiter.dart';
+import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/utils/get_next_delimiter.dart';
 
 // Returns only the name of the city as string

@@ -1,6 +1,6 @@
 import 'package:Sublin/models/routing.dart';
-import 'package:Sublin/models/user.dart';
-import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/models/user_class.dart';
+import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,4 @@
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 
 Future<void> sublinLogging(Preferences type) async {

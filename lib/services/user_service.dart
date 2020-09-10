@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:flutter/foundation.dart' as Foundation;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user_class.dart';
 
 class UserService {
   final FirebaseFirestore _database = FirebaseFirestore.instance;

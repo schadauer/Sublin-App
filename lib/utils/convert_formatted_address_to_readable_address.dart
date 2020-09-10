@@ -1,4 +1,4 @@
-import 'package:Sublin/models/delimiter.dart';
+import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 
 String convertFormattedAddressToReadableAddress(String formattedAddress) {

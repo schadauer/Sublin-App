@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' as Foundation;
 
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:Sublin/models/provider_user.dart';
 

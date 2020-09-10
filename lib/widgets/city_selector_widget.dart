@@ -1,7 +1,7 @@
-import 'package:Sublin/models/auth.dart';
-import 'package:Sublin/models/delimiter.dart';
+import 'package:Sublin/models/auth_class.dart';
+import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';

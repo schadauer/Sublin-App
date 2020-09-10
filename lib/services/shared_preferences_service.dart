@@ -1,4 +1,4 @@
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<bool> isKeyPresentSF(key) async {

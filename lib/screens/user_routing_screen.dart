@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:Sublin/models/auth.dart';
-import 'package:Sublin/models/direction.dart';
-import 'package:Sublin/models/preferences.dart';
-import 'package:Sublin/models/user.dart';
-import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/models/auth_class.dart';
+import 'package:Sublin/models/direction_enum.dart';
+import 'package:Sublin/models/preferences_enum.dart';
+import 'package:Sublin/models/user_class.dart';
+import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/user_request_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';

@@ -1,4 +1,4 @@
-import 'package:Sublin/models/provider_plan.dart';
+import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
 
 class ProviderUser {

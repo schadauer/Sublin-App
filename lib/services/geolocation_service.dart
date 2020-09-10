@@ -1,5 +1,5 @@
-import 'package:Sublin/models/preferences.dart';
-import 'package:Sublin/models/request.dart';
+import 'package:Sublin/models/preferences_enum.dart';
+import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/services/google_map_service.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:geolocator/geolocator.dart';

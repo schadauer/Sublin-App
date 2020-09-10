@@ -1,11 +1,11 @@
-import 'package:Sublin/models/error.dart';
+import 'package:Sublin/models/error_enum.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/widgets/provider_selection_widget.dart';
 import 'package:Sublin/screens/user_sign_in_screen.dart';
 import 'package:Sublin/services/auth_service.dart';

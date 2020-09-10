@@ -1,4 +1,4 @@
-import 'package:Sublin/models/booking.dart';
+import 'package:Sublin/models/booking_class.dart';
 
 class BookingConfirmed extends Booking {
   Booking confirmed;

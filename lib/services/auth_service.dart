@@ -1,12 +1,12 @@
-import 'package:Sublin/models/error.dart';
-import 'package:Sublin/models/preferences.dart';
-import 'package:Sublin/models/user_type.dart';
+import 'package:Sublin/models/error_enum.dart';
+import 'package:Sublin/models/preferences_enum.dart';
+import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/utils/get_random_string.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:Sublin/models/auth.dart';
+import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/user.dart' as sublin;
+import 'package:Sublin/models/user_class.dart' as sublin;
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:flutter/foundation.dart' as Foundation;

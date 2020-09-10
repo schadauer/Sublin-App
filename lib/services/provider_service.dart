@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

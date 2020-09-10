@@ -1,5 +1,5 @@
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/user.dart';
+import 'package:Sublin/models/user_class.dart';
 
 String getFormattedCityFromListProviderUserAddresses(
     ProviderUser providerUser, User user) {

@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:Sublin/models/booking_completed.dart';
-import 'package:Sublin/models/booking_confirmed.dart';
-import 'package:Sublin/models/booking_open.dart';
-import 'package:Sublin/models/preferences.dart';
+import 'package:Sublin/models/booking_completed_class.dart';
+import 'package:Sublin/models/booking_confirmed_class.dart';
+import 'package:Sublin/models/booking_open_class.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart' as Foundation;
