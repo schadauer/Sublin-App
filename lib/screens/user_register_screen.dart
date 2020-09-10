@@ -366,8 +366,6 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                           RaisedButton(
                             onPressed: () async {
                               try {
-                                print(_formKey);
-
                                 await _auth.register(
                                   email: email,
                                   password: password,

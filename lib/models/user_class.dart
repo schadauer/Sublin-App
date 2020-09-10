@@ -9,10 +9,10 @@ class User {
   final String secondName;
   final String homeAddress;
   final UserType userType;
-  final bool isRegistrationCompleted;
   final List<dynamic> communes;
   final List<dynamic> targetGroup;
-  final List<Address> requestedAddresses;
+  final List<dynamic> requestedAddresses;
+  bool isRegistrationCompleted;
 
   User({
     this.uid = '',
@@ -22,10 +22,10 @@ class User {
     this.secondName = '',
     this.homeAddress = '',
     this.userType = UserType.user,
-    this.isRegistrationCompleted = false,
     this.communes = const [],
     this.targetGroup = const [],
     this.requestedAddresses = const [],
+    this.isRegistrationCompleted = false,
   });
 
   factory User.initialData() {
@@ -36,7 +36,6 @@ class User {
 
   factory User.fromJson(Map data) {
     final User defaultValues = User();
-    final Address defaultValuesAddress = Address();
     data = data ?? {};
     return User(
         streamingOn: true,
@@ -51,15 +50,8 @@ class User {
             defaultValues.isRegistrationCompleted,
         communes: data['communes'] ?? defaultValues.communes,
         targetGroup: data['targetGroup'] ?? defaultValues.targetGroup,
-        requestedAddresses: (data['requestedAddresses'] == null)
-            ? defaultValues.requestedAddresses
-            : data['requestedAddresses'].map<Address>((address) {
-                return Address(
-                  formattedAddress: address['formattedAddress'] ??
-                      defaultValuesAddress.formattedAddress,
-                  id: address['id'] ?? defaultValuesAddress.id,
-                );
-              }).toList());
+        requestedAddresses:
+            data['requestedAddresses'] ?? defaultValues.requestedAddresses);
   }
 
   Map<String, dynamic> toJson(User data) {

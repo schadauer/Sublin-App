@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
-import 'package:Sublin/services/autocomplete_stations_service.dart';
+import 'package:Sublin/screens/provider_booking_screen.dart';
+import 'package:Sublin/services/user_service.dart';
+import 'package:Sublin/utils/add_to_list.dart';
 import 'package:Sublin/utils/get_city_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
@@ -91,8 +93,6 @@ class _ProviderRegistrationScreenState
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
 
-    print(ProviderUser().toMap(_providerUser));
-
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60.0),
@@ -150,7 +150,7 @@ class _ProviderRegistrationScreenState
                             height: 20,
                           ),
                           AddressSearchWidget(
-                            addressInputFunction: addressSelectionFunction,
+                            addressInputFunction: _addressSelectionFunction,
                             isEndAddress: true,
                             isStartAddress: false,
                             isCheckOnly: true,
@@ -171,7 +171,7 @@ class _ProviderRegistrationScreenState
                                             _station = '';
                                             _showProgressIndicator = true;
                                             _providerUser = ProviderUser();
-                                            _providerUser.communes = [
+                                            _providerUser.addresses = [
                                               _request.endAddress
                                             ];
                                           });
@@ -244,6 +244,9 @@ class _ProviderRegistrationScreenState
                                     style:
                                         Theme.of(context).textTheme.bodyText1,
                                   ),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
                                   if (_checkRoutingData.endAddressAvailable &&
                                       user.userType == UserType.sponsor)
                                     ProviderSelectionWidget(
@@ -256,7 +259,7 @@ class _ProviderRegistrationScreenState
                                       providerTypeSelection:
                                           ProviderType.sponsorShuttle,
                                       selectionFunction:
-                                          providerSelectionFunction,
+                                          _providerSelectionFunction,
                                       active: ProviderType.sponsorShuttle ==
                                           _providerUser.providerType,
                                     ),
@@ -272,7 +275,7 @@ class _ProviderRegistrationScreenState
                                       providerTypeSelection:
                                           ProviderType.sponsor,
                                       selectionFunction:
-                                          providerSelectionFunction,
+                                          _providerSelectionFunction,
                                       active: ProviderType.sponsor ==
                                           _providerUser.providerType,
                                     ),
@@ -283,7 +286,7 @@ class _ProviderRegistrationScreenState
                                           'vom Bahnhof zu den Adressen in ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}. Gewerbeberechtigung notwendig.',
                                       providerTypeSelection: ProviderType.taxi,
                                       selectionFunction:
-                                          providerSelectionFunction,
+                                          _providerSelectionFunction,
                                       active: ProviderType.taxi ==
                                           _providerUser.providerType,
                                     ),
@@ -296,7 +299,7 @@ class _ProviderRegistrationScreenState
                                       providerTypeSelection:
                                           ProviderType.shuttle,
                                       selectionFunction:
-                                          providerSelectionFunction,
+                                          _providerSelectionFunction,
                                       active: ProviderType.shuttle ==
                                           _providerUser.providerType,
                                     ),
@@ -336,10 +339,10 @@ class _ProviderRegistrationScreenState
                                             if (_providerUser.providerType ==
                                                     ProviderType.sponsor &&
                                                 cityFormattedAddress != '' &&
-                                                !_providerUser.communes
+                                                !_providerUser.addresses
                                                     .contains(
                                                         cityFormattedAddress))
-                                              _providerUser.communes.add(
+                                              _providerUser.addresses.add(
                                                   getCityFormattedAddress(
                                                       _checkRoutingData
                                                           .endAddress));
@@ -573,7 +576,7 @@ class _ProviderRegistrationScreenState
                                     ),
                                     AddressSearchWidget(
                                       addressInputFunction:
-                                          stationSelectionFunction,
+                                          _stationSelectionFunction,
                                       isEndAddress: false,
                                       isStartAddress: false,
                                       isStation: true,
@@ -621,7 +624,7 @@ class _ProviderRegistrationScreenState
                                                               builder: (context) =>
                                                                   AddressInputScreen(
                                                                     addressInputFunction:
-                                                                        citySelectionFunction,
+                                                                        _citySelectionFunction,
                                                                     isEndAddress:
                                                                         false,
                                                                     isStartAddress:
@@ -640,7 +643,7 @@ class _ProviderRegistrationScreenState
                                         ],
                                       ),
                                     SizedBox(
-                                      height: 20,
+                                      height: 10,
                                     ),
                                     if (_providerUser.providerType ==
                                         ProviderType.taxi)
@@ -652,21 +655,39 @@ class _ProviderRegistrationScreenState
                                       ),
                                     if (_providerUser.providerType ==
                                         ProviderType.shuttle)
-                                      RaisedButton(
-                                        onPressed: (_providerUser
-                                                    .stations.length !=
-                                                0)
-                                            ? () async {
-                                                try {
-                                                  _pageSteps = 4;
-                                                  _pageViewController.nextPage(
-                                                      duration: Duration(
-                                                          milliseconds: 300),
-                                                      curve: Curves.easeOut);
-                                                } catch (e) {}
-                                              }
-                                            : null,
-                                        child: Text('Weiter'),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          RaisedButton(
+                                            onPressed: (_providerUser
+                                                        .stations.length !=
+                                                    0)
+                                                ? () async {
+                                                    try {
+                                                      _pageSteps = 4;
+                                                      // Add To communes
+                                                      _providerUser.communes =
+                                                          addStringToList(
+                                                              _providerUser
+                                                                  .communes,
+                                                              getCityFormattedAddress(
+                                                                  _providerUser
+                                                                          .addresses[
+                                                                      0]));
+                                                      _pageViewController
+                                                          .nextPage(
+                                                              duration: Duration(
+                                                                  milliseconds:
+                                                                      300),
+                                                              curve: Curves
+                                                                  .easeOut);
+                                                    } catch (e) {}
+                                                  }
+                                                : null,
+                                            child: Text('Weiter'),
+                                          ),
+                                        ],
                                       )
                                   ])
                             ]))
@@ -717,18 +738,18 @@ class _ProviderRegistrationScreenState
                                         : 'E-Mails verwalten',
                                 providerPlanSelection: ProviderPlan.emailOnly,
                                 selectionFunction:
-                                    providerPlanSelectionFunction,
+                                    _providerPlanSelectionFunction,
                                 active: ProviderPlan.emailOnly ==
                                     _providerUser.providerPlan,
                               ),
                               ProviderSelectionWidget(
                                 title: 'Alle',
                                 text: user.userType == UserType.provider
-                                    ? 'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getReadablePartOfFormattedAddress(_providerUser.communes[0], Delimiter.city)} beautragen.'
-                                    : 'Alle Personen, die den Transferservice zwischen Bahnhof und den Adressen des Gemeindegebiets ${getReadablePartOfFormattedAddress(_providerUser.communes[0], Delimiter.city)} beauftragen',
+                                    ? 'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getReadablePartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beautragen.'
+                                    : 'Alle Personen, die den Transferservice zwischen Bahnhof und den Adressen des Gemeindegebiets ${getReadablePartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beauftragen',
                                 providerPlanSelection: ProviderPlan.all,
                                 selectionFunction:
-                                    providerPlanSelectionFunction,
+                                    _providerPlanSelectionFunction,
                                 active: ProviderPlan.all ==
                                     _providerUser.providerPlan,
                               ),
@@ -738,6 +759,7 @@ class _ProviderRegistrationScreenState
                               RegisterNowWidget(
                                 providerUser: _providerUser,
                                 auth: auth,
+                                user: user,
                                 isActive: _providerUser.providerPlan ==
                                             ProviderPlan.emailOnly &&
                                         _providerUser.targetGroup.length > 0 ||
@@ -760,31 +782,31 @@ class _ProviderRegistrationScreenState
         context,
         MaterialPageRoute(
             builder: (context) => EmailListScreen(
-                  emailListScreenFunction: emailListScreenFunction,
+                  emailListScreenFunction: _emailListScreenFunction,
                   targetGroup: _providerUser.targetGroup,
                 )));
   }
 
-  void emailListScreenFunction(List<String> list) {
+  void _emailListScreenFunction(List<String> list) {
     setState(() {
       _providerUser.targetGroup = list;
     });
   }
 
-  void providerPlanSelectionFunction(ProviderPlan selection) {
+  void _providerPlanSelectionFunction(ProviderPlan selection) {
     setState(() {
       _providerUser.providerPlan = selection;
     });
   }
 
-  void providerSelectionFunction(ProviderType selection) {
+  void _providerSelectionFunction(ProviderType selection) {
     setState(() {
       _providerUser.providerType = selection;
       _pageSteps = 3;
     });
   }
 
-  void addressSelectionFunction({
+  void _addressSelectionFunction({
     String userUid,
     String input,
     String id,
@@ -799,7 +821,7 @@ class _ProviderRegistrationScreenState
     });
   }
 
-  void stationSelectionFunction(
+  void _stationSelectionFunction(
       {String userUid,
       String input,
       String id,
@@ -813,7 +835,7 @@ class _ProviderRegistrationScreenState
     );
   }
 
-  void citySelectionFunction({
+  void _citySelectionFunction({
     String userUid,
     String input,
     String id,
@@ -822,6 +844,27 @@ class _ProviderRegistrationScreenState
     bool isEndAddress,
   }) {
     _addCityToStations(input);
+  }
+
+  void _addCityToStations(String formattedAddress) {
+    bool cityExists = false;
+    _providerUser.stations.map((station) {
+      String cityFromFormattedAddress =
+          getReadablePartOfFormattedAddress(formattedAddress, Delimiter.city);
+      String cityFromStation =
+          getReadablePartOfFormattedAddress(station, Delimiter.city);
+
+      if (cityFromFormattedAddress == cityFromStation) {
+        cityExists = true;
+      }
+    }).toList();
+    if (cityExists == false) {
+      setState(() {
+        _providerUser.stations.add(formattedAddress + _station);
+        _providerUser.communes =
+            addStringToList(_providerUser.communes, formattedAddress);
+      });
+    }
   }
 
   Future<void> _checkAddressStatus(String uid) async {
@@ -851,40 +894,22 @@ class _ProviderRegistrationScreenState
     String station = '',
     bool remove = false,
   }) {
-    String userAddress = _providerUser.communes[0];
+    String userAddress = _providerUser.addresses[0];
     // If Taxi the scope is the postcode
     // If not Taxi the scope is the full address
     if (_providerUser.providerType == ProviderType.taxi)
       userAddress = getReadablePartOfFormattedAddress(
-          _providerUser.communes[0], delimiter);
+          _providerUser.addresses[0], delimiter);
     setState(() {
       if (station != '')
         _providerUser.stations = [
           userAddress + station,
         ];
-      _providerUser.communes
-          .add(Delimiter.country + 'AT' + delimiter + userAddress);
+      // Get the formatted city for the communes
+      addStringToList(
+          _providerUser.communes, getCityFormattedAddress(userAddress));
+      // _providerUser.addresses.add(userAddress);
     });
-  }
-
-  void _addCityToStations(String formattedAddress) {
-    bool cityExists = false;
-    _providerUser.stations.map((station) {
-      String cityFromFormattedAddress =
-          getReadablePartOfFormattedAddress(formattedAddress, Delimiter.city);
-      String cityFromStation =
-          getReadablePartOfFormattedAddress(station, Delimiter.city);
-
-      if (cityFromFormattedAddress == cityFromStation) {
-        cityExists = true;
-      }
-    }).toList();
-    if (cityExists == false) {
-      setState(() {
-        _providerUser.stations.add(formattedAddress + _station);
-        _providerUser.communes.add(formattedAddress);
-      });
-    }
   }
 
   void _removeCityFromStation(String city) {
@@ -954,6 +979,7 @@ class RegisterNowWidget extends StatelessWidget {
   const RegisterNowWidget(
       {Key key,
       @required ProviderUser providerUser,
+      @required this.user,
       @required this.auth,
       @required this.isActive})
       : _providerUser = providerUser,
@@ -962,6 +988,7 @@ class RegisterNowWidget extends StatelessWidget {
   final ProviderUser _providerUser;
   final Auth auth;
   final bool isActive;
+  final User user;
 
   @override
   Widget build(BuildContext context) {
@@ -970,10 +997,18 @@ class RegisterNowWidget extends StatelessWidget {
       children: <Widget>[
         RaisedButton(
           onPressed: isActive
-              ? () {
+              ? () async {
                   _providerUser.operationRequested = true;
-                  ProviderUserService().updateProviderUserData(
+                  await ProviderUserService().updateProviderUserData(
                       uid: auth.uid, data: _providerUser);
+                  User _user = user;
+                  _user.isRegistrationCompleted = true;
+                  print('adfasfd');
+                  print(User().toJson(_user));
+                  await UserService()
+                      .updateUserDataIsRegistrationCompleted(uid: user.uid);
+                  await Navigator.pushNamed(
+                      context, ProviderBookingScreen.routeName);
                 }
               : null,
           child: Text('Jetzt registrieren'),

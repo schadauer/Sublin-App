@@ -37,7 +37,6 @@ class _InitRoutesState extends State<InitRoutes> {
       );
     return MaterialApp(
       routes: {
-        // HomeScreen.routeName: (context) => HomeScreen(),
         ProviderBookingScreen.routeName: (context) => ProviderBookingScreen(),
         ProviderPartnerScreen.routeName: (context) => ProviderPartnerScreen(),
         ProviderTargetGroupScreen.routeName: (context) =>
@@ -52,7 +51,7 @@ class _InitRoutesState extends State<InitRoutes> {
       },
       title: 'Sublin',
       theme: themeData(context),
-      home: (user.userType != UserType.user && !providerUser.inOperation)
+      home: (user.userType != UserType.user)
           ? providerUser.operationRequested
               ? ProviderBookingScreen()
               : ProviderRegistrationScreen()

@@ -65,8 +65,8 @@ class ProviderUser {
             }).toList(),
       communes: (data['communes'] == null)
           ? defaultValues.addresses
-          : data['communes'].map<String>((address) {
-              return address.toString();
+          : data['communes'].map<String>((commune) {
+              return commune.toString();
             }).toList(),
       addresses: (data['addresses'] == null)
           ? defaultValues.addresses
@@ -102,7 +102,6 @@ class ProviderUser {
       if (data.inOperation != null) 'inOperation': data.inOperation,
       if (data.outOfWork != null) 'outOfWork': data.outOfWork,
       if (data.providerName != null) 'providerName': data.providerName,
-      if (data.id != null) 'id': data.id,
       if (data.targetGroup != null) 'targetGroup': data.targetGroup,
       if (data.communes != null) 'communes': data.communes,
       if (data.addresses != null) 'addresses': data.addresses,

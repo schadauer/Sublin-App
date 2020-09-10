@@ -35,14 +35,16 @@ class StreamProviders extends StatelessWidget {
         StreamProvider<Routing>.value(
           initialData: Routing(),
           value: RoutingService().streamRouting(auth.uid),
-          // catchError: (_, err) {
-          //   print(err.toString());
-          // },
+          catchError: (_, err) {
+            print(err);
+            return Routing();
+          },
           lazy: true,
         ),
         StreamProvider<User>.value(
           initialData: User.initialData(),
           value: UserService().streamUser(auth.uid),
+          catchError: (_, err) => User.initialData(),
           lazy: true,
         ),
         StreamProvider<List<BookingOpen>>.value(
@@ -64,6 +66,10 @@ class StreamProviders extends StatelessWidget {
           initialData: ProviderUser(),
           value: ProviderUserService().streamProviderUserData(auth.uid),
           lazy: true,
+          catchError: (_, err) {
+            print('Provider user error' + err);
+            return ProviderUser();
+          },
         )
       ], child: InitRoutes());
     }

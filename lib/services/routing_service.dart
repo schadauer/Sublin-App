@@ -32,9 +32,9 @@ class RoutingService {
   Stream<Routing> streamCheck(uid) {
     try {
       return _database.collection('check').doc(uid).snapshots().map((snap) {
-        if (!Foundation.kReleaseMode) {
-          sublinLogging(Preferences.intLoggingRoutings);
-        }
+        // if (!Foundation.kReleaseMode) {
+        //   sublinLogging(Preferences.intLoggingRoutings);
+        // }
         return Routing.fromMap(snap.data());
       });
     } catch (e) {

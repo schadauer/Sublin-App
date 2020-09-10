@@ -19,7 +19,8 @@ class ProviderService {
       }
       return _database
           .collection('providers')
-          .where('communes', arrayContainsAny: communes)
+          .where('communes',
+              arrayContainsAny: communes.length == 0 ? [''] : communes)
           .where('providerPlan', isEqualTo: 'all')
           .get()
           .then((value) {

@@ -29,9 +29,6 @@ class AuthService {
     String password,
     String firstName,
     UserType userType,
-
-    // String providerAddress,
-    // String providerType,
   }) async {
     try {
       dynamic result =

@@ -1,3 +1,4 @@
+import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/widgets/loading_widget.dart';
@@ -83,8 +84,6 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                               });
                             },
                             obscureText: true,
-                            // keyboardType: TextInputType.datetime,
-                            //obscureText: true,
                             decoration: InputDecoration(
                                 hintText: 'Passwort',
                                 prefixIcon: Icon(Icons.lock))),
@@ -95,10 +94,13 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             FlatButton(
-                                textColor:
-                                    Theme.of(context).secondaryHeaderColor,
-                                onPressed: () => Navigator.pop(context),
-                                child: Text('Noch nicht registriert?')),
+                              textColor: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(
+                                'Noch nicht registriert?',
+                                style: ThemeConstants.mainButton,
+                              ),
+                            ),
                             RaisedButton(
                               onPressed: () async {
                                 // setState(() {

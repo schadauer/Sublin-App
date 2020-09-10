@@ -1,4 +1,7 @@
 import 'package:Sublin/models/preferences_enum.dart';
+import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/provider_partner_screen.dart';
 import 'package:Sublin/screens/provider_target_group_screen.dart';
@@ -12,9 +15,13 @@ import 'package:flutter/material.dart';
 
 class NavigationBarWidget extends StatefulWidget {
   final bool isProvider;
+  final User user;
+  final ProviderUser providerUser;
 
   const NavigationBarWidget({
     this.isProvider = false,
+    this.user,
+    this.providerUser,
     Key key,
   }) : super(key: key);
 
@@ -27,62 +34,63 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.isProvider);
     return FutureBuilder<int>(
         future: _getCurrentIndex(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               widget.isProvider != null) {
             _currentIndex = snapshot.data;
+
             if (widget.isProvider == true) {
               return BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 // This is the bottom navigation for providers
                 onTap: (index) async {
+                  print('index');
+                  print(index);
+                  print(_currentIndex);
                   try {
-                    if (index == 0 && _currentIndex != 0)
+                    if (index == 0 && _currentIndex != 0) {
                       await _setCurrentIndex(0);
-                    Navigator.of(context)
-                        .push(_createRoute(ProviderBookingScreen()));
+                      Navigator.of(context)
+                          .push(_createRoute(ProviderBookingScreen()));
+                    }
                     if (index == 1 && _currentIndex != 1) {
                       await _setCurrentIndex(1);
                       Navigator.of(context)
-                          .push(_createRoute(ProviderPartnerScreen()));
-                    }
-                    if (index == 2 && _currentIndex != 2) {
-                      await _setCurrentIndex(2);
-                      Navigator.of(context)
                           .push(_createRoute(ProviderTargetGroupScreen()));
                     }
-                    if (index == 3 && _currentIndex != 3) {
-                      await _setCurrentIndex(3);
+                    if (index == 2 && _currentIndex != 2) {
+                      print('click');
+                      await _setCurrentIndex(2);
                       Navigator.of(context)
-                          .push(_createRoute(UserProfileScreen()));
+                          .push(_createRoute(ProviderPartnerScreen()));
                     }
-                    setState(() {
-                      _currentIndex = index;
-                    });
+                    if (index != _currentIndex) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    }
                   } catch (e) {
                     print(e);
                   }
                 },
-                items: const <BottomNavigationBarItem>[
+                items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
                     icon: Icon(Icons.assignment_late),
                     title: Text('Aufträge'),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.assignment_late),
-                    title: Text('Partner'),
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.assignment_late),
                     title: Text('Zielgruppe'),
                   ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.settings),
-                    title: Text('Profil'),
-                  ),
+                  if (widget.providerUser == null ||
+                      widget.providerUser?.providerType !=
+                          ProviderType.sponsorShuttle)
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.assignment_late),
+                      title: Text('Partner'),
+                    ),
                 ],
                 currentIndex: _currentIndex,
                 selectedItemColor: Colors.amber[800],
@@ -124,10 +132,10 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                     icon: Icon(Icons.search),
                     title: Text('Meine Fahrt'),
                   ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.assignment),
-                    title: Text('Meine Freunde'),
-                  ),
+                  // BottomNavigationBarItem(
+                  //   icon: Icon(Icons.assignment),
+                  //   title: Text('Meine Freunde'),
+                  // ),
                 ],
                 currentIndex: _currentIndex,
                 selectedItemColor: ThemeConstants.sublinMainColor,
@@ -145,8 +153,6 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
     await addIntToSF(Preferences.intCurrentScreen, currentIndex);
     int _currentIndexFromSharedServices =
         await getIntValuesSF(Preferences.intCurrentScreen);
-    print('get index set');
-    print(_currentIndexFromSharedServices);
     setState(() {
       _currentIndex = _currentIndexFromSharedServices;
     });

@@ -52,20 +52,6 @@ class UserService {
     }
   }
 
-  // Future<List<String>> getPreferredAddresses(String uid) async {
-  //   try {
-  //     if (!Foundation.kReleaseMode) {
-  //       await sublinLogging(Preferences.intLoggingUsers);
-  //     }
-  //     return await _database.collection('users').doc(uid).get().then((value) {
-  //       return User.fromJson(value.data());
-  //     });
-  //   } catch (e) {
-  //     print(e);
-  //     return null;
-  //   }
-  // }
-
   Future<void> writeUserData({String uid, User data}) async {
     try {
       if (!Foundation.kReleaseMode) {
@@ -76,6 +62,33 @@ class UserService {
           );
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> updateUserDataIsRegistrationCompleted({String uid}) async {
+    try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingUsers);
+      }
+      await _database.collection('users').doc(uid).set({
+        'isRegistrationCompleted': true,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> addEmailToTargetGroupUserData(
+      {String uid, List<dynamic> targetGroupList}) async {
+    try {
+      if (!Foundation.kReleaseMode) {
+        await sublinLogging(Preferences.intLoggingUsers);
+      }
+      await _database.collection('users').doc(uid).update({
+        'targetGroup': targetGroupList,
+      });
+    } catch (e) {
+      print('updateProviderUser: $e');
     }
   }
 }

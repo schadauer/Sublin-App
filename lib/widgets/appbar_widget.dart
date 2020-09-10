@@ -1,13 +1,19 @@
+import 'package:Sublin/models/user_class.dart';
+import 'package:Sublin/screens/user_profile_screen.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   const AppbarWidget({
     this.title = '',
+    this.user,
+    this.showProfileIcon = true,
     Key key,
   }) : super(key: key);
 
   final String title;
+  final User user;
+  final bool showProfileIcon;
 
   @override
   Size get preferredSize => const Size.fromHeight(55);
@@ -22,27 +28,20 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           style: Theme.of(context).textTheme.headline1,
         ),
         backgroundColor: Theme.of(context).primaryColor,
+        elevation: 0.0,
         actions: [
-          Builder(
-            builder: (context) => IconButton(
-              icon: Icon(
-                Icons.account_circle,
-                size: 35,
+          if (showProfileIcon)
+            Builder(
+              builder: (context) => IconButton(
+                icon: Icon(
+                  Icons.account_circle,
+                  size: 35,
+                ),
+                onPressed: () =>
+                    Navigator.pushNamed(context, UserProfileScreen.routeName),
+                tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
               ),
-              // Container(
-              //   width: 40,
-              //   height: 40,
-              //   decoration: BoxDecoration(
-              //       shape: BoxShape.circle,
-              //       image: DecorationImage(
-              //           fit: BoxFit.fill,
-              //           image: NetworkImage(
-              //               "https://dev.gemeindeserver.net/media/seitenstetten/1524150647-img-0151-jpg.jpeg"))),
-              // ),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
             ),
-          ),
         ],
       ),
     );

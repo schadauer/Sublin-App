@@ -10,7 +10,7 @@ class ThemeConstants {
   static TextStyle mainButton = TextStyle(
     fontSize: 16,
     fontFamily: 'Lato',
-    color: Colors.white,
+    color: sublinMainColor,
     fontWeight: FontWeight.normal,
   );
 }

@@ -81,6 +81,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
                 if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.data.length != 0) {
                   // Get all available addresses excluding taxis and add one element for user to add new cities
+                  // List<ProviderUser> _data = snapshot.data != ? snapshot.data[0] : null;
                   List<ProviderUser> _providerUsersExcludeTaxis =
                       _addUserProviderForUserToAddCity(
                           _applyFilterFromListOfAll(
