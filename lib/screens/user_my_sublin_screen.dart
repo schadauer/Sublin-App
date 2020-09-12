@@ -1,27 +1,21 @@
 /* Copyright (C) 2020 Andreas Schadauer, andreas@sublin.app - All Rights Reserved */
 
-import 'dart:convert';
-import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
-import 'package:Sublin/services/provider_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/get_city_formatted_address.dart';
 import 'package:Sublin/utils/get_formatted_city_from_provider_user_addresses.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
-import 'package:Sublin/widgets/floating_button_add_cities_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:crypto/crypto.dart';
 
 enum Filter { taxisOnly, excludeTaxis }
 enum CardType { available, unavailable, add }
@@ -74,8 +68,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
           child: FutureBuilder<List<List<ProviderUser>>>(
               // future: ProviderService().getProviders(communes: user.communes),
               future: Future.wait([
-                ProviderService().getProviders(communes: user.communes),
-                ProviderService().getProvidersEmailOnly(email: user.email),
+                ProviderUserService().getProviders(communes: user.communes),
+                ProviderUserService().getProvidersEmailOnly(email: user.email),
               ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done &&

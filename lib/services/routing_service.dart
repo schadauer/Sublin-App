@@ -18,7 +18,7 @@ class RoutingService {
         sublinLogging(Preferences.intLoggingRoutings);
       }
       return _database.collection('routings').doc(uid).snapshots().map((snap) {
-        return Routing.fromMap(snap.data());
+        return Routing.fromJson(snap.data());
       });
     } on SocketException {
       print('no internet');
@@ -35,7 +35,7 @@ class RoutingService {
         // if (!Foundation.kReleaseMode) {
         //   sublinLogging(Preferences.intLoggingRoutings);
         // }
-        return Routing.fromMap(snap.data());
+        return Routing.fromJson(snap.data());
       });
     } catch (e) {
       print(e);
@@ -90,7 +90,7 @@ class RoutingService {
         await sublinLogging(Preferences.intLoggingRoutings);
       }
       return _database.collection('routings').doc(uid).get().then((value) {
-        return Routing.fromMap(value.data());
+        return Routing.fromJson(value.data());
       });
     } catch (e) {
       print(e);

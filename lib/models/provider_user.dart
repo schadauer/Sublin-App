@@ -39,7 +39,7 @@ class ProviderUser {
     this.timeEnd: 2400,
   });
 
-  factory ProviderUser.fromMap(Map data) {
+  factory ProviderUser.fromJson(Map data) {
     ProviderUser defaultValues = ProviderUser();
 
     data = data ?? {};

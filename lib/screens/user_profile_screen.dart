@@ -3,11 +3,14 @@ import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/provider_registration_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/theme/theme.dart';
+import 'package:Sublin/utils/get_readable_user_type.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+enum CardType { email, providerType }
 
 class UserProfileScreen extends StatefulWidget {
   static const routeName = './userProfileScreenState';
@@ -81,8 +84,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ],
                 ),
               )),
-            Row(
+            Column(
               children: [
+                UserPersonalDataCard(user: user, cardType: CardType.email),
+                UserPersonalDataCard(
+                    user: user, cardType: CardType.providerType),
                 FlatButton(
                   onPressed: () => AuthService().signOut(),
                   child: Text('Ausloggen'),
@@ -93,5 +99,67 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
     );
+  }
+}
+
+class UserPersonalDataCard extends StatelessWidget {
+  const UserPersonalDataCard({
+    Key key,
+    @required this.user,
+    @required this.cardType,
+  }) : super(key: key);
+
+  final User user;
+  final CardType cardType;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+          padding: ThemeConstants.largePadding,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: ThemeConstants.mediumPadding,
+                  child: Text(
+                    (_getTitleText(user, cardType)),
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: ThemeConstants.mediumPadding,
+                  child: Text((_getValueText(user, cardType))),
+                ),
+              )
+            ],
+          )),
+    );
+  }
+
+  String _getTitleText(User user, CardType cardType) {
+    switch (cardType) {
+      case CardType.email:
+        return 'Email';
+        break;
+      case CardType.providerType:
+        return 'Benutzer';
+        break;
+    }
+  }
+
+  String _getValueText(User user, CardType cardType) {
+    switch (cardType) {
+      case CardType.email:
+        return user.email;
+        break;
+      case CardType.providerType:
+        return getReadableUserType(user.userType);
+        break;
+    }
   }
 }

@@ -4,6 +4,7 @@ import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/provider_partner_screen.dart';
+import 'package:Sublin/screens/provider_scope_screen.dart';
 import 'package:Sublin/screens/provider_target_group_screen.dart';
 import 'package:Sublin/screens/user_request_screen.dart';
 import 'package:Sublin/screens/user_profile_screen.dart';
@@ -40,15 +41,15 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
           if (snapshot.connectionState == ConnectionState.done &&
               widget.isProvider != null) {
             _currentIndex = snapshot.data;
-
+            // As provider you have more navigational items at your disposal
+            if (widget.isProvider == false && _currentIndex > 2)
+              _currentIndex = 0;
+            print(snapshot.data);
             if (widget.isProvider == true) {
               return BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 // This is the bottom navigation for providers
                 onTap: (index) async {
-                  print('index');
-                  print(index);
-                  print(_currentIndex);
                   try {
                     if (index == 0 && _currentIndex != 0) {
                       await _setCurrentIndex(0);
@@ -58,11 +59,17 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                     if (index == 1 && _currentIndex != 1) {
                       await _setCurrentIndex(1);
                       Navigator.of(context)
+                          .push(_createRoute(ProviderScopeScreen()));
+                    }
+
+                    if (index == 2 && _currentIndex != 2) {
+                      await _setCurrentIndex(2);
+                      Navigator.of(context)
                           .push(_createRoute(ProviderTargetGroupScreen()));
                     }
-                    if (index == 2 && _currentIndex != 2) {
+                    if (index == 3 && _currentIndex != 3) {
                       print('click');
-                      await _setCurrentIndex(2);
+                      await _setCurrentIndex(3);
                       Navigator.of(context)
                           .push(_createRoute(ProviderPartnerScreen()));
                     }
@@ -77,18 +84,23 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                 },
                 items: <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.assignment_late),
+                    icon: Icon(Icons.departure_board),
                     title: Text('Aufträge'),
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(Icons.assignment_late),
+                    icon: Icon(Icons.check_circle),
+                    title: Text('Mein Service'),
+                  ),
+                  // if (widget.providerUser.providerType != ProviderType.taxi)
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.group),
                     title: Text('Zielgruppe'),
                   ),
                   if (widget.providerUser == null ||
                       widget.providerUser?.providerType !=
                           ProviderType.sponsorShuttle)
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.assignment_late),
+                      icon: Icon(Icons.verified_user),
                       title: Text('Partner'),
                     ),
                 ],

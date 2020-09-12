@@ -78,15 +78,15 @@ class UserService {
     }
   }
 
-  Future<void> addEmailToTargetGroupUserData(
+  Future<void> updateTargetGroupUserData(
       {String uid, List<dynamic> targetGroupList}) async {
     try {
       if (!Foundation.kReleaseMode) {
         await sublinLogging(Preferences.intLoggingUsers);
       }
-      await _database.collection('users').doc(uid).update({
+      await _database.collection('users').doc(uid).set({
         'targetGroup': targetGroupList,
-      });
+      }, SetOptions(merge: true));
     } catch (e) {
       print('updateProviderUser: $e');
     }

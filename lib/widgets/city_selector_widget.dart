@@ -29,7 +29,7 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
     final Auth auth = Provider.of<Auth>(context);
     return FutureBuilder(
         future: widget.providerAddress == true
-            ? ProviderUserService().getProviderUserData(auth.uid)
+            ? ProviderUserService().getProviderUser(auth.uid)
             : UserService().getUser(auth.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done && !_isLoading) {
@@ -112,8 +112,7 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
     User _userData;
     ProviderUser _providerUserData;
     if (widget.providerAddress == true) {
-      _providerUserData =
-          await ProviderUserService().getProviderUserData(userUid);
+      _providerUserData = await ProviderUserService().getProviderUser(userUid);
       _data = _providerUserData;
     } else if (widget.providerAddress == false) {
       _userData = await UserService().getUser(userUid);
@@ -144,8 +143,7 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
     User _userData;
     ProviderUser _providerUserData;
     if (widget.providerAddress == true) {
-      _providerUserData =
-          await ProviderUserService().getProviderUserData(userUid);
+      _providerUserData = await ProviderUserService().getProviderUser(userUid);
       _data = _providerUserData;
     } else if (widget.providerAddress == false) {
       _userData = await UserService().getUser(userUid);

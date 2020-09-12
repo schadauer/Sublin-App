@@ -1,12 +1,18 @@
+import 'dart:convert';
+
+import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
-import 'package:Sublin/services/provider_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
+import 'package:Sublin/utils/add_to_list.dart';
+import 'package:Sublin/utils/is_email_format.dart';
+import 'package:Sublin/utils/remove_from_list.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,130 +24,281 @@ class ProviderTargetGroupScreen extends StatefulWidget {
 }
 
 class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
-  TextEditingController _controller;
+  TextEditingController _emailTextController = TextEditingController();
+  FocusNode _emailFocus;
+
+  @override
+  void dispose() {
+    _emailTextController.dispose();
+    _emailFocus.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final User _user = Provider.of<User>(context);
+    final ProviderUser _providerUser = Provider.of<ProviderUser>(context);
+    List<dynamic> _targetGroupUser;
+    List<dynamic> _targetGroupProviderUser;
     final _screenWidth = MediaQuery.of(context).size.width;
     final _screenHeight = MediaQuery.of(context).size.height;
-    final double _seachBarHeight = 80.0;
+    final double _seachBarHeight = 100.0;
     final double _navigationHeight = 182.0;
+    final _bodyHeight = _screenHeight - _seachBarHeight - _navigationHeight;
+    final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
-        bottomNavigationBar:
-            NavigationBarWidget(isProvider: _user.userType != UserType.user),
+        bottomNavigationBar: NavigationBarWidget(isProvider: true),
         appBar: AppbarWidget(title: 'Zielgruppe'),
         body: SafeArea(
-            child: Column(
-          children: [
-            Container(
-              color: Theme.of(context).primaryColor,
-              width: MediaQuery.of(context).size.width,
-              height: _seachBarHeight,
-              child: Padding(
-                padding: ThemeConstants.largePadding,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      flex: 6,
-                      child: TextFormField(
-                        initialValue: 'test@test.com',
-                        enableSuggestions: true,
-                        autofillHints: ['Email'],
-                        controller: _controller,
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        _controller.text;
-                        try {
-// UserService().addEmailToTargetGroupUserData();
-                        } catch (e) {
-                          print(e);
-                        }
-                      },
-                      child: SizedBox(
-                        width: 60,
-                        child: Icon(
-                          Icons.add,
-                          size: 40.0,
-                          textDirection: TextDirection.rtl,
+            child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: StreamBuilder<User>(
+              stream: UserService().streamUser(_providerUser.uid),
+              builder: (context, snapshot) {
+                User _user = snapshot.data;
+                if (snapshot.hasData) {
+                  // if (snapshot.data.targetGroup.length != 0) {
+                  // Show this if "providerPlan" is set to "emailOnly" and emails are in the target group
+                  return Column(
+                    children: [
+                      if (_providerUser.providerPlan == ProviderPlan.emailOnly)
+                        Container(
+                          color: Theme.of(context).primaryColor,
+                          height: _seachBarHeight,
+                          child: Padding(
+                            padding: ThemeConstants.largePadding,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  flex: 6,
+                                  child: Form(
+                                    key: _formKey,
+                                    child: TextFormField(
+                                      decoration: InputDecoration(
+                                          hintText: 'E-Mailadresse hinzufügen'),
+                                      autofocus: true,
+                                      focusNode: _emailFocus,
+                                      controller: _emailTextController,
+                                      validator: (e) {
+                                        String _message;
+                                        if (!isEmailFormat(e))
+                                          _message =
+                                              'Bitte gib eine gültige E-Mailadresse an';
+                                        return _message;
+                                      },
+                                      onChanged: (value) =>
+                                          print(_emailTextController.text),
+                                    ),
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    try {
+                                      if (_formKey.currentState.validate()) {
+                                        _targetGroupUser = addStringToList(
+                                            _user.targetGroup,
+                                            _emailTextController.text);
+                                        await UserService()
+                                            .updateTargetGroupUserData(
+                                                uid: _user.uid,
+                                                targetGroupList:
+                                                    _targetGroupUser);
+                                        ProviderUser _providerUser =
+                                            await ProviderUserService()
+                                                .getProviderUser(_user.uid);
+                                        _targetGroupProviderUser =
+                                            addStringToList(
+                                                _providerUser.targetGroup,
+                                                sha256
+                                                    .convert(utf8.encode(
+                                                        _emailTextController
+                                                            .text))
+                                                    .toString());
+                                        print(_targetGroupProviderUser);
+                                        await ProviderUserService()
+                                            .updateTargetGroupProviderUser(
+                                                uid: _user.uid,
+                                                targetGroupList:
+                                                    _targetGroupProviderUser);
+                                        _emailTextController.clear();
+                                        _emailFocus.requestFocus();
+                                      }
+                                    } catch (e) {
+                                      print(e);
+                                    }
+                                  },
+                                  child: SizedBox(
+                                    width: 60,
+                                    child: Icon(
+                                      Icons.add,
+                                      size: 40.0,
+                                      textDirection: TextDirection.rtl,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-                height: _screenHeight - _seachBarHeight - _navigationHeight,
-                child: StreamBuilder<User>(
-                    stream: UserService().streamUser(_user.uid),
-                    builder: (context, snapshot) {
-                      User _user = snapshot.data;
-                      if (snapshot.hasData) {
-                        return ListView.builder(
-                            itemCount: _user.targetGroup.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Card(
-                                  child: Padding(
-                                padding: ThemeConstants.largePadding,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                      if (_user.targetGroup.length != 0)
+                        SizedBox(
+                          height: _bodyHeight,
+                          child: ListView.builder(
+                              itemCount: _user.targetGroup.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Card(
+                                    child: Padding(
+                                  padding: ThemeConstants.largePadding,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        flex: 6,
+                                        child: Text(_user.targetGroup[index]),
+                                      ),
+                                      InkWell(
+                                        onTap: () async {
+                                          _targetGroupUser = removeFromList(
+                                              _user.targetGroup,
+                                              _user.targetGroup[index]);
+                                          await UserService()
+                                              .updateTargetGroupUserData(
+                                                  uid: _user.uid,
+                                                  targetGroupList:
+                                                      _targetGroupUser);
+                                          ProviderUser _providerUser =
+                                              await ProviderUserService()
+                                                  .getProviderUser(_user.uid);
+                                          _targetGroupProviderUser =
+                                              removeFromList(
+                                                  _providerUser.targetGroup,
+                                                  sha256
+                                                      .convert(utf8.encode(
+                                                          _emailTextController
+                                                              .text))
+                                                      .toString());
+                                          await ProviderUserService()
+                                              .updateTargetGroupProviderUser(
+                                                  uid: _user.uid,
+                                                  targetGroupList:
+                                                      _targetGroupProviderUser);
+                                        },
+                                        child: SizedBox(
+                                          width: 50.0,
+                                          child: Icon(
+                                            Icons.remove,
+                                            size: 40.0,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ));
+                              }),
+                        )
+                      else if (_providerUser.providerPlan ==
+                              ProviderPlan.emailOnly &&
+                          _user.targetGroup.length == 0)
+                        SizedBox(
+                          height: _bodyHeight,
+                          width: _screenWidth / 1.5,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error,
+                                size: 60.0,
+                                color: Theme.of(context).errorColor,
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Keine Zielgruppe definiert',
+                                style: Theme.of(context).textTheme.headline1,
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Derzeit kann keiner deinen Service in Anspruch nehmen. Bitte füge E-Mailadressen hinzu oder gib deinen Dienst für alle frei.',
+                                style: Theme.of(context).textTheme.bodyText1,
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              RaisedButton(
+                                  onPressed: () async {
+                                    await ProviderUserService()
+                                        .updateProviderPlanProviderUserData(
+                                            uid: _user.uid,
+                                            providerPlan: ProviderPlan.all);
+                                  },
+                                  child: Text('Für alle freigeben')),
+                            ],
+                          ),
+                        )
+                      else
+                        SizedBox(
+                          height: _bodyHeight,
+                          width: _screenWidth / 1.5,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: _screenWidth / 1.5,
+                                child: Column(
                                   children: [
-                                    Expanded(
-                                      flex: 6,
-                                      child: Text(_user.targetGroup[index]),
+                                    Icon(
+                                      Icons.group,
+                                      size: 60.0,
                                     ),
                                     SizedBox(
-                                      width: 50.0,
-                                      child: Icon(
-                                        Icons.remove,
-                                        size: 40.0,
-                                      ),
-                                    )
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      'Keine Einschränkung',
+                                      style:
+                                          Theme.of(context).textTheme.headline1,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      'Derzeit können alle deinen Shuttledienst vom Bahnhof zu deiner Addresse in Anspruch nehmen.',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    RaisedButton(
+                                        onPressed: () async {
+                                          await ProviderUserService()
+                                              .updateProviderPlanProviderUserData(
+                                                  uid: _user.uid,
+                                                  providerPlan:
+                                                      ProviderPlan.emailOnly);
+                                        },
+                                        child: Text('Zielgruppe einschränken')),
                                   ],
                                 ),
-                              ));
-                            });
-                      } else {
-                        return Column(
-                          children: [
-                            SizedBox(
-                              width: _screenWidth / 1.5,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'Keine Einschränkung',
-                                    style:
-                                        Theme.of(context).textTheme.headline1,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    'Derzeit können alle deinen Shuttledienst vom Bahnhof zu deiner Addresse in Anspruch nehmen.',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  RaisedButton(
-                                      onPressed: null,
-                                      child: Text('Zielgruppe einschränken')),
-                                ],
                               ),
-                            ),
-                          ],
-                        );
-                      }
-                    })),
-          ],
+                            ],
+                          ),
+                        )
+                    ],
+                  );
+                } else {
+                  return CircularProgressIndicator();
+                }
+              }),
         )));
   }
 }

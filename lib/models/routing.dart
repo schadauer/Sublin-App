@@ -47,7 +47,7 @@ class Routing {
     this.timestamp,
   });
 
-  factory Routing.fromMap(Map data) {
+  factory Routing.fromJson(Map data) {
     Routing defaultValue = Routing();
     Step defaultValueStep = Step();
     ProviderUser defaultValueProviderUser = ProviderUser();

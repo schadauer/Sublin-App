@@ -64,7 +64,7 @@ class StreamProviders extends StatelessWidget {
         ),
         StreamProvider<ProviderUser>.value(
           initialData: ProviderUser(),
-          value: ProviderUserService().streamProviderUserData(auth.uid),
+          value: ProviderUserService().streamProviderUser(auth.uid),
           lazy: true,
           catchError: (_, err) {
             print('Provider user error' + err);
