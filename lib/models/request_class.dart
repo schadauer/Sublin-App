@@ -4,6 +4,7 @@ class Request {
   String startAddress;
   String startId;
   bool checkAddress;
+  DateTime departureTime;
   DateTime timestamp;
 
   Request({
@@ -12,6 +13,7 @@ class Request {
     this.startAddress = '',
     this.startId,
     this.checkAddress,
+    this.departureTime,
     this.timestamp,
   });
 }

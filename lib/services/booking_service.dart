@@ -32,9 +32,9 @@ class BookingService {
 
   Stream<List<BookingConfirmed>> streamConfirmedBookings(uid) {
     try {
-      if (!Foundation.kReleaseMode) {
-        sublinLogging(Preferences.intLoggingBookings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   sublinLogging(Preferences.intLoggingBookings);
+      // }
       return _database
           .collection('bookings')
           .doc(uid)
@@ -51,9 +51,9 @@ class BookingService {
 
   Stream<List<BookingCompleted>> streamCompletedBookings(uid) {
     try {
-      if (!Foundation.kReleaseMode) {
-        sublinLogging(Preferences.intLoggingBookings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   sublinLogging(Preferences.intLoggingBookings);
+      // }
       return _database
           .collection('bookings')
           .doc(uid)

@@ -49,9 +49,9 @@ class AuthService {
       );
 
       await UserService().writeUserData(uid: authUser.uid, data: user);
-      if (!Foundation.kReleaseMode) {
-        sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   sublinLogging(Preferences.intLoggingUsers);
+      // }
       await authUser.sendEmailVerification();
 
       if (userType == UserType.provider || userType == UserType.sponsor) {
@@ -77,7 +77,6 @@ class AuthService {
       print(signUpError.code);
       if (signUpError.code == 'email-already-in-use') {
         userCredential = SublinError.emailAlreadyInUse;
-        print(userCredential);
       }
     } catch (e) {
       print(e.toString());

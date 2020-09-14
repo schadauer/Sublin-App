@@ -498,9 +498,6 @@ class _ProviderRegistrationScreenState
                                                             .providerName)
                                                     ? () async {
                                                         try {
-                                                          print(ProviderUser()
-                                                              .toMap(
-                                                                  _providerUser));
                                                           _providerNameFormFieldController
                                                                   .text =
                                                               _providerUser
@@ -1003,8 +1000,6 @@ class RegisterNowWidget extends StatelessWidget {
                       uid: auth.uid, data: _providerUser);
                   User _user = user;
                   _user.isRegistrationCompleted = true;
-                  print('adfasfd');
-                  print(User().toJson(_user));
                   await UserService()
                       .updateUserDataIsRegistrationCompleted(uid: user.uid);
                   await Navigator.pushNamed(

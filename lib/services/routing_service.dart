@@ -14,9 +14,9 @@ class RoutingService {
 
   Stream<Routing> streamRouting(uid) {
     try {
-      if (!Foundation.kReleaseMode) {
-        sublinLogging(Preferences.intLoggingRoutings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   sublinLogging(Preferences.intLoggingRoutings);
+      // }
       return _database.collection('routings').doc(uid).snapshots().map((snap) {
         return Routing.fromJson(snap.data());
       });
@@ -50,6 +50,7 @@ class RoutingService {
       startAddress,
       startId,
       checkAddress = false,
+      departureTime,
       timestamp}) async {
     try {
       // await _database.collection('routings').document(uid).delete();
@@ -59,11 +60,14 @@ class RoutingService {
         'startAddress': startAddress,
         'startId': startId,
         'checkAddress': checkAddress,
+        'departureTime': departureTime != null
+            ? DateTime.now().millisecondsSinceEpoch
+            : departureTime,
         'timestamp': timestamp,
       });
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingRoutings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingRoutings);
+      // }
     } on SocketException {
       print('no internet');
     } catch (e) {
@@ -73,9 +77,9 @@ class RoutingService {
 
   Future<void> bookRoute({uid}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingRoutings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingRoutings);
+      // }
       await _database.collection('routings').doc(uid).update({
         'booked': true,
       });
@@ -86,9 +90,9 @@ class RoutingService {
 
   Future<Routing> getRoute(uid) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingRoutings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingRoutings);
+      // }
       return _database.collection('routings').doc(uid).get().then((value) {
         return Routing.fromJson(value.data());
       });
@@ -100,9 +104,9 @@ class RoutingService {
 
   Future<bool> checkIfProviderAvailable(uid) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingRoutings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingRoutings);
+      // }
       return _database.collection('check').doc(uid).get().then((value) {
         return value.data()['providerAvailable'];
       });
@@ -114,9 +118,9 @@ class RoutingService {
 
   Future<void> deleteCheck(uid) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingRoutings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingRoutings);
+      // }
       // _database.collection('check').doc(uid).delete();
     } catch (e) {
       print('deleteCheck catch' + e);
@@ -125,9 +129,9 @@ class RoutingService {
 
   Future<void> removeProviderFromRoute(uid) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingRoutings);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingRoutings);
+      // }
       _database.collection('routings').doc(uid).set({'provider': ''});
     } catch (e) {
       print('removeProviderFromRoute catch ' + e);

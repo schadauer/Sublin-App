@@ -17,13 +17,21 @@ import 'package:Sublin/utils/is_sublin_available.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
+import 'package:Sublin/widgets/user_routing_start_end_widget.dart';
 import 'package:Sublin/widgets/user_step_notification_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:Sublin/widgets/step_widget.dart';
+
+enum StepType {
+  start,
+  public,
+  end,
+}
 
 class UserRoutingScreen extends StatefulWidget {
   static const routeName = '/userRoutingScreen';
@@ -33,19 +41,7 @@ class UserRoutingScreen extends StatefulWidget {
 
 class _UserRoutingScreenState extends State<UserRoutingScreen> {
   Timer _timer;
-  // Completer<GoogleMapController> _controller = Completer();
-
-  // static final CameraPosition _kGooglePlex = CameraPosition(
-  //   target: LatLng(48.1652731, 16.3165917),
-  //   zoom: 14,
-  // );
-
-  // static final CameraPosition _kLake = CameraPosition(
-  //   // bearing: 192.8334901395799,
-  //   target: LatLng(37.43296265331129, -122.08832357078792),
-  //   tilt: 59.440717697143555,
-  //   zoom: 19.151926040649414,
-  // );
+  int currentTime = DateTime.now().millisecondsSinceEpoch;
 
   @override
   void initState() {
@@ -65,20 +61,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     final Routing routingService = Provider.of<Routing>(context);
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
-
-    if (args != null) {
-      if (args.startId != routingService.startId ||
-          args.endId != routingService.endId) {
-        // _timer = Timer.periodic(Duration(seconds: 10), (timer) {
-        //   timer.cancel();
-        //   Navigator.pushReplacementNamed(context, UserRequestScreen.routeName);
-        // });
-        return Scaffold(
-            body: Center(
-          child: Text('Deine Route wird neu berechnet'),
-        ));
-      }
-    }
+    double hightBookingBottomSheet = 70.0;
 
     bool _isRouteAvailable() {
       bool startAddressIsAvailable =
@@ -93,8 +76,94 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
       return startAddressIsAvailable == true && endAddressIsAvailable == true;
     }
 
+    double _getRoutingStepHight(StepType steptype, Routing routingService) {
+      // We need to calculate the screen height minus the bottom navigation and the appbar
+      double safePaddingTop = MediaQuery.of(context).padding.top;
+      double safePaddingBottom = MediaQuery.of(context).padding.bottom;
+      double availableHight = MediaQuery.of(context).size.height -
+          kBottomNavigationBarHeight -
+          130 -
+          safePaddingTop -
+          safePaddingBottom;
+      double heightOfStepCard = 80.0;
+      double numberOfStartOrEndSteps = 0;
+      if (routingService.isPubliclyAccessibleEndAddress == true)
+        numberOfStartOrEndSteps += 1;
+      if (routingService.isPubliclyAccessibleStartAddress == true)
+        numberOfStartOrEndSteps += 1;
+      double numberOfPublicSteps =
+          routingService.publicSteps.length.toDouble() -
+              numberOfStartOrEndSteps;
+      if (numberOfPublicSteps > 2) numberOfPublicSteps = 2.5;
+      switch (steptype) {
+        case StepType.start:
+        case StepType.end:
+          print(heightOfStepCard * numberOfPublicSteps);
+          print(
+              (availableHight - (heightOfStepCard * numberOfPublicSteps)) / 2);
+          return (availableHight - (heightOfStepCard * numberOfPublicSteps)) /
+              2;
+          break;
+        case StepType.public:
+          return heightOfStepCard * numberOfPublicSteps;
+          break;
+      }
+    }
+
+    bool _isRouteExpired() {
+      // int startTime = routingService.isPubliclyAccessibleStartAddress
+      //     ? routingService.publicSteps[1].startTime
+      //     : routingService.sublinStartStep.startTime;
+      // if (startTime * 1000 > DateTime.now().millisecondsSinceEpoch)
+      //   return false;
+      // else
+      //   return true;
+      return false;
+    }
+
     if (!_isRouteAvailable()) {
-      // if (_timer != null) _timer.cancel();
+      return Scaffold(
+          appBar: AppbarWidget(title: 'Meine Reiseroute'),
+          endDrawer: DrawerSideNavigationWidget(
+            authService: AuthService(),
+          ),
+          body: Center(
+            child: Padding(
+              padding: ThemeConstants.largePadding,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.sentiment_dissatisfied,
+                    size: 50,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'Für diese Adresse gibt es leider noch kein Sublin-Service.',
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  RaisedButton(
+                    onPressed: () async {
+                      try {
+                        await Navigator.pushReplacementNamed(
+                            context, UserRequestScreen.routeName);
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                    child: Text('Andere Route suchen'),
+                  )
+                ],
+              ),
+            ),
+          ));
+    } else if (_isRouteExpired()) {
       return Scaffold(
           appBar: AppbarWidget(title: 'Meine Reiseroute'),
           endDrawer: DrawerSideNavigationWidget(
@@ -108,7 +177,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'Für diese Adresse gibt es leider noch kein Sublin-Service.',
+                    'Deine Route ist nicht mehr aktuell',
                   ),
                   RaisedButton(
                     onPressed: () async {
@@ -164,15 +233,13 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
             ),
           ));
     } else {
-      // If route is available - either start or end or both
-      // if (_timer != null) _timer.cancel();
       return Scaffold(
           bottomNavigationBar: NavigationBarWidget(
               isProvider: user.userType == UserType.provider),
-          // appBar: AppbarWidget(title: 'Meine Reiseroute'),
-          // endDrawer: DrawerSideNavigationWidget(
-          //   authService: AuthService(),
-          // ),
+          appBar: AppbarWidget(title: 'Meine Reiseroute'),
+          endDrawer: DrawerSideNavigationWidget(
+            authService: AuthService(),
+          ),
           body: Container(
             color: Theme.of(context).primaryColor,
             child: SafeArea(
@@ -192,335 +259,231 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                               ),
                             ]),
                       ])),
+                  // -------------------------These are the public steps -----------------------------
                   Container(
                       padding: EdgeInsets.only(
-                        top: 140,
-                        bottom: 210,
+                        top: _getRoutingStepHight(
+                            StepType.start, routingService),
                       ),
                       height: MediaQuery.of(context).size.height,
                       child: ListView.builder(
                           itemCount: routingService.publicSteps.length,
                           itemBuilder: (context, index) {
-                            if (routingService.publicSteps[index].distance ==
-                                0) {
+                            print(routingService.publicSteps[index].travelMode);
+                            if (routingService.publicSteps[index].travelMode ==
+                                'TRANSIT') {
                               return StepWidget(
                                 startAddress: routingService
                                     .publicSteps[index].startAddress,
-                                endAddress: routingService
-                                    .publicSteps[index].endAddress,
                                 startTime:
                                     routingService.publicSteps[index].startTime,
+                                endAddress: routingService
+                                    .publicSteps[index].endAddress,
                                 endTime:
                                     routingService.publicSteps[index].endTime,
                                 distance:
                                     routingService.publicSteps[index].distance,
                                 duration:
                                     routingService.publicSteps[index].duration,
+                                providerName: routingService
+                                    .publicSteps[index].providerName,
+                                lineName:
+                                    routingService.publicSteps[index].lineName,
                               );
                             } else
-                              return null;
+                              return Container();
                           })),
+                  // -------------------------These is the start step steps -----------------------------
                   if (routingService.startAddressAvailable ||
                       routingService.isPubliclyAccessibleStartAddress)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: isSublinAvailable(
-                                      Direction.start, routingService) &&
-                                  routingService.booked == true
-                              ? 200
-                              : 140,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius: 5,
-                                offset: Offset(
-                                    4.0, 1.0), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              if (routingService.booked == true &&
-                                  isSublinAvailable(
-                                      Direction.start, routingService))
-                                UserStepNotificationWidget(
-                                    routingService: routingService,
-                                    direction: Direction.start),
-                              Container(
-                                color: routingService.startAddressAvailable
-                                    ? ThemeConstants.sublinMainBackgroundColor
-                                    : Theme.of(context).primaryColor,
-                                width: MediaQuery.of(context).size.width,
-                                height: 140,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        Container(
-                                          width: 60,
-                                          height: 140,
-                                        ),
-                                        if (routingService
-                                            .startAddressAvailable)
-                                          Container(
-                                            height: 140,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                60,
-                                            padding: EdgeInsets.all(15),
-                                            child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  AutoSizeText(
-                                                    '${convertFormattedAddressToReadableAddress(routingService.sublinStartStep?.startAddress)}',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1,
-                                                  ),
-                                                  AutoSizeText(
-                                                    'Abholung um ca. ${getTimeFormat(routingService.sublinStartStep?.startTime)}',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline1,
-                                                  ),
-                                                  AutoSizeText(
-                                                    'Kostenloses Shuttleservice von deinem Standort zum Bahnhof durch ${routingService.sublinStartStep.provider?.providerName}',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .caption,
-                                                  ),
-                                                ]),
-                                          ),
-                                        if (!routingService
-                                                .startAddressAvailable &&
-                                            routingService
-                                                .isPubliclyAccessibleStartAddress)
-                                          Container(
-                                            height: 120,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                60,
-                                            padding: EdgeInsets.all(15),
-                                            child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  AutoSizeText(
-                                                    '${routingService.publicSteps[0]?.startAddress}',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1,
-                                                  ),
-                                                  AutoSizeText(
-                                                    'Abfahrt um ${getTimeFormat(routingService.publicSteps[0]?.startTime)}',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline1,
-                                                  ),
-                                                ]),
-                                          ),
-                                      ],
-                                    ),
-                                    StepIconWidget(
-                                      isStartAddress: true,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    UserRoutingStartEndWidget(
+                      direction: Direction.start,
+                      routingService: routingService,
+                      stepHeight:
+                          _getRoutingStepHight(StepType.start, routingService),
                     ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 210,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            if (routingService.endAddressAvailable)
-                              Container(
-                                color: routingService.endAddressAvailable
-                                    ? Theme.of(context).secondaryHeaderColor
-                                    : Theme.of(context).primaryColor,
-                                width: MediaQuery.of(context).size.width,
-                                height: 140,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        Container(
-                                          width: 60,
-                                          height: 140,
-                                        ),
-                                        Container(
-                                          height: 140,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              60,
-                                          padding: EdgeInsets.all(15),
-                                          child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                AutoSizeText(
-                                                  '${convertFormattedAddressToReadableAddress(routingService.sublinEndStep.endAddress)}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1,
-                                                ),
-                                                AutoSizeText(
-                                                  'Ankunft um ca. ${getTimeFormat(routingService.sublinEndStep.endTime)}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headline1,
-                                                ),
-                                                AutoSizeText(
-                                                  'Kostenlose Abholung vom Bahnhof durch ${routingService.sublinEndStep.provider.providerName}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .caption,
-                                                ),
-                                              ]),
-                                        ),
-                                      ],
-                                    ),
-                                    StepIconWidget(
-                                      isEndAddress: true,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            if (!routingService.endAddressAvailable &&
-                                routingService.isPubliclyAccessibleEndAddress)
-                              Container(
-                                color: routingService.endAddressAvailable
-                                    ? Theme.of(context).secondaryHeaderColor
-                                    : Theme.of(context).primaryColor,
-                                width: MediaQuery.of(context).size.width,
-                                height: 140,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: <Widget>[
-                                        Container(
-                                          width: 60,
-                                          height: 140,
-                                        ),
-                                        Container(
-                                          height: 140,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              60,
-                                          padding: EdgeInsets.all(15),
-                                          child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                AutoSizeText(
-                                                  '${routingService.publicSteps[routingService.publicSteps.length - 1].endAddress}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1,
-                                                ),
-                                                AutoSizeText(
-                                                  'Planmäßige Ankunft um ${getTimeFormat(routingService.publicSteps[routingService.publicSteps.length - 1].endTime)}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headline1,
-                                                ),
-                                              ]),
-                                        ),
-                                      ],
-                                    ),
-                                    StepIconWidget(
-                                      isEndAddress: true,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            if (routingService.booked == true &&
-                                isSublinAvailable(
-                                    Direction.end, routingService))
-                              UserStepNotificationWidget(
-                                  routingService: routingService,
-                                  direction: Direction.end),
-                            if (routingService.booked == false)
-                              Container(
-                                height: 70,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    FlatButton(
-                                        onPressed: () async {
-                                          // await RoutingService().removeProviderFromRoute(user.uid);
-                                          Navigator.pushReplacementNamed(
-                                              context,
-                                              UserRequestScreen.routeName);
-                                        },
-                                        child: Text('Route ändern')),
-                                    RaisedButton(
-                                        onPressed: routingService.booked
-                                            ? null
-                                            : () {
-                                                RoutingService()
-                                                    .bookRoute(uid: auth.uid);
-                                              },
-                                        child: Text('Service bestellen'))
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  // -------------------------These is the end steps -----------------------------
+                  UserRoutingStartEndWidget(
+                    direction: Direction.end,
+                    routingService: routingService,
+                    stepHeight:
+                        _getRoutingStepHight(StepType.start, routingService),
                   ),
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   crossAxisAlignment: CrossAxisAlignment.center,
+                  //   children: <Widget>[
+                  //     Container(
+                  //       width: MediaQuery.of(context).size.width,
+                  //       height:
+                  //           _getRoutingStepHight(StepType.end, routingService) +
+                  //               hightBookingBottomSheet,
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.white,
+                  //         boxShadow: [
+                  //           BoxShadow(
+                  //             color: Colors.grey.withOpacity(0.5),
+                  //             spreadRadius: 5,
+                  //             blurRadius: 7,
+                  //             offset:
+                  //                 Offset(0, 3), // changes position of shadow
+                  //           ),
+                  //         ],
+                  //       ),
+                  //       child: Column(
+                  //         mainAxisAlignment: MainAxisAlignment.start,
+                  //         children: <Widget>[
+                  //           if (routingService.endAddressAvailable)
+                  //             Container(
+                  //               color: routingService.endAddressAvailable
+                  //                   ? Theme.of(context).secondaryHeaderColor
+                  //                   : Theme.of(context).primaryColor,
+                  //               width: MediaQuery.of(context).size.width,
+                  //               height: _getRoutingStepHight(
+                  //                   StepType.end, routingService),
+                  //               child: Stack(
+                  //                 children: <Widget>[
+                  //                   Row(
+                  //                     mainAxisAlignment:
+                  //                         MainAxisAlignment.spaceEvenly,
+                  //                     children: <Widget>[
+                  //                       Container(
+                  //                         width: 60,
+                  //                         height: 140,
+                  //                       ),
+                  //                       Container(
+                  //                         height: 140,
+                  //                         width: MediaQuery.of(context)
+                  //                                 .size
+                  //                                 .width -
+                  //                             60,
+                  //                         padding: EdgeInsets.all(15),
+                  //                         child: Column(
+                  //                             mainAxisAlignment:
+                  //                                 MainAxisAlignment.spaceAround,
+                  //                             crossAxisAlignment:
+                  //                                 CrossAxisAlignment.start,
+                  //                             children: <Widget>[
+                  //                               AutoSizeText(
+                  //                                 '${convertFormattedAddressToReadableAddress(routingService.sublinEndStep.endAddress)}',
+                  //                                 style: Theme.of(context)
+                  //                                     .textTheme
+                  //                                     .bodyText1,
+                  //                               ),
+                  //                               AutoSizeText(
+                  //                                 'Ankunft um ca. ${getTimeFormat(routingService.sublinEndStep.endTime)}',
+                  //                                 style: Theme.of(context)
+                  //                                     .textTheme
+                  //                                     .headline1,
+                  //                               ),
+                  //                               AutoSizeText(
+                  //                                 'Kostenlose Abholung vom Bahnhof durch ${routingService.sublinEndStep.provider.providerName}',
+                  //                                 style: Theme.of(context)
+                  //                                     .textTheme
+                  //                                     .caption,
+                  //                               ),
+                  //                             ]),
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                   StepIconWidget(
+                  //                     isEndAddress: true,
+                  //                   )
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           if (!routingService.endAddressAvailable &&
+                  //               routingService.isPubliclyAccessibleEndAddress)
+                  //             Container(
+                  //               color: routingService.endAddressAvailable
+                  //                   ? Theme.of(context).secondaryHeaderColor
+                  //                   : Theme.of(context).primaryColor,
+                  //               width: MediaQuery.of(context).size.width,
+                  //               height: 140,
+                  //               child: Stack(
+                  //                 children: <Widget>[
+                  //                   Row(
+                  //                     mainAxisAlignment:
+                  //                         MainAxisAlignment.spaceEvenly,
+                  //                     children: <Widget>[
+                  //                       Container(
+                  //                         width: 60,
+                  //                         height: 140,
+                  //                       ),
+                  //                       Container(
+                  //                         height: 140,
+                  //                         width: MediaQuery.of(context)
+                  //                                 .size
+                  //                                 .width -
+                  //                             60,
+                  //                         padding: EdgeInsets.all(15),
+                  //                         child: Column(
+                  //                             mainAxisAlignment:
+                  //                                 MainAxisAlignment.spaceAround,
+                  //                             crossAxisAlignment:
+                  //                                 CrossAxisAlignment.start,
+                  //                             children: <Widget>[
+                  //                               AutoSizeText(
+                  //                                 '${routingService.publicSteps[routingService.publicSteps.length - 1].endAddress}',
+                  //                                 style: Theme.of(context)
+                  //                                     .textTheme
+                  //                                     .bodyText1,
+                  //                               ),
+                  //                               AutoSizeText(
+                  //                                 'Planmäßige Ankunft um ${getTimeFormat(routingService.publicSteps[routingService.publicSteps.length - 1].endTime)}',
+                  //                                 style: Theme.of(context)
+                  //                                     .textTheme
+                  //                                     .headline1,
+                  //                               ),
+                  //                             ]),
+                  //                       ),
+                  //                     ],
+                  //                   ),
+                  //                   StepIconWidget(
+                  //                     isEndAddress: true,
+                  //                   )
+                  //                 ],
+                  //               ),
+                  //             ),
+
+                  //           // This is the bottom sheet for ordering
+                  //           if (routingService.booked == true &&
+                  //               isSublinAvailable(
+                  //                   Direction.end, routingService))
+                  //             UserStepNotificationWidget(
+                  //                 routingService: routingService,
+                  //                 direction: Direction.end),
+                  //           if (routingService.booked == false)
+                  //             Container(
+                  //               height: hightBookingBottomSheet,
+                  //               child: Row(
+                  //                 mainAxisAlignment:
+                  //                     MainAxisAlignment.spaceAround,
+                  //                 children: <Widget>[
+                  //                   FlatButton(
+                  //                       onPressed: () async {
+                  //                         // await RoutingService().removeProviderFromRoute(user.uid);
+                  //                         Navigator.pushReplacementNamed(
+                  //                             context,
+                  //                             UserRequestScreen.routeName);
+                  //                       },
+                  //                       child: Text('Route ändern')),
+                  //                   RaisedButton(
+                  //                       onPressed: routingService.booked
+                  //                           ? null
+                  //                           : () {
+                  //                               RoutingService()
+                  //                                   .bookRoute(uid: auth.uid);
+                  //                             },
+                  //                       child: Text('Service bestellen'))
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ),

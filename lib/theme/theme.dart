@@ -7,6 +7,13 @@ class ThemeConstants {
   static EdgeInsetsGeometry smallPadding = const EdgeInsets.all(4.0);
   static EdgeInsetsGeometry mediumPadding = EdgeInsets.all(8.0);
   static EdgeInsetsGeometry largePadding = const EdgeInsets.all(16.0);
+  static TextStyle veryLargeHeader = TextStyle(
+    fontSize: 20,
+    fontFamily: 'Lato',
+    color: Colors.black,
+    height: 1.3,
+    fontWeight: FontWeight.normal,
+  );
   static TextStyle mainButton = TextStyle(
     fontSize: 16,
     fontFamily: 'Lato',

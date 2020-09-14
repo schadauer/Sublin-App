@@ -1,4 +1,5 @@
 import 'package:Sublin/theme/theme.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:Sublin/utils/get_time_format.dart';
@@ -11,7 +12,8 @@ class StepWidget extends StatefulWidget {
   final String endAddress;
   final int startTime;
   final int endTime;
-  final String provider;
+  final String providerName;
+  final String lineName;
   final int distance;
   final int duration;
   final Function addressInputFunction;
@@ -23,7 +25,8 @@ class StepWidget extends StatefulWidget {
       this.endAddress = '',
       this.startTime = 0,
       this.endTime = 0,
-      this.provider = '',
+      this.providerName = '',
+      this.lineName = '',
       this.distance = 0,
       this.duration = 0,
       this.addressInputFunction});
@@ -36,7 +39,7 @@ class _StepWidgetState extends State<StepWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 120,
+      height: 100,
       child: Container(
         child: Stack(children: <Widget>[
           SizedBox(
@@ -52,27 +55,63 @@ class _StepWidgetState extends State<StepWidget> {
                   Container(
                     padding: EdgeInsets.all(0),
                     width: 60,
-                    height: 100,
+                    height: 80,
                     color: Colors.white54,
                   ),
                   Expanded(
                     child: Container(
-                      padding: ThemeConstants.mediumPadding,
+                      padding: EdgeInsets.only(right: 20, left: 5),
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              '${getTimeFormat(widget.startTime)} ${widget.startAddress}',
-                              style: Theme.of(context).textTheme.bodyText1,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 4,
+                                  child: AutoSizeText(
+                                    '${widget.lineName} ${widget.startAddress}',
+                                    maxLines: 2,
+                                    style:
+                                        Theme.of(context).textTheme.headline2,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    '${getTimeFormat(widget.startTime)}',
+                                    style:
+                                        Theme.of(context).textTheme.headline2,
+                                    textAlign: TextAlign.end,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Icon(
-                              Icons.more_vert,
-                              size: 20,
-                            ),
-                            Text(
-                              '${getTimeFormat(widget.endTime)} ${widget.endAddress}',
-                              style: Theme.of(context).textTheme.bodyText1,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 4,
+                                  child: Text(
+                                    '${widget.providerName}',
+                                    style: Theme.of(context).textTheme.caption,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    '${getTimeFormat(widget.endTime)}',
+                                    style: Theme.of(context).textTheme.caption,
+                                    textAlign: TextAlign.end,
+                                  ),
+                                ),
+                              ],
                             ),
                           ]),
                     ),
@@ -82,8 +121,11 @@ class _StepWidgetState extends State<StepWidget> {
             ),
           ),
           StepIconWidget(
-              isStartAddress: widget.isStartAddress,
-              isEndAddress: widget.isEndAddress),
+            isStartAddress: widget.isStartAddress,
+            isEndAddress: widget.isEndAddress,
+            icon: Icons.train,
+            iconSize: 30.0,
+          ),
         ]),
       ),
     );

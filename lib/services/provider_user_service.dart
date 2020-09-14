@@ -150,7 +150,6 @@ class ProviderUserService {
       if (!Foundation.kReleaseMode) {
         await sublinLogging(Preferences.intLoggingUsers);
       }
-      print(providerPlan);
       await _database.collection('providers').doc(uid).set({
         'providerPlan': _providerPlanString.substring(
             _providerPlanString.indexOf('.') + 1, _providerPlanString.length),

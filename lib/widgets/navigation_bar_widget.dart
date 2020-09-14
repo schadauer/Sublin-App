@@ -44,7 +44,6 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
             // As provider you have more navigational items at your disposal
             if (widget.isProvider == false && _currentIndex > 2)
               _currentIndex = 0;
-            print(snapshot.data);
             if (widget.isProvider == true) {
               return BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,

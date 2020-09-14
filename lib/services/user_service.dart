@@ -27,9 +27,9 @@ class UserService {
 
   Future<void> updateHomeAddress({String uid, String address}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database.collection('users').doc(uid).set({
         'homeAddress': address,
       }, SetOptions(merge: true));
@@ -40,9 +40,9 @@ class UserService {
 
   Future<User> getUser(String uid) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       return await _database.collection('users').doc(uid).get().then((value) {
         return User.fromJson(value.data());
       });
@@ -54,9 +54,9 @@ class UserService {
 
   Future<void> writeUserData({String uid, User data}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database.collection('users').doc(uid).set(
             User().toJson(data),
           );
@@ -67,9 +67,9 @@ class UserService {
 
   Future<void> updateUserDataIsRegistrationCompleted({String uid}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database.collection('users').doc(uid).set({
         'isRegistrationCompleted': true,
       }, SetOptions(merge: true));
@@ -81,9 +81,9 @@ class UserService {
   Future<void> updateTargetGroupUserData(
       {String uid, List<dynamic> targetGroupList}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database.collection('users').doc(uid).set({
         'targetGroup': targetGroupList,
       }, SetOptions(merge: true));

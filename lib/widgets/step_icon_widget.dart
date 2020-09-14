@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 class StepIconWidget extends StatelessWidget {
   final bool isStartAddress;
   final bool isEndAddress;
+  final IconData icon;
+  final double iconSize;
 
   StepIconWidget({
     this.isEndAddress = false,
     this.isStartAddress = false,
+    this.icon,
+    this.iconSize = 40,
   });
 
   @override
@@ -31,16 +35,16 @@ class StepIconWidget extends StatelessWidget {
           children: <Widget>[
             Container(
               margin: EdgeInsets.only(top: 20),
-              height: 40,
-              width: 40,
+              height: iconSize,
+              width: iconSize,
               decoration: BoxDecoration(
                 color: Colors.black,
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                (isEndAddress) ? Icons.flag : Icons.home,
+                icon,
                 color: Colors.white,
-                size: 25,
+                size: iconSize / 1.5,
               ),
             ),
           ],

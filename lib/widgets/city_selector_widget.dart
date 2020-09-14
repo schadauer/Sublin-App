@@ -128,9 +128,6 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
       // For providers we nee also to add the addresses as station address
 
     } else if (widget.providerAddress == false) {
-      print(userUid);
-      print(_data);
-
       await UserService().writeUserData(uid: userUid, data: _data);
     }
     setState(() {

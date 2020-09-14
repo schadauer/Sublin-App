@@ -72,6 +72,8 @@ class Routing {
       sublinEndStep: (data['sublinEndStep'] == null)
           ? defaultValue.sublinEndStep
           : Step(
+              travelMode: data['sublinEndStep']['travelMode'] ??
+                  defaultValueStep.travelMode,
               endAddress: data['sublinEndStep']['endAddress'] ??
                   defaultValueStep.endAddress,
               startAddress: data['sublinEndStep']['startAddress'] ??
@@ -150,6 +152,8 @@ class Routing {
       sublinStartStep: (data['sublinStartStep'] == null)
           ? defaultValue.sublinEndStep
           : Step(
+              travelMode: data['sublinStartStep']['travelMode'] ??
+                  defaultValueStep.travelMode,
               endAddress: data['sublinStartStep']['endAddress'] ??
                   defaultValueStep.endAddress,
               startAddress: data['sublinStartStep']['startAddress'] ??
@@ -229,6 +233,10 @@ class Routing {
                 endTime: step['endTime'] ?? defaultValueStep.endTime,
                 distance: step['distance'] ?? defaultValueStep.distance,
                 duration: step['duration'] ?? defaultValueStep.duration,
+                providerName:
+                    step['providerName'] ?? defaultValueStep.providerName,
+                travelMode: step['travelMode'] ?? defaultValueStep.travelMode,
+                lineName: step['lineName'] ?? defaultValueStep.lineName,
               );
             }).toList(),
       timestamp: data['timestamp'] ?? defaultValue.timestamp,

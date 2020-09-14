@@ -115,7 +115,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                                         _emailTextController
                                                             .text))
                                                     .toString());
-                                        print(_targetGroupProviderUser);
+
                                         await ProviderUserService()
                                             .updateTargetGroupProviderUser(
                                                 uid: _user.uid,

@@ -20,6 +20,9 @@ class Step {
   String endId;
   String stationAddress;
   String stationName;
+  String providerName;
+  String lineName;
+  String travelMode;
   ProviderUser provider;
   ProviderUser sponsor;
   int startTime;
@@ -47,6 +50,9 @@ class Step {
     this.endId,
     this.stationAddress,
     this.stationName,
+    this.providerName,
+    this.lineName,
+    this.travelMode,
     this.provider,
     this.sponsor,
     this.startTime = 0,

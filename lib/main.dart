@@ -48,7 +48,6 @@ Future<RemoteConfig> _setupRemoteConfig() async {
 bool _appRequiresUpdate(String minAppVersion) {
   bool updateRequired = false;
   for (var i = 0; i <= 4; i + 2) {
-    print(i);
     // if (int.parse(minAppVersion.substring(i, i + 1)) >=
     //     int.parse(appVersion.substring(i, i + 1))) updateRequired = true;
     // print(minAppVersion.substring(i, i + 1));
