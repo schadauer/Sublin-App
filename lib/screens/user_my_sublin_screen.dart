@@ -3,18 +3,26 @@
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/request_class.dart';
+import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
+import 'package:Sublin/screens/user_routing_screen.dart';
+import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
+import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
+import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/utils/get_formatted_city_from_provider_user_addresses.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 enum Filter { taxisOnly, excludeTaxis }
@@ -26,12 +34,29 @@ class UserMySublinScreen extends StatefulWidget {
   _UserMySublinScreenState createState() => _UserMySublinScreenState();
 }
 
-class _UserMySublinScreenState extends State<UserMySublinScreen> {
-  User _user;
-  bool _loadAddress = false;
-  bool _changedAddress = false;
+class _UserMySublinScreenState extends State<UserMySublinScreen>
+    with WidgetsBindingObserver {
+  // User _user;
+  // bool _loadAddress = false;
+  // bool _changedAddress = false;
   int _lengthProviderUsersOfAvailables;
   int _lengthProviderUsersWithUnavailables;
+  GeolocationStatus _geolocationStatus;
+  Request _localRequest;
+
+  @override
+  void initState() {
+    _getStartAddressFromGeolocastion();
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _getStartAddressFromGeolocastion();
+    }
+  }
 
   @override
   void dispose() {
@@ -41,20 +66,11 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
-    bool _cityAdded = false;
-
+    print(_geolocationStatus);
     var size = MediaQuery.of(context).size;
-
     /*24 is for notification bar on Android*/
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 3;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 4;
     final double itemWidth = size.width / 2;
-
-    // void isBottomSheetClosedCallback(bool value) {
-    //   setState(() {
-    //     _cityAdded = true;
-    //   });
-    // }
-
     return Scaffold(
       bottomNavigationBar:
           NavigationBarWidget(isProvider: user.userType != UserType.user),
@@ -91,20 +107,64 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
                       _providerUsersWithUnavailables.length;
                   return Column(
                     children: [
-                      Expanded(
-                        child: Card(
-                          color: ThemeConstants.backgroundColor,
-                          child: Padding(
-                            padding: ThemeConstants.mediumPadding,
-                            child: AutoSizeText(
-                              'Bei diesen Adressen ist für dich ein kostenloses Abholservice möglich',
-                              style: Theme.of(context).textTheme.bodyText1,
-                              // textAlign: TextAlign.center,
+                      if (_geolocationStatus != GeolocationStatus.granted)
+                        Container(
+                          height: 80,
+                          child: Card(
+                            color: Theme.of(context).primaryColor,
+                            child: Padding(
+                              padding: ThemeConstants.mediumPadding,
+                              child: (_geolocationStatus !=
+                                      GeolocationStatus.granted)
+                                  ? Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: AutoSizeText(
+                                            'Sublin funktioniert am einfachsten wenn der Ortungsdienst aktiviert ist.',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                            // textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: RaisedButton(
+                                              onPressed: () {
+                                                openAppSettings();
+                                              },
+                                              child: AutoSizeText(
+                                                  'Einstellungen')),
+                                        )
+                                      ],
+                                    )
+                                  : Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: AutoSizeText(
+                                            'Dein Standort ist ${convertFormattedAddressToReadableAddress(_localRequest.startAddress)}',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                            // textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: RaisedButton(
+                                              onPressed: () {
+                                                openAppSettings();
+                                              },
+                                              child: AutoSizeText(
+                                                  'Einstellungen')),
+                                        )
+                                      ],
+                                    ),
                             ),
                           ),
                         ),
-                        flex: 1,
-                      ),
                       Expanded(
                         flex: 10,
                         child: GridView.builder(
@@ -158,7 +218,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
       case CardType.available:
         return Container(
           child: Card(
-              color: ThemeConstants.sublinMainBackgroundColor,
+              color: Theme.of(context).primaryColor,
               semanticContainer: true,
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: Padding(
@@ -167,21 +227,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      height: 100,
-                      child: Container(
-                          width: itemWidth / 2,
-                          height: itemHeight / 2,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(
-                                      "https://dev.gemeindeserver.net/media/seitenstetten/1524150647-img-0151-jpg.jpeg")))),
-                    ),
                     Expanded(
                         flex: 3,
                         child: Column(
@@ -189,39 +234,58 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
                             SizedBox(
                               height: 10,
                             ),
-                            AutoSizeText(
-                              getReadablePartOfFormattedAddress(
-                                  getFormattedCityFromListProviderUserAddresses(
-                                      providerUser, user),
-                                  Delimiter.city),
-                              style: Theme.of(context).textTheme.headline1,
+                            Expanded(
+                              child: AutoSizeText(
+                                getReadablePartOfFormattedAddress(
+                                    getFormattedCityFromListProviderUserAddresses(
+                                        providerUser, user),
+                                    Delimiter.city),
+                                style: Theme.of(context).textTheme.headline1,
+                              ),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            AutoSizeText(
-                              'Gesponsert von',
-                              style: Theme.of(context).textTheme.caption,
+                            Expanded(
+                              child: AutoSizeText(
+                                'Gesponsert von',
+                                style: Theme.of(context).textTheme.caption,
+                              ),
                             ),
-                            AutoSizeText(
-                              providerUser.providerName,
-                              style: Theme.of(context).textTheme.caption,
-                              maxLines: 2,
+                            Expanded(
+                              child: AutoSizeText(
+                                providerUser.providerName,
+                                style: Theme.of(context).textTheme.caption,
+                                maxLines: 2,
+                              ),
                             ),
-                            // AutoSizeText(
-                            //   'Durchgeführt von',
-                            //   style: Theme.of(context)
-                            //       .textTheme
-                            //       .caption,
-                            // ),
-                            // AutoSizeText(
-                            //   getReadableTaxiFromListOfAllProviders(
-                            //       _providerUser,
-                            //       providerUsersTaxisOnly),
-                            //   style: Theme.of(context)
-                            //       .textTheme
-                            //       .caption,
-                            // )
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                RaisedButton(
+                                  onPressed: () async {
+                                    await RoutingService().requestRoute(
+                                      uid: user.uid,
+                                      startAddress:
+                                          _localRequest?.startAddress ?? '',
+                                      startId: '',
+                                      endAddress: providerUser.addresses[0],
+                                      endId: '',
+                                      timestamp: DateTime.now(),
+                                    );
+                                    await Navigator.pushReplacementNamed(
+                                      context,
+                                      UserRoutingScreen.routeName,
+                                      arguments: Routing(
+                                        startId: '',
+                                        endId: '',
+                                      ),
+                                    );
+                                  },
+                                  child: Text('Hinfahren'),
+                                )
+                              ],
+                            )
                           ],
                         ))
                   ],
@@ -248,25 +312,24 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
             },
             child: Card(
                 color: ThemeConstants.backgroundColor,
-                child: Padding(
-                  padding: ThemeConstants.mediumPadding,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.add,
-                        size: 70,
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      AutoSizeText(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.add,
+                      size: 70,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Expanded(
+                      child: AutoSizeText(
                         'Orte hinzufügen, die du gerne besuchen möchtest',
                         textAlign: TextAlign.center,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 )),
           ),
         );
@@ -317,6 +380,22 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
     }
   }
 
+  Future<void> _getStartAddressFromGeolocastion() async {
+    try {
+      GeolocationStatus geolocationStatus =
+          await GeolocationService().isGeoLocationPermissionGranted();
+      Request _geolocation = await GeolocationService().getCurrentCoordinates();
+      setState(() {
+        _geolocationStatus = geolocationStatus;
+        if (_geolocation != null) {
+          _localRequest = _geolocation;
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void _addCityToCommunesSelectionFunction({
     String userUid,
     String input,
@@ -337,23 +416,23 @@ class _UserMySublinScreenState extends State<UserMySublinScreen> {
     // });
   }
 
-  Future<void> _addressInputFunction(
-      {String userUid,
-      String input,
-      String id,
-      bool isCompany,
-      List<dynamic> terms,
-      bool isStartAddress,
-      bool isEndAddress}) async {
-    setState(() {
-      _loadAddress = true;
-    });
-    await UserService().updateHomeAddress(uid: userUid, address: input);
-    // _user = await _getUser(userUid);
-    setState(() {
-      _loadAddress = false;
-    });
-  }
+  // Future<void> _addressInputFunction(
+  //     {String userUid,
+  //     String input,
+  //     String id,
+  //     bool isCompany,
+  //     List<dynamic> terms,
+  //     bool isStartAddress,
+  //     bool isEndAddress}) async {
+  //   setState(() {
+  //     _loadAddress = true;
+  //   });
+  //   await UserService().updateHomeAddress(uid: userUid, address: input);
+  //   // _user = await _getUser(userUid);
+  //   setState(() {
+  //     _loadAddress = false;
+  //   });
+  // }
 
   Future<User> _getUser(userUid) async {
     return await UserService().getUser(userUid);

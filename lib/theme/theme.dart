@@ -11,8 +11,7 @@ class ThemeConstants {
     fontSize: 20,
     fontFamily: 'Lato',
     color: Colors.black,
-    height: 1.3,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.bold,
   );
   static TextStyle mainButton = TextStyle(
     fontSize: 16,

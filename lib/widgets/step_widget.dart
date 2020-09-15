@@ -39,16 +39,16 @@ class _StepWidgetState extends State<StepWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
+      height: 90,
       child: Container(
         child: Stack(children: <Widget>[
           SizedBox(
             height: double.infinity,
             child: Card(
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(0),
               ),
-              margin: EdgeInsets.all(5),
+              margin: EdgeInsets.all(0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -60,7 +60,8 @@ class _StepWidgetState extends State<StepWidget> {
                   ),
                   Expanded(
                     child: Container(
-                      padding: EdgeInsets.only(right: 20, left: 5),
+                      padding: EdgeInsets.only(
+                          right: 20, left: 20, top: 10, bottom: 10),
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +73,7 @@ class _StepWidgetState extends State<StepWidget> {
                                 Expanded(
                                   flex: 4,
                                   child: AutoSizeText(
-                                    '${widget.lineName} ${widget.startAddress}',
+                                    '${widget.lineName} - ${widget.startAddress}',
                                     maxLines: 2,
                                     style:
                                         Theme.of(context).textTheme.headline2,
@@ -98,9 +99,20 @@ class _StepWidgetState extends State<StepWidget> {
                               children: [
                                 Expanded(
                                   flex: 4,
-                                  child: Text(
-                                    '${widget.providerName}',
-                                    style: Theme.of(context).textTheme.caption,
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.keyboard_tab),
+                                      SizedBox(width: 5),
+                                      Expanded(
+                                        child: AutoSizeText(
+                                          '${widget.endAddress}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                          maxLines: 2,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Expanded(
