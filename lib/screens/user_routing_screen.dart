@@ -318,7 +318,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                               FlatButton(
                                   onPressed: () async {
                                     // await RoutingService().removeProviderFromRoute(user.uid);
-                                    Navigator.pushReplacementNamed(
+                                    Navigator.pushNamed(
                                         context, UserMySublinScreen.routeName);
                                   },
                                   child: Text('Route ändern')),

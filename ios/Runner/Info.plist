@@ -24,8 +24,6 @@
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Mit deinen Standortdaten werden automatisch erkannt.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Mit deinen Standortdaten werden automatisch erkannt.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Mit deinen Standortdaten werden automatisch erkannt.</string>
 	<key>UIBackgroundModes</key>

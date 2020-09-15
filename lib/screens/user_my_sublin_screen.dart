@@ -1,6 +1,7 @@
 /* Copyright (C) 2020 Andreas Schadauer, andreas@sublin.app - All Rights Reserved */
 
 import 'package:Sublin/models/delimiter_class.dart';
+import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/request_class.dart';
@@ -12,6 +13,7 @@ import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/routing_service.dart';
+import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
@@ -36,13 +38,10 @@ class UserMySublinScreen extends StatefulWidget {
 
 class _UserMySublinScreenState extends State<UserMySublinScreen>
     with WidgetsBindingObserver {
-  // User _user;
-  // bool _loadAddress = false;
-  // bool _changedAddress = false;
   int _lengthProviderUsersOfAvailables;
   int _lengthProviderUsersWithUnavailables;
   GeolocationStatus _geolocationStatus;
-  Request _localRequest;
+  Request _localRequest = Request();
 
   @override
   void initState() {
@@ -66,7 +65,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
-    print(_geolocationStatus);
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
     final double itemHeight = (size.height - kToolbarHeight - 24) / 4;
@@ -74,7 +72,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     return Scaffold(
       bottomNavigationBar:
           NavigationBarWidget(isProvider: user.userType != UserType.user),
-      appBar: AppbarWidget(title: 'Mein Sublin'),
+      appBar: AppbarWidget(title: 'Meine Angebote'),
       // floatingActionButton: FloatingButtonAddCities(
       //     user: user, isBottomSheetClosedCallback: isBottomSheetClosedCallback),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -107,39 +105,14 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                       _providerUsersWithUnavailables.length;
                   return Column(
                     children: [
-                      if (_geolocationStatus != GeolocationStatus.granted)
-                        Container(
-                          height: 80,
-                          child: Card(
-                            color: Theme.of(context).primaryColor,
-                            child: Padding(
+                      Container(
+                        height: 80,
+                        child: Card(
+                          child: Padding(
                               padding: ThemeConstants.mediumPadding,
-                              child: (_geolocationStatus !=
+                              child: (_geolocationStatus ==
                                       GeolocationStatus.granted)
                                   ? Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: AutoSizeText(
-                                            'Sublin funktioniert am einfachsten wenn der Ortungsdienst aktiviert ist.',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1,
-                                            // textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: RaisedButton(
-                                              onPressed: () {
-                                                openAppSettings();
-                                              },
-                                              child: AutoSizeText(
-                                                  'Einstellungen')),
-                                        )
-                                      ],
-                                    )
-                                  : Row(
                                       children: [
                                         Expanded(
                                           flex: 2,
@@ -153,18 +126,67 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                         ),
                                         Expanded(
                                           flex: 1,
-                                          child: RaisedButton(
+                                          child: FlatButton(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          4.0),
+                                                  side: BorderSide(
+                                                      color: Theme.of(context)
+                                                          .primaryColor)),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AddressInputScreen(
+                                                              userUid: user.uid,
+                                                              addressInputFunction:
+                                                                  _addressInputFunction,
+                                                              isEndAddress:
+                                                                  false,
+                                                              isStartAddress:
+                                                                  true,
+                                                              showGeolocationOption:
+                                                                  false,
+                                                              isStation: false,
+                                                              title:
+                                                                  'Dein Standort',
+                                                            )));
+                                              },
+                                              child: AutoSizeText('ändern')),
+                                        )
+                                      ],
+                                    )
+                                  : Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: AutoSizeText(
+                                            'Sublin funktioniert am einfachsten wenn der Ortungsdienst aktiviert ist.',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                            // textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: FlatButton(
                                               onPressed: () {
                                                 openAppSettings();
                                               },
                                               child: AutoSizeText(
-                                                  'Einstellungen')),
+                                                'Einstellungen',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .caption,
+                                              )),
                                         )
                                       ],
-                                    ),
-                            ),
-                          ),
+                                    )),
                         ),
+                      ),
                       Expanded(
                         flex: 10,
                         child: GridView.builder(
@@ -177,6 +199,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                           itemBuilder: (BuildContext context, int index) {
                             ProviderUser _providerUser =
                                 _providerUsersWithUnavailables[index];
+
                             CardType _cardType;
                             if (index < _lengthProviderUsersOfAvailables)
                               _cardType = CardType.available;
@@ -214,6 +237,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     BuildContext context,
     CardType cardType,
   }) {
+    bool isShuttle = providerUser.providerType == ProviderType.shuttle ||
+        providerUser.providerType == ProviderType.sponsorShuttle;
     switch (cardType) {
       case CardType.available:
         return Container(
@@ -222,27 +247,36 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
               semanticContainer: true,
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: Padding(
-                padding: ThemeConstants.mediumPadding,
+                padding: ThemeConstants.largePadding,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                         flex: 3,
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Expanded(
-                              child: AutoSizeText(
-                                getReadablePartOfFormattedAddress(
-                                    getFormattedCityFromListProviderUserAddresses(
-                                        providerUser, user),
-                                    Delimiter.city),
-                                style: Theme.of(context).textTheme.headline1,
+                            if (isShuttle)
+                              Expanded(
+                                child: AutoSizeText(
+                                  getReadablePartOfFormattedAddress(
+                                      providerUser.addresses[0],
+                                      Delimiter.company),
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
                               ),
-                            ),
+                            if (!isShuttle)
+                              Expanded(
+                                child: AutoSizeText(
+                                  getReadablePartOfFormattedAddress(
+                                      getFormattedCityFromListProviderUserAddresses(
+                                          providerUser, user),
+                                      Delimiter.city),
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                              ),
                             SizedBox(
                               height: 10,
                             ),
@@ -264,23 +298,42 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                               children: [
                                 RaisedButton(
                                   onPressed: () async {
-                                    await RoutingService().requestRoute(
-                                      uid: user.uid,
-                                      startAddress:
-                                          _localRequest?.startAddress ?? '',
-                                      startId: '',
-                                      endAddress: providerUser.addresses[0],
-                                      endId: '',
-                                      timestamp: DateTime.now(),
-                                    );
-                                    await Navigator.pushReplacementNamed(
-                                      context,
-                                      UserRoutingScreen.routeName,
-                                      arguments: Routing(
+                                    print(_localRequest.startAddress);
+                                    if (_localRequest?.startAddress != '') {
+                                      await RoutingService().requestRoute(
+                                        uid: user.uid,
+                                        startAddress:
+                                            _localRequest.startAddress,
                                         startId: '',
+                                        endAddress: providerUser.addresses[0],
                                         endId: '',
-                                      ),
-                                    );
+                                        timestamp: DateTime.now(),
+                                      );
+                                      await Navigator.pushNamed(
+                                        context,
+                                        UserRoutingScreen.routeName,
+                                        arguments: Routing(
+                                          startId: '',
+                                          endId: '',
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddressInputScreen(
+                                                    userUid: user.uid,
+                                                    addressInputFunction:
+                                                        _addressInputFunction,
+                                                    isEndAddress: false,
+                                                    isStartAddress: true,
+                                                    showGeolocationOption:
+                                                        false,
+                                                    isStation: false,
+                                                    title: 'Dein Standort',
+                                                  )));
+                                    }
                                   },
                                   child: Text('Hinfahren'),
                                 )
@@ -385,10 +438,16 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
       GeolocationStatus geolocationStatus =
           await GeolocationService().isGeoLocationPermissionGranted();
       Request _geolocation = await GeolocationService().getCurrentCoordinates();
+      String _localRequestStartAddressFromSF =
+          await getStringValuesSF(Preferences.stringLocalRequestStartAddress);
       setState(() {
         _geolocationStatus = geolocationStatus;
         if (_geolocation != null) {
           _localRequest = _geolocation;
+          addStringToSF(Preferences.stringLocalRequestStartAddress,
+              _localRequest.startAddress);
+        } else {
+          _localRequest.startAddress = _localRequestStartAddressFromSF;
         }
       });
     } catch (e) {
@@ -416,23 +475,19 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     // });
   }
 
-  // Future<void> _addressInputFunction(
-  //     {String userUid,
-  //     String input,
-  //     String id,
-  //     bool isCompany,
-  //     List<dynamic> terms,
-  //     bool isStartAddress,
-  //     bool isEndAddress}) async {
-  //   setState(() {
-  //     _loadAddress = true;
-  //   });
-  //   await UserService().updateHomeAddress(uid: userUid, address: input);
-  //   // _user = await _getUser(userUid);
-  //   setState(() {
-  //     _loadAddress = false;
-  //   });
-  // }
+  Future<void> _addressInputFunction(
+      {String userUid,
+      String input,
+      String id,
+      bool isCompany,
+      List<dynamic> terms,
+      bool isStartAddress,
+      bool isEndAddress}) async {
+    setState(() {
+      _localRequest.startAddress = input;
+    });
+    addStringToSF(Preferences.stringLocalRequestStartAddress, input);
+  }
 
   Future<User> _getUser(userUid) async {
     return await UserService().getUser(userUid);

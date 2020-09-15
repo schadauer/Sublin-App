@@ -19,11 +19,14 @@ class ThemeConstants {
     color: sublinMainColor,
     fontWeight: FontWeight.normal,
   );
+  static ButtonTheme flatButton = ButtonTheme(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+  );
 }
 
 ThemeData themeData(context) {
   return ThemeData(
-    primarySwatch: Colors.blueGrey,
+    primarySwatch: Colors.grey,
     primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
     // primaryColor: Color.fromRGBO(54, 73, 88, 1),
     primaryColor: Color.fromRGBO(216, 214, 204, 1),

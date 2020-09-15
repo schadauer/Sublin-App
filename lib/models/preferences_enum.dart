@@ -1,6 +1,8 @@
 enum Preferences {
   boolHasRatedTrip,
   boolActiveRoute,
+  stringLocalRequestStartAddress,
+  stringLocalRequestEndAddress,
   intCurrentScreen,
   intLoggingAuth,
   intLoggingUsers,

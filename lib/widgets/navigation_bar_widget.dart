@@ -137,7 +137,7 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
                     icon: Icon(Icons.turned_in_not),
-                    title: Text('Mein Sublin'),
+                    title: Text('Meine Angebote'),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.search),
