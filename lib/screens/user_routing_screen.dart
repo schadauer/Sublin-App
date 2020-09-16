@@ -1,19 +1,17 @@
-import 'dart:async';
-
-import 'package:Sublin/models/auth_class.dart';
+import 'package:Sublin/models/routing_step_type_enum.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/services.dart';
 import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/user_my_sublin_screen.dart';
 import 'package:Sublin/screens/user_request_screen.dart';
-import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
-import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:Sublin/widgets/user_routing_start_end_widget.dart';
 import 'package:flutter/material.dart';
@@ -21,39 +19,21 @@ import 'package:provider/provider.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/widgets/step_widget.dart';
 
-enum StepType {
-  start,
-  public,
-  end,
-}
-
 class UserRoutingScreen extends StatefulWidget {
+  const UserRoutingScreen({Key key, this.setNavigationIndex}) : super(key: key);
+  final int setNavigationIndex;
   static const routeName = '/userRoutingScreen';
   @override
   _UserRoutingScreenState createState() => _UserRoutingScreenState();
 }
 
 class _UserRoutingScreenState extends State<UserRoutingScreen> {
-  Timer _timer;
+  // Timer _timer;
   int currentTime = DateTime.now().millisecondsSinceEpoch;
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final Routing args = ModalRoute.of(context).settings.arguments;
     final Routing routingService = Provider.of<Routing>(context);
-    final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
     double heightBookingBottomSheet = 70.0;
 
@@ -74,7 +54,6 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
       // We need to calculate the screen height minus the bottom navigation and the appbar
       double safePaddingTop = MediaQuery.of(context).padding.top;
       double safePaddingBottom = MediaQuery.of(context).padding.bottom;
-      print(safePaddingBottom);
       double screenSize = MediaQuery.of(context).size.height < 700.0
           ? 700
           : MediaQuery.of(context).size.height;
@@ -103,6 +82,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
           return heightOfStepCard * numberOfPublicSteps;
           break;
       }
+      return 0.0;
     }
 
     bool _isRouteExpired() {
@@ -119,9 +99,6 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     if (!_isRouteAvailable()) {
       return Scaffold(
           appBar: AppbarWidget(title: 'Meine aktuelle Fahrt'),
-          endDrawer: DrawerSideNavigationWidget(
-            authService: AuthService(),
-          ),
           body: Center(
             child: Padding(
               padding: ThemeConstants.largePadding,
@@ -161,9 +138,6 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     } else if (_isRouteExpired()) {
       return Scaffold(
           appBar: AppbarWidget(title: 'Abgelaufene Fahrt'),
-          endDrawer: DrawerSideNavigationWidget(
-            authService: AuthService(),
-          ),
           body: Center(
             child: Container(
               padding: EdgeInsets.all(20),
@@ -193,11 +167,9 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
       // if (_timer != null) _timer.cancel();
       return Scaffold(
           bottomNavigationBar: NavigationBarWidget(
-              isProvider: user.userType == UserType.provider),
+              isProvider: user.userType == UserType.provider,
+              setNavigationIndex: widget.setNavigationIndex),
           appBar: AppbarWidget(title: 'Fahrt abgeschlossen'),
-          endDrawer: DrawerSideNavigationWidget(
-            authService: AuthService(),
-          ),
           body: Center(
             child: Container(
               padding: EdgeInsets.all(20),
@@ -232,113 +204,144 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
           bottomNavigationBar: NavigationBarWidget(
               isProvider: user.userType == UserType.provider),
           appBar: AppbarWidget(title: 'Meine aktuelle Fahrt'),
-          endDrawer: DrawerSideNavigationWidget(
-            authService: AuthService(),
-          ),
-          body: Container(
-            child: SafeArea(
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                      width: 80,
-                      height: double.infinity,
-                      child: Stack(children: <Widget>[
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                height: double.infinity,
-                                width: 2,
-                                color: Colors.black,
+          body: FutureBuilder<List<String>>(
+              future: Future.wait([
+                getStringValuesSF(Preferences.stringLocalRequestStartAddress),
+                getStringValuesSF(Preferences.stringLocalRequestEndAddress),
+              ]),
+              builder: (context, snapshot) {
+                print('start');
+                print(snapshot.data[0]);
+                print(routingService.startAddress);
+                print(snapshot.data[1]);
+                print(routingService.endAddress);
+                print('end');
+                if (snapshot.data[0] == routingService.startAddress &&
+                    snapshot.data[1] == routingService.endAddress) {
+                  return Container(
+                    child: SafeArea(
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                              width: 80,
+                              height: double.infinity,
+                              child: Stack(children: <Widget>[
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                        height: double.infinity,
+                                        width: 2,
+                                        color: Colors.black,
+                                      ),
+                                    ]),
+                              ])),
+                          // -------------------------These are the public steps -----------------------------
+                          Container(
+                              padding: EdgeInsets.only(
+                                top: _getRoutingStepHight(
+                                    StepType.start, routingService),
                               ),
-                            ]),
-                      ])),
-                  // -------------------------These are the public steps -----------------------------
-                  Container(
-                      padding: EdgeInsets.only(
-                        top: _getRoutingStepHight(
-                            StepType.start, routingService),
-                      ),
-                      height: MediaQuery.of(context).size.height,
-                      child: ListView.builder(
-                          itemCount: routingService.publicSteps.length,
-                          itemBuilder: (context, index) {
-                            if (routingService.publicSteps[index].travelMode ==
-                                'TRANSIT') {
-                              return StepWidget(
-                                startAddress: routingService
-                                    .publicSteps[index].startAddress,
-                                startTime:
-                                    routingService.publicSteps[index].startTime,
-                                endAddress: routingService
-                                    .publicSteps[index].endAddress,
-                                endTime:
-                                    routingService.publicSteps[index].endTime,
-                                distance:
-                                    routingService.publicSteps[index].distance,
-                                duration:
-                                    routingService.publicSteps[index].duration,
-                                providerName: routingService
-                                    .publicSteps[index].providerName,
-                                lineName:
-                                    routingService.publicSteps[index].lineName,
-                              );
-                            } else
-                              return Container();
-                          })),
-                  // -------------------------These is the start step steps -----------------------------
-                  // if (routingService.startAddressAvailable ||
-                  //     routingService.isPubliclyAccessibleStartAddress)
-                  UserRoutingStartEndWidget(
-                    direction: Direction.start,
-                    routingService: routingService,
-                    stepHeight:
-                        _getRoutingStepHight(StepType.start, routingService),
-                  ),
-                  // ------------------------------These is the end steps -----------------------------
-                  UserRoutingStartEndWidget(
-                    direction: Direction.end,
-                    routingService: routingService,
-                    stepHeight:
-                        _getRoutingStepHight(StepType.start, routingService),
-                    heightBookingSheet: heightBookingBottomSheet,
-                  ),
-                  // ------------------------ This is the bottom sheet for ordering -------------------------
-
-                  if (routingService.booked == false)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: heightBookingBottomSheet,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              FlatButton(
-                                  onPressed: () async {
-                                    // await RoutingService().removeProviderFromRoute(user.uid);
-                                    Navigator.pushNamed(
-                                        context, UserMySublinScreen.routeName);
-                                  },
-                                  child: Text('Route ändern')),
-                              RaisedButton(
-                                  onPressed: routingService.booked
-                                      ? null
-                                      : () {
-                                          RoutingService()
-                                              .bookRoute(uid: auth.uid);
-                                        },
-                                  child: Text('Service bestellen'))
-                            ],
+                              height: MediaQuery.of(context).size.height,
+                              child: ListView.builder(
+                                  itemCount: routingService.publicSteps.length,
+                                  itemBuilder: (context, index) {
+                                    if (routingService
+                                            .publicSteps[index].travelMode ==
+                                        'TRANSIT') {
+                                      return StepWidget(
+                                        startAddress: routingService
+                                            .publicSteps[index].startAddress,
+                                        startTime: routingService
+                                            .publicSteps[index].startTime,
+                                        endAddress: routingService
+                                            .publicSteps[index].endAddress,
+                                        endTime: routingService
+                                            .publicSteps[index].endTime,
+                                        distance: routingService
+                                            .publicSteps[index].distance,
+                                        duration: routingService
+                                            .publicSteps[index].duration,
+                                        providerName: routingService
+                                            .publicSteps[index].providerName,
+                                        lineName: routingService
+                                            .publicSteps[index].lineName,
+                                      );
+                                    } else
+                                      return Container();
+                                  })),
+                          // -------------------------These is the start step steps -----------------------------
+                          // if (routingService.startAddressAvailable ||
+                          //     routingService.isPubliclyAccessibleStartAddress)
+                          UserRoutingStartEndWidget(
+                            direction: Direction.start,
+                            routingService: routingService,
+                            stepHeight: _getRoutingStepHight(
+                                StepType.start, routingService),
                           ),
-                        ),
-                      ],
+                          // ------------------------------These is the end steps -----------------------------
+                          UserRoutingStartEndWidget(
+                            direction: Direction.end,
+                            routingService: routingService,
+                            stepHeight: _getRoutingStepHight(
+                                StepType.start, routingService),
+                            heightBookingSheet: heightBookingBottomSheet,
+                          ),
+                          // ------------------------ This is the bottom sheet for ordering -------------------------
+
+                          if (routingService.booked == false)
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  height: heightBookingBottomSheet,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      FlatButton(
+                                          onPressed: () async {
+                                            // await RoutingService().removeProviderFromRoute(user.uid);
+                                            Navigator.pushNamed(context,
+                                                UserMySublinScreen.routeName);
+                                          },
+                                          child: Text('Route ändern')),
+                                      RaisedButton(
+                                          onPressed: routingService.booked
+                                              ? null
+                                              : () {
+                                                  HapticFeedback.mediumImpact();
+                                                  RoutingService()
+                                                      .bookRoute(uid: user.uid);
+                                                },
+                                          child: Text('Service bestellen'))
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
-                ],
-              ),
-            ),
-          ));
+                  );
+                } else {
+                  return Center(
+                      child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ConstrainedBox(
+                          constraints:
+                              BoxConstraints(minHeight: 80, minWidth: 80),
+                          child: CircularProgressIndicator()),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      AutoSizeText('Wir suchen deine Fahrt ...')
+                    ],
+                  ));
+                }
+              }));
     }
   }
 }

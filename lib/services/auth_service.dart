@@ -1,15 +1,11 @@
-import 'package:Sublin/models/error_enum.dart';
-import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/utils/get_random_string.dart';
-import 'package:Sublin/utils/logging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart' as sublin;
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
-import 'package:flutter/foundation.dart' as Foundation;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -69,15 +65,8 @@ class AuthService {
       {String email, String password}) async {
     dynamic userCredential;
     try {
-      print('register function');
       userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-    } on FirebaseAuthException catch (signUpError) {
-      print('Error email');
-      print(signUpError.code);
-      if (signUpError.code == 'email-already-in-use') {
-        userCredential = SublinError.emailAlreadyInUse;
-      }
     } catch (e) {
       print(e.toString());
     }
@@ -89,9 +78,9 @@ class AuthService {
       password = password ?? getRandomString(20);
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       User user = result.user;
       return user;
     } catch (e) {
@@ -116,9 +105,9 @@ class AuthService {
   Future signOut() async {
     try {
       await _auth.signOut();
-      if (!Foundation.kReleaseMode) {
-        sublinLogging(Preferences.intLoggingAuth);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   sublinLogging(Preferences.intLoggingAuth);
+      // }
     } catch (e) {
       return null;
     }

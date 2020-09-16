@@ -353,7 +353,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                     .startAddressAvailable)
                                               Expanded(
                                                 child: AutoSizeText(
-                                                  '${getTimeFormat(routingService.publicSteps[0]?.startTime - 1200)}',
+                                                  '${getTimeFormat(routingService.publicSteps[0].startTime - 1200)}',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .caption,

@@ -1,16 +1,13 @@
-import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/models/booking_class.dart';
 import 'package:Sublin/models/booking_completed_class.dart';
 import 'package:Sublin/models/booking_confirmed_class.dart';
 import 'package:Sublin/models/booking_open_class.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/booking_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
-import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -46,9 +43,6 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
 
     return Scaffold(
         appBar: AppbarWidget(title: 'Aufträge'),
-        endDrawer: DrawerSideNavigationWidget(
-          authService: AuthService(),
-        ),
         body: Container(
           width: MediaQuery.of(context).size.width,
           child: Column(
@@ -160,7 +154,6 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                   booking = bookings[index].confirmed;
                 if (bookings[index] is BookingCompleted)
                   booking = bookings[index].completed;
-
                 step.Step bookingStep = step.Step(
                     bookedTime: booking.sublinEndStep?.bookedTime ??
                         booking.sublinStartStep?.bookedTime,
@@ -386,11 +379,11 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
     });
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 }
 
 class _BookingFilterOption extends StatelessWidget {

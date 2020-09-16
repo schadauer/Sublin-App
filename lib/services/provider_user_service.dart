@@ -4,10 +4,6 @@ import 'dart:convert';
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart' as Foundation;
-
-import 'package:Sublin/models/preferences_enum.dart';
-import 'package:Sublin/utils/logging.dart';
 import 'package:Sublin/models/provider_user.dart';
 
 class ProviderUserService {
@@ -15,9 +11,9 @@ class ProviderUserService {
 
   Stream<ProviderUser> streamProviderUser(String uid) {
     try {
-      if (!Foundation.kReleaseMode) {
-        sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   sublinLogging(Preferences.intLoggingUsers);
+      // }
       return _database.collection('providers').doc(uid).snapshots().map((snap) {
         return ProviderUser.fromJson(snap.data());
       });
@@ -29,9 +25,9 @@ class ProviderUserService {
 
   Future<void> setProviderUserData({String uid, ProviderUser data}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database
           .collection('providers')
           .doc(uid)
@@ -43,9 +39,9 @@ class ProviderUserService {
 
   Future<void> updateProviderUserData({String uid, ProviderUser data}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database
           .collection('providers')
           .doc(uid)
@@ -59,9 +55,9 @@ class ProviderUserService {
     List<dynamic> communes,
   }) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingProviderUser);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingProviderUser);
+      // }
       return _database
           .collection('providers')
           .where('communes',
@@ -83,9 +79,9 @@ class ProviderUserService {
     String uid,
   }) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingProviderUser);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingProviderUser);
+      // }
       return _database
           .collection('providers')
           .where('partners', arrayContains: uid)
@@ -103,9 +99,9 @@ class ProviderUserService {
 
   Future<ProviderUser> getProviderUser(String uid) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       return await _database
           .collection('providers')
           .doc(uid)
@@ -123,9 +119,9 @@ class ProviderUserService {
     String email,
   }) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingProviderUser);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingProviderUser);
+      // }
       return _database
           .collection('providers')
           .where('providerPlan', isEqualTo: 'emailOnly')
@@ -147,9 +143,9 @@ class ProviderUserService {
       {String uid, ProviderPlan providerPlan}) async {
     try {
       String _providerPlanString = providerPlan.toString();
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database.collection('providers').doc(uid).set({
         'providerPlan': _providerPlanString.substring(
             _providerPlanString.indexOf('.') + 1, _providerPlanString.length),
@@ -162,9 +158,9 @@ class ProviderUserService {
   Future<void> updatePartnersProviderUser(
       {String uid, List<String> partners}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database.collection('providers').doc(uid).set({
         'partners': partners,
       }, SetOptions(merge: true));
@@ -176,9 +172,9 @@ class ProviderUserService {
   Future<void> updateTargetGroupProviderUser(
       {String uid, List<dynamic> targetGroupList}) async {
     try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingUsers);
-      }
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
       await _database.collection('providers').doc(uid).set({
         'targetGroup': targetGroupList,
       }, SetOptions(merge: true));

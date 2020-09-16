@@ -24,12 +24,10 @@ import 'package:Sublin/models/timespan.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
-import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
-import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 import 'package:Sublin/widgets/time_field_widget.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:Sublin/widgets/provider_selection_widget.dart';
@@ -101,9 +99,6 @@ class _ProviderRegistrationScreenState
                 ? 'Registrierung als Anbieter'
                 : 'Registrierung als Sponsor',
           )),
-      endDrawer: DrawerSideNavigationWidget(
-        authService: AuthService(),
-      ),
       body: SafeArea(
         child: PageView(
           controller: _pageViewController,
@@ -645,6 +640,7 @@ class _ProviderRegistrationScreenState
                                     if (_providerUser.providerType ==
                                         ProviderType.taxi)
                                       RegisterNowWidget(
+                                        user: user,
                                         providerUser: _providerUser,
                                         auth: auth,
                                         isActive:

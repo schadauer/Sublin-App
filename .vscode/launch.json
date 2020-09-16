@@ -44,7 +44,8 @@
       "name": "Samsung A10",
       "request": "launch",
       "type": "dart",
-      "deviceId": "R58N32RAT7N"
+      "deviceId": "R58N32RAT7N",
+      "flutterMode": "profile"
     },
   ],
   "compounds": [

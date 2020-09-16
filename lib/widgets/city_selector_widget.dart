@@ -158,23 +158,23 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
     });
   }
 
-  void _addCityToStations(ProviderUser providerUser, String formattedAddress) {
-    bool cityExists = false;
-    providerUser.stations.map((station) {
-      String cityFromFormattedAddress =
-          getReadablePartOfFormattedAddress(formattedAddress, Delimiter.city);
-      String cityFromStation =
-          getReadablePartOfFormattedAddress(station, Delimiter.city);
+  // void _addCityToStations(ProviderUser providerUser, String formattedAddress) {
+  //   bool cityExists = false;
+  //   providerUser.stations.map((station) {
+  //     String cityFromFormattedAddress =
+  //         getReadablePartOfFormattedAddress(formattedAddress, Delimiter.city);
+  //     String cityFromStation =
+  //         getReadablePartOfFormattedAddress(station, Delimiter.city);
 
-      if (cityFromFormattedAddress == cityFromStation) {
-        cityExists = true;
-      }
-    }).toList();
-    if (cityExists == false) {
-      setState(() {
-        providerUser.stations.add(formattedAddress + widget.station);
-        providerUser.communes.add(formattedAddress);
-      });
-    }
-  }
+  //     if (cityFromFormattedAddress == cityFromStation) {
+  //       cityExists = true;
+  //     }
+  //   }).toList();
+  //   if (cityExists == false) {
+  //     setState(() {
+  //       providerUser.stations.add(formattedAddress + widget.station);
+  //       providerUser.communes.add(formattedAddress);
+  //     });
+  //   }
+  // }
 }

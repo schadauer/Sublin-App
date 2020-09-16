@@ -13,7 +13,6 @@ import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
 import 'package:Sublin/screens/provider_registration_screen.dart';
-import 'package:Sublin/screens/user_request_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/loading_widget.dart';
@@ -43,7 +42,6 @@ class _InitRoutesState extends State<InitRoutes> {
         ProviderTargetGroupScreen.routeName: (context) =>
             ProviderTargetGroupScreen(),
         ProviderScopeScreen.routeName: (context) => ProviderScopeScreen(),
-        UserRequestScreen.routeName: (context) => UserRequestScreen(),
         UserProfileScreen.routeName: (context) => UserProfileScreen(),
         UserMySublinScreen.routeName: (context) => UserMySublinScreen(),
         ProviderRegistrationScreen.routeName: (context) =>
@@ -58,8 +56,12 @@ class _InitRoutesState extends State<InitRoutes> {
               ? ProviderBookingScreen()
               : ProviderRegistrationScreen()
           : routingService.booked == true && !isRouteCompleted(routingService)
-              ? UserRoutingScreen()
-              : UserRoutingScreen(),
+              ? UserRoutingScreen(
+                  setNavigationIndex: 1,
+                )
+              : UserMySublinScreen(
+                  setNavigationIndex: 0,
+                ),
     );
   }
 

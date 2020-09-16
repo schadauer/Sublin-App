@@ -1,6 +1,5 @@
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/user_profile_screen.dart';
-import 'package:Sublin/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {

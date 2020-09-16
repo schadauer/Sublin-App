@@ -1,10 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Sublin/models/preferences_enum.dart';
-import 'package:Sublin/utils/logging.dart';
-import 'package:flutter/foundation.dart' as Foundation;
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:Sublin/models/routing.dart';

@@ -1,4 +1,3 @@
-import 'package:Sublin/models/address_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 
 class User {

@@ -150,6 +150,7 @@ class UserPersonalDataCard extends StatelessWidget {
         return 'Benutzer';
         break;
     }
+    return '';
   }
 
   String _getValueText(User user, CardType cardType) {
@@ -161,5 +162,6 @@ class UserPersonalDataCard extends StatelessWidget {
         return getReadableUserType(user.userType);
         break;
     }
+    return '';
   }
 }

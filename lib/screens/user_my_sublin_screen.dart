@@ -2,24 +2,21 @@
 
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/preferences_enum.dart';
+import 'package:Sublin/models/my_card_format_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/request_class.dart';
-import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
-import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
-import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
-import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
-import 'package:Sublin/utils/get_formatted_city_from_provider_user_addresses.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
+import 'package:Sublin/widgets/user_my_sublin_card_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +25,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 enum Filter { taxisOnly, excludeTaxis }
-enum CardType { available, unavailable, add }
 
 class UserMySublinScreen extends StatefulWidget {
+  const UserMySublinScreen({Key key, this.setNavigationIndex})
+      : super(key: key);
+
+  final int setNavigationIndex;
+
   static const routeName = './userFreeRidecreenState';
   @override
   _UserMySublinScreenState createState() => _UserMySublinScreenState();
@@ -67,15 +68,16 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     final User user = Provider.of<User>(context);
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 4;
+    print(size.width);
+    final double itemHeight =
+        (size.height > 700 ? 700 : size.height - kToolbarHeight - 24) /
+            (size.height > 700 ? 2.8 : 2.4);
     final double itemWidth = size.width / 2;
     return Scaffold(
-      bottomNavigationBar:
-          NavigationBarWidget(isProvider: user.userType != UserType.user),
-      appBar: AppbarWidget(title: 'Meine Angebote'),
-      // floatingActionButton: FloatingButtonAddCities(
-      //     user: user, isBottomSheetClosedCallback: isBottomSheetClosedCallback),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      bottomNavigationBar: NavigationBarWidget(
+          isProvider: user.userType != UserType.user,
+          setNavigationIndex: widget.setNavigationIndex),
+      appBar: AppbarWidget(title: 'Meine Shuttles'),
       body: SafeArea(
         child: Padding(
           padding: ThemeConstants.mediumPadding,
@@ -95,6 +97,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                           _applyFilterFromListOfAll(
                               [...snapshot.data[0], ...snapshot.data[1]],
                               Filter.excludeTaxis));
+
                   _lengthProviderUsersOfAvailables =
                       _providerUsersExcludeTaxis.length - 1;
                   // Now let's add all unavailable cities which are inactive for the user to view
@@ -111,7 +114,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                           child: Padding(
                               padding: ThemeConstants.mediumPadding,
                               child: (_geolocationStatus ==
-                                      GeolocationStatus.granted)
+                                          GeolocationStatus.granted ||
+                                      _localRequest.startAddress != '')
                                   ? Row(
                                       children: [
                                         Expanded(
@@ -148,7 +152,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                                               isStartAddress:
                                                                   true,
                                                               showGeolocationOption:
-                                                                  false,
+                                                                  true,
                                                               isStation: false,
                                                               title:
                                                                   'Dein Standort',
@@ -199,22 +203,21 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                           itemBuilder: (BuildContext context, int index) {
                             ProviderUser _providerUser =
                                 _providerUsersWithUnavailables[index];
-
-                            CardType _cardType;
+                            MyCardFormat _myCardFormat;
                             if (index < _lengthProviderUsersOfAvailables)
-                              _cardType = CardType.available;
+                              _myCardFormat = MyCardFormat.available;
                             else if (index == _lengthProviderUsersOfAvailables)
-                              _cardType = CardType.add;
+                              _myCardFormat = MyCardFormat.add;
                             else
-                              _cardType = CardType.unavailable;
-                            return _showCart(
-                              providerUser: _providerUser,
-                              itemWidth: itemWidth,
-                              itemHeight: itemHeight,
-                              user: user,
-                              context: context,
-                              cardType: _cardType,
-                            );
+                              _myCardFormat = MyCardFormat.unavailable;
+                            return UserMySublinCardWidget(
+                                localRequest: _localRequest,
+                                providerUser: _providerUser,
+                                itemWidth: itemWidth,
+                                itemHeight: itemHeight,
+                                user: user,
+                                context: context,
+                                myCardFormat: _myCardFormat);
                           },
                         ),
                       ),
@@ -227,252 +230,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
         ),
       ),
     );
-  }
-
-  Container _showCart({
-    ProviderUser providerUser,
-    double itemWidth,
-    double itemHeight,
-    User user,
-    BuildContext context,
-    CardType cardType,
-  }) {
-    bool isShuttle = providerUser.providerType == ProviderType.shuttle ||
-        providerUser.providerType == ProviderType.sponsorShuttle;
-    switch (cardType) {
-      case CardType.available:
-        return Container(
-          child: Card(
-              color: Theme.of(context).primaryColor,
-              semanticContainer: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Padding(
-                padding: ThemeConstants.largePadding,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        flex: 3,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (isShuttle)
-                              Expanded(
-                                child: AutoSizeText(
-                                  getReadablePartOfFormattedAddress(
-                                      providerUser.addresses[0],
-                                      Delimiter.company),
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
-                              ),
-                            if (!isShuttle)
-                              Expanded(
-                                child: AutoSizeText(
-                                  getReadablePartOfFormattedAddress(
-                                      getFormattedCityFromListProviderUserAddresses(
-                                          providerUser, user),
-                                      Delimiter.city),
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
-                              ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Expanded(
-                              child: AutoSizeText(
-                                'Gesponsert von',
-                                style: Theme.of(context).textTheme.caption,
-                              ),
-                            ),
-                            Expanded(
-                              child: AutoSizeText(
-                                providerUser.providerName,
-                                style: Theme.of(context).textTheme.caption,
-                                maxLines: 2,
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                RaisedButton(
-                                  onPressed: () async {
-                                    print(_localRequest.startAddress);
-                                    if (_localRequest?.startAddress != '') {
-                                      await RoutingService().requestRoute(
-                                        uid: user.uid,
-                                        startAddress:
-                                            _localRequest.startAddress,
-                                        startId: '',
-                                        endAddress: providerUser.addresses[0],
-                                        endId: '',
-                                        timestamp: DateTime.now(),
-                                      );
-                                      await Navigator.pushNamed(
-                                        context,
-                                        UserRoutingScreen.routeName,
-                                        arguments: Routing(
-                                          startId: '',
-                                          endId: '',
-                                        ),
-                                      );
-                                    } else {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AddressInputScreen(
-                                                    userUid: user.uid,
-                                                    addressInputFunction:
-                                                        _addressInputFunction,
-                                                    isEndAddress: false,
-                                                    isStartAddress: true,
-                                                    showGeolocationOption:
-                                                        false,
-                                                    isStation: false,
-                                                    title: 'Dein Standort',
-                                                  )));
-                                    }
-                                  },
-                                  child: Text('Hinfahren'),
-                                )
-                              ],
-                            )
-                          ],
-                        ))
-                  ],
-                ),
-              )),
-        );
-        break;
-      case CardType.add:
-        return Container(
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AddressInputScreen(
-                            addressInputFunction:
-                                _addCityToCommunesSelectionFunction,
-                            userUid: user.uid,
-                            isEndAddress: false,
-                            isStartAddress: false,
-                            cityOnly: true,
-                            title: 'Ortschaft hinzufügen',
-                          )));
-            },
-            child: Card(
-                color: ThemeConstants.backgroundColor,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add,
-                      size: 70,
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                      child: AutoSizeText(
-                        'Orte hinzufügen, die du gerne besuchen möchtest',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                )),
-          ),
-        );
-      case CardType.unavailable:
-        return Container(
-          child: Card(
-              color: ThemeConstants.backgroundColor,
-              semanticContainer: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Padding(
-                padding: ThemeConstants.mediumPadding,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                        flex: 3,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AutoSizeText(
-                              'Für',
-                              style: Theme.of(context).textTheme.caption,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            AutoSizeText(
-                              providerUser.providerName,
-                              style: Theme.of(context).textTheme.headline1,
-                              maxLines: 2,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            AutoSizeText(
-                              'gibt es leider noch keinen Sponsor',
-                              style: Theme.of(context).textTheme.caption,
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ))
-                  ],
-                ),
-              )),
-        );
-        break;
-    }
-  }
-
-  Future<void> _getStartAddressFromGeolocastion() async {
-    try {
-      GeolocationStatus geolocationStatus =
-          await GeolocationService().isGeoLocationPermissionGranted();
-      Request _geolocation = await GeolocationService().getCurrentCoordinates();
-      String _localRequestStartAddressFromSF =
-          await getStringValuesSF(Preferences.stringLocalRequestStartAddress);
-      setState(() {
-        _geolocationStatus = geolocationStatus;
-        if (_geolocation != null) {
-          _localRequest = _geolocation;
-          addStringToSF(Preferences.stringLocalRequestStartAddress,
-              _localRequest.startAddress);
-        } else {
-          _localRequest.startAddress = _localRequestStartAddressFromSF;
-        }
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  void _addCityToCommunesSelectionFunction({
-    String userUid,
-    String input,
-    String id,
-    bool isCompany,
-    bool isStartAddress,
-    bool isEndAddress,
-  }) async {
-    User _data;
-    _data = await UserService().getUser(userUid);
-    if (!_data.communes.contains(input)) {
-      _data.communes.add(input);
-    }
-    await UserService().writeUserData(uid: userUid, data: _data);
-    // }
-    // setState(() {
-    //   _isLoading = false;
-    // });
   }
 
   Future<void> _addressInputFunction(
@@ -489,8 +246,30 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     addStringToSF(Preferences.stringLocalRequestStartAddress, input);
   }
 
-  Future<User> _getUser(userUid) async {
-    return await UserService().getUser(userUid);
+  Future<void> _getStartAddressFromGeolocastion() async {
+    try {
+      String _localRequestStartAddressFromSF =
+          await getStringValuesSF(Preferences.stringLocalRequestStartAddress);
+      if (_localRequestStartAddressFromSF != '') {
+        setState(() {
+          _localRequest.startAddress = _localRequestStartAddressFromSF;
+        });
+      } else {
+        GeolocationStatus geolocationStatus =
+            await GeolocationService().isGeoLocationPermissionGranted();
+        if (geolocationStatus == GeolocationStatus.granted) {
+          Request _geolocation =
+              await GeolocationService().getCurrentCoordinates();
+          setState(() {
+            _localRequest = _geolocation;
+          });
+          addStringToSF(Preferences.stringLocalRequestStartAddress,
+              _localRequest.startAddress);
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }
 
@@ -508,18 +287,19 @@ List<ProviderUser> _addUnavailableCitiesToList(
   List<ProviderUser> _providerUsersExcludeTaxisWithUnavailableCities = [
     ...providerUsersExcludeTaxis
   ];
-  List<String> _addedAddresses = [];
-  user.communes.forEach((commune) {
+  List<dynamic> communes = user.communes;
+
+  communes = user.communes.where((commune) {
+    bool containsElement = false;
     providerUsersExcludeTaxis.forEach((providerUser) {
-      bool _containsAddress = false;
-      if (_addedAddresses.contains(commune)) _containsAddress = true;
-      if (_containsAddress == false) {
-        _addedAddresses.add(commune);
-        _providerUsersExcludeTaxisWithUnavailableCities.add(ProviderUser(
-            providerName:
-                getReadablePartOfFormattedAddress(commune, Delimiter.city)));
-      }
+      if (providerUser.communes.contains(commune)) containsElement = true;
     });
+    return !containsElement;
+  }).toList();
+  communes.forEach((commune) {
+    _providerUsersExcludeTaxisWithUnavailableCities.add(ProviderUser(
+        providerName:
+            getReadablePartOfFormattedAddress(commune, Delimiter.city)));
   });
   return _providerUsersExcludeTaxisWithUnavailableCities;
 }
@@ -535,22 +315,23 @@ List<ProviderUser> _applyFilterFromListOfAll(
         break;
       case Filter.taxisOnly:
         if (providerUser.providerType == ProviderType.taxi) isTrue = true;
+        break;
     }
     return isTrue;
   }).toList();
   return _providerUsers;
 }
 
-String _getReadableTaxiFromListOfAllProviders(
-    ProviderUser providerUser, List<ProviderUser> providerUsersTaxiOnly) {
-  String _taxi = '';
+// String _getReadableTaxiFromListOfAllProviders(
+//     ProviderUser providerUser, List<ProviderUser> providerUsersTaxiOnly) {
+//   String _taxi = '';
 
-  providerUser.partners.forEach((partnerId) {
-    providerUsersTaxiOnly.forEach((providerUser) {
-      if (providerUser.uid == partnerId) {
-        _taxi = providerUser.providerName;
-      }
-    });
-  });
-  return _taxi;
-}
+//   providerUser.partners.forEach((partnerId) {
+//     providerUsersTaxiOnly.forEach((providerUser) {
+//       if (providerUser.uid == partnerId) {
+//         _taxi = providerUser.providerName;
+//       }
+//     });
+//   });
+//   return _taxi;
+// }

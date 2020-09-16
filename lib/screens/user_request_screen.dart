@@ -16,12 +16,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
-import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/services/routing_service.dart';
 
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
-import 'package:Sublin/widgets/drawer_side_navigation_widget.dart';
 
 class UserRequestScreen extends StatefulWidget {
   static const routeName = '/userRequestScreen';
@@ -57,9 +55,6 @@ class _UserRequestScreenState extends State<UserRequestScreen>
       bottomNavigationBar:
           NavigationBarWidget(isProvider: user.userType == UserType.provider),
       appBar: AppbarWidget(title: 'Meine Fahrt'),
-      endDrawer: DrawerSideNavigationWidget(
-        authService: AuthService(),
-      ),
       body: SingleChildScrollView(
         child: SizedBox(
             height: MediaQuery.of(context).size.height -

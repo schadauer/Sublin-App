@@ -11,4 +11,5 @@ String getReadableUserType(UserType userType) {
     case UserType.user:
       return 'Privater Benutzer';
   }
+  return '';
 }

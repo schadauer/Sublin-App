@@ -6,7 +6,6 @@ import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/provider_partner_screen.dart';
 import 'package:Sublin/screens/provider_scope_screen.dart';
 import 'package:Sublin/screens/provider_target_group_screen.dart';
-import 'package:Sublin/screens/user_request_screen.dart';
 import 'package:Sublin/screens/user_profile_screen.dart';
 import 'package:Sublin/screens/user_my_sublin_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
@@ -15,11 +14,13 @@ import 'package:Sublin/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class NavigationBarWidget extends StatefulWidget {
+  final int setNavigationIndex;
   final bool isProvider;
   final User user;
   final ProviderUser providerUser;
 
   const NavigationBarWidget({
+    this.setNavigationIndex,
     this.isProvider = false,
     this.user,
     this.providerUser,
@@ -35,8 +36,9 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.setNavigationIndex);
     return FutureBuilder<int>(
-        future: _getCurrentIndex(),
+        future: _getCurrentIndex(widget.isProvider),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               widget.isProvider != null) {
@@ -120,7 +122,7 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                       await _setCurrentIndex(1);
                       if (await getBoolValuesSF(Preferences.boolHasRatedTrip))
                         await Navigator.of(context)
-                            .push(_createRoute(UserRequestScreen()));
+                            .push(_createRoute(UserRoutingScreen()));
                       else
                         await Navigator.of(context)
                             .push(_createRoute(UserRoutingScreen()));
@@ -137,7 +139,7 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
                     icon: Icon(Icons.turned_in_not),
-                    title: Text('Meine Angebote'),
+                    title: Text('Meine Shuttles'),
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.search),
@@ -169,9 +171,19 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
     });
   }
 
-  Future<int> _getCurrentIndex() async {
+  Future<int> _getCurrentIndex(bool isProvider) async {
     int _currentIndexFromSharedServices =
         await getIntValuesSF(Preferences.intCurrentScreen);
+    if (widget.setNavigationIndex == null) {
+      if (!isProvider && _currentIndexFromSharedServices >= 2) {
+        await addIntToSF(Preferences.intCurrentScreen, 0);
+        _currentIndexFromSharedServices = 0;
+      }
+    } else {
+      _currentIndexFromSharedServices = widget.setNavigationIndex;
+      await addIntToSF(
+          Preferences.intCurrentScreen, _currentIndexFromSharedServices);
+    }
     return _currentIndexFromSharedServices;
   }
 }

@@ -1,21 +1,11 @@
-import 'dart:convert';
-
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/user_class.dart';
-import 'package:Sublin/screens/user_my_sublin_screen.dart';
-
 import 'package:Sublin/services/provider_user_service.dart';
-import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/add_to_list.dart';
-import 'package:Sublin/utils/is_email_format.dart';
-import 'package:Sublin/utils/remove_from_list.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

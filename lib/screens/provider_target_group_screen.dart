@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
-import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';

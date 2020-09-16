@@ -7,7 +7,7 @@ class StepIconWidget extends StatelessWidget {
   final bool isEndAddress;
   final IconData icon;
   final bool isWaitingForConfirmation;
-  double iconSize;
+  final double iconSize;
 
   StepIconWidget({
     this.isSublinService = false,
@@ -20,7 +20,6 @@ class StepIconWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isSublinService) iconSize = 50.0;
     return Container(
       width: 80,
       height: double.infinity,
