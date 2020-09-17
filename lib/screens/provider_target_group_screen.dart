@@ -46,6 +46,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
     final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         bottomNavigationBar: NavigationBarWidget(isProvider: true),
         appBar: AppbarWidget(title: 'Zielgruppe'),
         body: SafeArea(
@@ -98,6 +99,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                         _targetGroupUser = addStringToList(
                                             _user.targetGroup,
                                             _emailTextController.text);
+                                        print(_emailTextController.text);
                                         await UserService()
                                             .updateTargetGroupUserData(
                                                 uid: _user.uid,
@@ -114,14 +116,14 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                                         _emailTextController
                                                             .text))
                                                     .toString());
-
+                                        print(_targetGroupProviderUser);
                                         await ProviderUserService()
                                             .updateTargetGroupProviderUser(
                                                 uid: _user.uid,
                                                 targetGroupList:
                                                     _targetGroupProviderUser);
                                         _emailTextController.clear();
-                                        _emailFocus.requestFocus();
+                                        // _emailFocus.requestFocus();
                                       }
                                     } catch (e) {
                                       print(e);
@@ -159,6 +161,8 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                       ),
                                       InkWell(
                                         onTap: () async {
+                                          String emailToRemove =
+                                              _user.targetGroup[index];
                                           _targetGroupUser = removeFromList(
                                               _user.targetGroup,
                                               _user.targetGroup[index]);
@@ -175,8 +179,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                                   _providerUser.targetGroup,
                                                   sha256
                                                       .convert(utf8.encode(
-                                                          _emailTextController
-                                                              .text))
+                                                          emailToRemove))
                                                       .toString());
                                           await ProviderUserService()
                                               .updateTargetGroupProviderUser(

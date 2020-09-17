@@ -14,6 +14,7 @@ import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
+import 'package:Sublin/utils/get_city_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/user_my_sublin_card_widget.dart';
@@ -24,7 +25,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-enum Filter { taxisOnly, excludeTaxis }
+enum Filter {
+  taxisOnly,
+  excludeTaxis,
+  excludeStartAddress,
+  excludeIfNotPartner
+}
 
 class UserMySublinScreen extends StatefulWidget {
   const UserMySublinScreen({Key key, this.setNavigationIndex})
@@ -68,7 +74,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     final User user = Provider.of<User>(context);
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
-    print(size.width);
     final double itemHeight =
         (size.height > 700 ? 700 : size.height - kToolbarHeight - 24) /
             (size.height > 700 ? 2.8 : 2.4);
@@ -90,13 +95,32 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.data.length != 0) {
+                  List<ProviderUser> _providerUsersAll = [
+                    ...snapshot.data[0],
+                    ...snapshot.data[1]
+                  ];
+
                   // Get all available addresses excluding taxis and add one element for user to add new cities
                   // List<ProviderUser> _data = snapshot.data != ? snapshot.data[0] : null;
                   List<ProviderUser> _providerUsersExcludeTaxis =
-                      _addUserProviderForUserToAddCity(
-                          _applyFilterFromListOfAll(
-                              [...snapshot.data[0], ...snapshot.data[1]],
-                              Filter.excludeTaxis));
+                      _addUserProviderForUserToAddCity(_applyFilterFromList(
+                          providerUsers: _providerUsersAll,
+                          filter: Filter.excludeTaxis,
+                          localRequest: _localRequest));
+
+                  // --------------------------------------------------------------------- TODO --------------------------------------------------------------
+                  // We need to filter out those that are not partners with a taxi
+                  _providerUsersExcludeTaxis = _applyFilterFromList(
+                      providerUsers: _providerUsersExcludeTaxis,
+                      filter: Filter.excludeIfNotPartner,
+                      localRequest: _localRequest);
+                  print(_providerUsersExcludeTaxis);
+
+                  // Now we filter out the addresses that are within the area of the current position
+                  _providerUsersExcludeTaxis = _applyFilterFromList(
+                      providerUsers: _providerUsersExcludeTaxis,
+                      filter: Filter.excludeStartAddress,
+                      localRequest: _localRequest);
 
                   _lengthProviderUsersOfAvailables =
                       _providerUsersExcludeTaxis.length - 1;
@@ -117,28 +141,65 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                           GeolocationStatus.granted ||
                                       _localRequest.startAddress != '')
                                   ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Expanded(
-                                          flex: 2,
-                                          child: AutoSizeText(
-                                            'Dein Standort ist ${convertFormattedAddressToReadableAddress(_localRequest.startAddress)}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1,
-                                            // textAlign: TextAlign.center,
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 10),
+                                            child: Container(
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '1',
+                                                  style: TextStyle(
+                                                    fontSize: 25,
+                                                    fontFamily: 'Lato',
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                         Expanded(
-                                          flex: 1,
-                                          child: FlatButton(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          4.0),
-                                                  side: BorderSide(
-                                                      color: Theme.of(context)
-                                                          .primaryColor)),
-                                              onPressed: () {
+                                          flex: 5,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              AutoSizeText(
+                                                'Dein Standort',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline1,
+                                              ),
+                                              AutoSizeText(
+                                                '${convertFormattedAddressToReadableAddress(_localRequest.startAddress)}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText1,
+                                                // textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                            flex: 1,
+                                            child: InkWell(
+                                              onTap: () {
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -158,8 +219,23 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                                                   'Dein Standort',
                                                             )));
                                               },
-                                              child: AutoSizeText('ändern')),
-                                        )
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.edit,
+                                                    size: 25,
+                                                  ),
+                                                  Text(
+                                                    'ändern',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .caption,
+                                                  )
+                                                ],
+                                              ),
+                                            ))
                                       ],
                                     )
                                   : Row(
@@ -304,8 +380,8 @@ List<ProviderUser> _addUnavailableCitiesToList(
   return _providerUsersExcludeTaxisWithUnavailableCities;
 }
 
-List<ProviderUser> _applyFilterFromListOfAll(
-    List<ProviderUser> providerUsers, Filter filter) {
+List<ProviderUser> _applyFilterFromList(
+    {List<ProviderUser> providerUsers, Filter filter, Request localRequest}) {
   List<ProviderUser> _providerUsers;
   _providerUsers = providerUsers.where((providerUser) {
     bool isTrue = false;
@@ -316,6 +392,19 @@ List<ProviderUser> _applyFilterFromListOfAll(
       case Filter.taxisOnly:
         if (providerUser.providerType == ProviderType.taxi) isTrue = true;
         break;
+      case Filter.excludeStartAddress:
+        if (!providerUser.communes
+            .contains(getCityFormattedAddress(localRequest.startAddress)))
+          isTrue = true;
+        break;
+      case Filter.excludeIfNotPartner:
+        print(providerUser.partnershipConfirmed);
+        print(providerUser.providerName);
+        if (providerUser.providerType == ProviderType.sponsor ||
+            providerUser.providerType == ProviderType.sponsorShuttle) {
+          if (providerUser.partnershipConfirmed == true) isTrue = true;
+        } else
+          isTrue = true;
     }
     return isTrue;
   }).toList();

@@ -42,6 +42,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
     final completedBookings = Provider.of<List<BookingCompleted>>(context);
 
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: AppbarWidget(title: 'Aufträge'),
         body: Container(
           width: MediaQuery.of(context).size.width,

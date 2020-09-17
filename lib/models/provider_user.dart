@@ -17,6 +17,7 @@ class ProviderUser {
   List<String> addresses;
   List<String> stations;
   List<String> partners;
+  bool partnershipConfirmed;
   int timeStart;
   int timeEnd;
 
@@ -35,6 +36,7 @@ class ProviderUser {
     this.addresses: const [],
     this.stations: const [],
     this.partners: const [],
+    this.partnershipConfirmed: false,
     this.timeStart: 0,
     this.timeEnd: 2400,
   });
@@ -83,6 +85,8 @@ class ProviderUser {
           : data['partners'].map<String>((partner) {
               return partner.toString();
             }).toList(),
+      partnershipConfirmed:
+          data['partnershipConfirmed'] ?? defaultValues.partnershipConfirmed,
       timeStart: data['timeStart'] ?? defaultValues.timeStart,
       timeEnd: data['timeEnd'] ?? defaultValues.timeEnd,
     );
@@ -107,6 +111,8 @@ class ProviderUser {
       if (data.addresses != null) 'addresses': data.addresses,
       if (data.stations != null) 'stations': data.stations,
       if (data.partners != null) 'partners': data.partners,
+      if (data.partnershipConfirmed != null)
+        'partnershipConfirmed': data.partnershipConfirmed,
       if (data.timeStart != null) 'timeStart': data.timeStart,
       if (data.timeEnd != null) 'timeEnd': data.timeEnd,
     };

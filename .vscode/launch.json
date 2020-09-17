@@ -45,7 +45,7 @@
       "request": "launch",
       "type": "dart",
       "deviceId": "R58N32RAT7N",
-      "flutterMode": "profile"
+      // "flutterMode": "profile"
     },
   ],
   "compounds": [

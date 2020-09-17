@@ -24,6 +24,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     final User user = Provider.of<User>(context);
 
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       bottomNavigationBar:
           NavigationBarWidget(isProvider: user.userType != UserType.user),
       appBar: AppbarWidget(title: 'Mein Profil', showProfileIcon: false),

@@ -57,7 +57,8 @@ class UserMySublinCardWidget extends StatelessWidget {
                 semanticContainer: true,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 5, left: 10, right: 10),
+                  padding:
+                      EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,68 +145,66 @@ class UserMySublinCardWidget extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  RaisedButton(
-                                    onPressed: () async {
-                                      if (localRequest?.startAddress != '') {
-                                        String _startAddress =
-                                            _createRequestBasedOnDirectionOfUser()
-                                                .startAddress;
-                                        String _endAddress =
-                                            _createRequestBasedOnDirectionOfUser()
-                                                .endAddress;
-                                        print(
-                                            _createRequestBasedOnDirectionOfUser()
-                                                .startAddress);
-                                        print(
-                                            _createRequestBasedOnDirectionOfUser()
-                                                .endAddress);
-                                        addStringToSF(
-                                            Preferences
-                                                .stringLocalRequestStartAddress,
-                                            _startAddress);
-                                        addStringToSF(
-                                            Preferences
-                                                .stringLocalRequestEndAddress,
-                                            _endAddress);
-                                        await RoutingService().requestRoute(
-                                          uid: user.uid,
-                                          startAddress:
-                                              _createRequestBasedOnDirectionOfUser()
-                                                  .startAddress,
-                                          startId: '',
-                                          endAddress:
-                                              _createRequestBasedOnDirectionOfUser()
-                                                  .endAddress,
-                                          endId: '',
-                                          timestamp: DateTime.now(),
-                                        );
-                                        await Navigator.pushNamed(
-                                          context,
-                                          UserRoutingScreen.routeName,
-                                          arguments: Routing(
+                                  Expanded(
+                                    flex: 2,
+                                    child: RaisedButton(
+                                      onPressed: () async {
+                                        if (localRequest?.startAddress != '') {
+                                          String _startAddress =
+                                              _getRequestBasedOnDirectionOfUser()
+                                                  .startAddress;
+                                          String _endAddress =
+                                              _getRequestBasedOnDirectionOfUser()
+                                                  .endAddress;
+
+                                          addStringToSF(
+                                              Preferences
+                                                  .stringLocalRequestStartAddress,
+                                              _startAddress);
+                                          addStringToSF(
+                                              Preferences
+                                                  .stringLocalRequestEndAddress,
+                                              _endAddress);
+                                          await RoutingService().requestRoute(
+                                            uid: user.uid,
+                                            startAddress:
+                                                _getRequestBasedOnDirectionOfUser()
+                                                    .startAddress,
                                             startId: '',
+                                            endAddress:
+                                                _getRequestBasedOnDirectionOfUser()
+                                                    .endAddress,
                                             endId: '',
-                                          ),
-                                        );
-                                      } else {
-                                        Navigator.push(
+                                            timestamp: DateTime.now(),
+                                          );
+                                          await Navigator.pushNamed(
                                             context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AddressInputScreen(
-                                                      userUid: user.uid,
-                                                      addressInputFunction:
-                                                          _addressInputFunction,
-                                                      isEndAddress: false,
-                                                      isStartAddress: true,
-                                                      showGeolocationOption:
-                                                          false,
-                                                      isStation: false,
-                                                      title: 'Dein Standort',
-                                                    )));
-                                      }
-                                    },
-                                    child: Text('Hinfahren'),
+                                            UserRoutingScreen.routeName,
+                                            arguments: Routing(
+                                              startId: '',
+                                              endId: '',
+                                            ),
+                                          );
+                                        } else {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddressInputScreen(
+                                                        userUid: user.uid,
+                                                        addressInputFunction:
+                                                            _addressInputFunction,
+                                                        isEndAddress: false,
+                                                        isStartAddress: true,
+                                                        showGeolocationOption:
+                                                            false,
+                                                        isStation: false,
+                                                        title: 'Dein Standort',
+                                                      )));
+                                        }
+                                      },
+                                      child: Text('Hinfahren'),
+                                    ),
                                   )
                                 ],
                               )
@@ -316,19 +315,20 @@ class UserMySublinCardWidget extends StatelessWidget {
   //   return '';
   // }
 
-  Request _createRequestBasedOnDirectionOfUser() {
+  Request _getRequestBasedOnDirectionOfUser() {
     Request request = Request();
-    if (_getDirectionBasedUserPosition() == Direction.end) {
-      request.startAddress = localRequest.startAddress;
-      request.endAddress = providerUser.addresses[0];
-    } else {
-      // If it is a specific address we need this one - if it is a city address we use the users position
-      if (providerUser.addresses
-          .contains(getCityFormattedAddress(localRequest.startAddress)))
-        request.startAddress = localRequest.startAddress;
-      else
-        request.startAddress = providerUser.addresses[0];
-    }
+    request.startAddress = localRequest.startAddress;
+    request.endAddress = providerUser.addresses[0];
+
+    // if (_getDirectionBasedUserPosition() == Direction.end) {
+    // } else {
+    //   // If it is a specific address we need this one - if it is a city address we use the users position
+    //   if (providerUser.addresses
+    //       .contains(getCityFormattedAddress(localRequest.startAddress)))
+    //     request.startAddress = localRequest.startAddress;
+    //   else
+    //     request.startAddress = providerUser.addresses[0];
+    // }
     return request;
   }
 

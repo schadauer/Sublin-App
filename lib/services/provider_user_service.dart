@@ -63,6 +63,8 @@ class ProviderUserService {
           .where('communes',
               arrayContainsAny: communes.length == 0 ? [''] : communes)
           .where('providerPlan', isEqualTo: 'all')
+          // .where('providerType',
+          //     isEqualTo: ['sponsor', 'sponsorshuttle', 'shuttle'])
           .get()
           .then((value) {
         return value.docs.map((e) {

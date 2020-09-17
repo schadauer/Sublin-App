@@ -38,15 +38,28 @@ class AddressInputScreen extends StatefulWidget {
 
 class _AddressInputScreenState extends State<AddressInputScreen> {
   GoogleMapService _autocomplete = GoogleMapService();
-  FocusNode _focus = new FocusNode();
   TextEditingController _textFormFieldController = TextEditingController();
   List _autocompleteResults = [];
+  FocusNode _focus;
 
   @override
   void initState() {
     if (widget.showGeolocationOption == true)
       _getStartAddressFromGeolocastion();
+    _focus = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _focus.requestFocus();
+      });
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    _focus.dispose();
+    super.dispose();
   }
 
   @override
@@ -66,7 +79,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                     height: 50,
                     child: TextFormField(
                       focusNode: _focus,
-                      autofocus: true,
                       onChanged: (input) async {
                         var result =
                             await _autocomplete.getGoogleAddressAutocomplete(

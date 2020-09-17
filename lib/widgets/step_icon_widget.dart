@@ -39,23 +39,22 @@ class StepIconWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(top: 20),
-              height: iconSize,
-              width: iconSize,
-              decoration: BoxDecoration(
-                color: isSublinService
-                    ? ThemeConstants.sublinMainColor
-                    : Colors.black,
-                shape: BoxShape.circle,
-              ),
-              child: isWaitingForConfirmation
-                  ? CircularProgressIndicator()
-                  : Icon(
-                      icon,
-                      color: Colors.white,
-                      size: iconSize / 1.5,
-                    ),
-            ),
+                margin: EdgeInsets.only(top: 20),
+                height: iconSize,
+                width: iconSize,
+                decoration: BoxDecoration(
+                  color: isSublinService
+                      ? ThemeConstants.sublinMainColor
+                      : Colors.black,
+                  shape: BoxShape.circle,
+                ),
+                child: isWaitingForConfirmation
+                    ? CircularProgressIndicator()
+                    : Icon(
+                        icon,
+                        color: Colors.white,
+                        size: iconSize / 1.5,
+                      )),
           ],
         ),
       ]),
