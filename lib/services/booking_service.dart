@@ -132,6 +132,7 @@ class BookingService {
           .doc(userId)
           .set({
         isSublinEndStep ? 'sublinEndStep' : "sublinStartStep": {
+          'completed': true,
           'noShow': true,
           'noShowTime': DateTime.now().microsecondsSinceEpoch,
         }

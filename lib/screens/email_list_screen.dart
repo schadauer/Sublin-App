@@ -1,5 +1,6 @@
-import 'package:Sublin/theme/theme.dart';
 import 'package:flutter/material.dart';
+
+import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_email_initials.dart';
 import 'package:Sublin/utils/is_email_format.dart';
 

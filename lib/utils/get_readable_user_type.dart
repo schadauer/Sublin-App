@@ -6,7 +6,7 @@ String getReadableUserType(UserType userType) {
       return 'Anbieter';
       break;
     case UserType.sponsor:
-      return 'Auftraggeber/Sponsor';
+      return 'Sponsor';
       break;
     case UserType.user:
       return 'Privater Benutzer';

@@ -1,18 +1,22 @@
-import 'package:Sublin/models/booking_class.dart';
-import 'package:Sublin/models/booking_completed_class.dart';
-import 'package:Sublin/models/booking_confirmed_class.dart';
-import 'package:Sublin/models/booking_open_class.dart';
-import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/services/booking_service.dart';
-import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
-import 'package:Sublin/utils/get_time_format.dart';
-import 'package:Sublin/widgets/appbar_widget.dart';
-import 'package:Sublin/widgets/navigation_bar_widget.dart';
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/step.dart' as step;
+
+import 'package:Sublin/models/booking_class.dart';
+import 'package:Sublin/models/booking_completed_class.dart';
+import 'package:Sublin/models/booking_confirmed_class.dart';
+import 'package:Sublin/models/booking_open_class.dart';
+import 'package:Sublin/models/booking_status_enum.dart';
+import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/services/booking_service.dart';
+import 'package:Sublin/theme/theme.dart';
+import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
+import 'package:Sublin/utils/get_date_format.dart';
+import 'package:Sublin/widgets/appbar_widget.dart';
+import 'package:Sublin/widgets/navigation_bar_widget.dart';
 
 class ProviderBookingScreen extends StatefulWidget {
   static const routeName = './providerBookingScreen';
@@ -26,20 +30,21 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
   //     TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   int _loadingIndex;
   int _now;
-  // Timer _timer;
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    _now = DateTime.now().millisecondsSinceEpoch;
   }
 
   @override
   Widget build(BuildContext context) {
     // final auth = Provider.of<Auth>(context);
+    final ProviderUser providerUser = Provider.of<ProviderUser>(context);
     final openBookings = Provider.of<List<BookingOpen>>(context);
     final confirmedBookings = Provider.of<List<BookingConfirmed>>(context);
     final completedBookings = Provider.of<List<BookingCompleted>>(context);
+    _now = DateTime.now().millisecondsSinceEpoch;
 
     return Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -51,49 +56,62 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _selectedIndex = 0;
-                            });
-                          },
-                          child: _BookingFilterOption(
-                            bookings: openBookings,
-                            title: 'Offene',
+                  height: 80,
+                  child: Container(
+                    color: Theme.of(context).primaryColor,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 0;
+                              });
+                            },
+                            child: _BookingFilterOption(
+                              bookings: openBookings,
+                              title: 'Offene',
+                              active: _selectedIndex == 0,
+                              bookingStatus: BookingStatus.open,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _selectedIndex = 1;
-                            });
-                          },
-                          child: _BookingFilterOption(
-                            bookings: confirmedBookings,
-                            title: 'Bestätigte',
+                        Expanded(
+                          flex: 3,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 1;
+                              });
+                            },
+                            child: _BookingFilterOption(
+                              bookings: confirmedBookings,
+                              title: 'Bestätigte',
+                              active: _selectedIndex == 1,
+                              bookingStatus: BookingStatus.confirmed,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              _selectedIndex = 2;
-                            });
-                          },
-                          child: _BookingFilterOption(
-                            bookings: completedBookings,
-                            title: 'Erledigte',
+                        Expanded(
+                          flex: 2,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 2;
+                              });
+                            },
+                            child: _BookingFilterOption(
+                              bookings: completedBookings,
+                              title: 'Erledigte',
+                              active: _selectedIndex == 2,
+                              bookingStatus: BookingStatus.completed,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   )),
               (() {
                 switch (_selectedIndex) {
@@ -124,7 +142,11 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: NavigationBarWidget(isProvider: true));
+        bottomNavigationBar: NavigationBarWidget(
+          isProvider: true,
+          setNavigationIndex: 0,
+          providerUser: providerUser,
+        ));
   }
 
   ProviderUser _getProviderUser(Booking booking) {
@@ -170,20 +192,24 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                         booking.sublinStartStep.startTime,
                     endTime: booking.sublinEndStep?.endTime ??
                         booking.sublinStartStep.endTime,
+                    userName: booking.sublinEndStep?.userName ??
+                        booking.sublinStartStep.userName,
                     provider: _getProviderUser(booking));
+                print('bookingStep.userName');
                 bool isEndStep =
                     booking.sublinEndStep?.bookedTime != null ? true : false;
                 int _timeRemaining =
                     (bookingStep.startTime * 1000 - _now) ~/ 60000;
                 int _timeFromBooking = (_now - bookingStep.bookedTime) ~/ 60000;
                 return Card(
+                  // color: Theme.of(context).primaryColor,
                   margin: EdgeInsets.all(5.0),
                   child: Padding(
                     padding: ThemeConstants.mediumPadding,
                     child: Column(
                       children: [
                         Container(
-                          height: 100,
+                          height: 140,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +220,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                   width: 70,
                                   child: Column(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceAround,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
@@ -216,7 +242,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                           child: Text(
                                             _timeRemaining.toString(),
                                             style: TextStyle(
-                                              fontSize: 25,
+                                              fontSize: 20,
                                               fontFamily: 'Lato',
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -268,10 +294,11 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                         ),
                                       ),
                                       AutoSizeText(
-                                        'gebucht',
+                                        'Minuten gebucht',
                                         style:
                                             Theme.of(context).textTheme.caption,
                                         maxLines: 2,
+                                        textAlign: TextAlign.center,
                                       ),
                                     ],
                                   ),
@@ -288,20 +315,25 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                   children: [
                                     Text(
                                       'Abholung um ' +
-                                          getTimeFormat(bookingStep.startTime),
+                                          getDateFormat(bookingStep.startTime),
                                       style:
                                           Theme.of(context).textTheme.headline1,
                                     ),
                                     Text(
+                                      bookingStep.userName,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
+                                    Text(
                                       'von: ' +
-                                          convertFormattedAddressToReadableAddress(
+                                          getReadableAddressFromFormattedAddress(
                                               bookingStep.startAddress),
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                     ),
                                     Text(
                                       'nach: ' +
-                                          convertFormattedAddressToReadableAddress(
+                                          getReadableAddressFromFormattedAddress(
                                               bookingStep.endAddress),
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
@@ -320,13 +352,21 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               RaisedButton(
-                                onPressed: () {
+                                onPressed: () async {
                                   // _loadingFunction(index);
-                                  BookingService().confirmBooking(
+                                  int numberOfOpens = bookings.length;
+
+                                  await BookingService().confirmBooking(
                                       providerId: bookingStep.provider.id,
                                       userId: booking.userId,
                                       isSublinEndStep: isEndStep,
                                       index: index);
+                                  // If we have accepted the last one jump to the confirmed list
+                                  if (numberOfOpens == 1) {
+                                    setState(() {
+                                      _selectedIndex = 1;
+                                    });
+                                  }
                                 },
                                 child: Text('Bestätigen'),
                               ),
@@ -351,7 +391,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                 child: Text('Nicht erschienen'),
                               ),
                               RaisedButton(
-                                onPressed: (_timeRemaining < 200)
+                                onPressed: (_timeRemaining < 0)
                                     ? () {
                                         _loadingFunction(index);
                                         BookingService().completedBooking(
@@ -392,34 +432,48 @@ class _BookingFilterOption extends StatelessWidget {
     Key key,
     @required this.title,
     @required this.bookings,
+    @required this.active,
+    @required this.bookingStatus,
   }) : super(key: key);
 
   final String title;
   final List<dynamic> bookings;
+  final bool active;
+  final BookingStatus bookingStatus;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme.of(context).primaryColor,
+      color: active ? Colors.white : Theme.of(context).primaryColor,
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Row(
-          children: [
-            Container(
-              width: 35,
-              height: 35,
-              decoration: BoxDecoration(
-                color: Theme.of(context).backgroundColor,
-                shape: BoxShape.circle,
+        padding: ThemeConstants.mediumPadding,
+        child: bookingStatus != BookingStatus.completed
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    child: Center(
+                        child: Text(
+                      bookings.length.toString(),
+                      style:
+                          TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                    )),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  AutoSizeText(
+                    title,
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ],
+              )
+            : Center(
+                child: AutoSizeText(
+                  title,
+                  style: Theme.of(context).textTheme.caption,
+                ),
               ),
-              child: Center(child: Text(bookings.length.toString())),
-            ),
-            AutoSizeText(
-              title,
-              style: Theme.of(context).textTheme.caption,
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:Sublin/theme/theme.dart';
+import 'package:Sublin/utils/is_email_format.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/widgets/loading_widget.dart';
@@ -65,6 +66,10 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         TextFormField(
+                            validator: (val) =>
+                                val.length < 2 || !isEmailFormat(val)
+                                    ? 'Bitte gib eine gültige E-Mailadresse an'
+                                    : null,
                             onChanged: (val) {
                               setState(() {
                                 email = val;
@@ -103,17 +108,14 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                             ),
                             RaisedButton(
                               onPressed: () async {
-                                // setState(() {
-                                //   //isLoading = true;
-                                // });
-                                // if (password == '')
-                                //   await _auth.signInWithEmailAndLink(email);
-                                if (password != '')
-                                  await _auth.signIn(
-                                      email: email, password: password);
-                                // setState(() {
-                                //   //isLoading = false;
-                                // });
+                                try {
+                                  if (_formKey.currentState.validate()) {
+                                    await _auth.signIn(
+                                        email: email, password: password);
+                                  }
+                                } catch (e) {
+                                  print(e);
+                                }
                               },
                               child: Text('Einloggen'),
                             ),

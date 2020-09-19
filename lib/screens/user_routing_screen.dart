@@ -174,9 +174,9 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
               } else if (isRouteCompleted(routingService)) {
                 // if (_timer != null) _timer.cancel();
                 return Scaffold(
-                    // bottomNavigationBar: NavigationBarWidget(
-                    //     isProvider: user.userType == UserType.provider,
-                    //     setNavigationIndex: widget.setNavigationIndex),
+                    bottomNavigationBar: NavigationBarWidget(
+                        isProvider: user.userType == UserType.provider,
+                        setNavigationIndex: 1),
                     appBar: AppbarWidget(title: 'Fahrt abgeschlossen'),
                     body: Center(
                       child: Container(
@@ -211,7 +211,9 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
               } else {
                 return Scaffold(
                     bottomNavigationBar: NavigationBarWidget(
-                        isProvider: user.userType == UserType.provider),
+                      isProvider: user.userType == UserType.provider,
+                      setNavigationIndex: 1,
+                    ),
                     appBar: AppbarWidget(title: 'Meine aktuelle Fahrt'),
                     body: Container(
                       child: SafeArea(
@@ -329,7 +331,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
               return Scaffold(
                 bottomNavigationBar: NavigationBarWidget(
                     isProvider: user.userType == UserType.provider,
-                    setNavigationIndex: widget.setNavigationIndex),
+                    setNavigationIndex: 1),
                 appBar: AppbarWidget(title: 'Wir suchen deine Fahrt'),
                 body: Center(
                     child: Column(
@@ -347,7 +349,8 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                 )),
               );
             }
-          }
+          } else
+            return Container();
         });
   }
 }

@@ -39,7 +39,6 @@ class GoogleMapService {
       var response = await client.get(
           '$autocompleteUrl?key=$key&sessiontoken=$sessionToken&input=$input&types=$addressTypes&location&components=country:at&language=de');
       output = jsonDecode(response.body)['predictions'];
-
       formattedOutput = output.map((val) {
         Map output = {
           'name': _convertGoogleToFormattedAddress(
@@ -87,7 +86,6 @@ String _convertGoogleToFormattedAddress({
   bool cityOnly = false,
 }) {
   // Check if house number is given form Google address pattern
-
   String numberPart = '';
   String streetPart = '';
   String cityPart = '';

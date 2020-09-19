@@ -1,14 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:provider/provider.dart';
+
 import 'package:Sublin/models/user_class.dart';
-import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/provider_registration_screen.dart';
 import 'package:Sublin/services/auth_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_readable_user_type.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
-import 'package:Sublin/widgets/navigation_bar_widget.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 enum CardType { email, providerType }
 
@@ -25,8 +24,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      bottomNavigationBar:
-          NavigationBarWidget(isProvider: user.userType != UserType.user),
+      // bottomNavigationBar: NavigationBarWidget(
+      //   isProvider: user.userType != UserType.user,
+      // ),
       appBar: AppbarWidget(title: 'Mein Profil', showProfileIcon: false),
       body: SafeArea(
         child: Column(

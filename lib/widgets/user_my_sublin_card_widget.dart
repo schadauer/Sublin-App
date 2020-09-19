@@ -30,6 +30,7 @@ class UserMySublinCardWidget extends StatelessWidget {
       @required this.user,
       @required this.context,
       @required this.myCardFormat,
+      @required this.isRouteBooked,
       this.onHeroTap})
       : super(key: key);
 
@@ -41,6 +42,7 @@ class UserMySublinCardWidget extends StatelessWidget {
   final BuildContext context;
   final MyCardFormat myCardFormat;
   final VoidCallback onHeroTap;
+  final bool isRouteBooked;
 
   @override
   Widget build(BuildContext context) {
@@ -148,61 +150,68 @@ class UserMySublinCardWidget extends StatelessWidget {
                                   Expanded(
                                     flex: 2,
                                     child: RaisedButton(
-                                      onPressed: () async {
-                                        if (localRequest?.startAddress != '') {
-                                          String _startAddress =
-                                              _getRequestBasedOnDirectionOfUser()
-                                                  .startAddress;
-                                          String _endAddress =
-                                              _getRequestBasedOnDirectionOfUser()
-                                                  .endAddress;
+                                      onPressed: (isRouteBooked)
+                                          ? null
+                                          : () async {
+                                              if (localRequest?.startAddress !=
+                                                  '') {
+                                                String _startAddress =
+                                                    _getRequestBasedOnDirectionOfUser()
+                                                        .startAddress;
+                                                String _endAddress =
+                                                    _getRequestBasedOnDirectionOfUser()
+                                                        .endAddress;
 
-                                          addStringToSF(
-                                              Preferences
-                                                  .stringLocalRequestStartAddress,
-                                              _startAddress);
-                                          addStringToSF(
-                                              Preferences
-                                                  .stringLocalRequestEndAddress,
-                                              _endAddress);
-                                          await RoutingService().requestRoute(
-                                            uid: user.uid,
-                                            startAddress:
-                                                _getRequestBasedOnDirectionOfUser()
-                                                    .startAddress,
-                                            startId: '',
-                                            endAddress:
-                                                _getRequestBasedOnDirectionOfUser()
-                                                    .endAddress,
-                                            endId: '',
-                                            timestamp: DateTime.now(),
-                                          );
-                                          await Navigator.pushNamed(
-                                            context,
-                                            UserRoutingScreen.routeName,
-                                            arguments: Routing(
-                                              startId: '',
-                                              endId: '',
-                                            ),
-                                          );
-                                        } else {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AddressInputScreen(
-                                                        userUid: user.uid,
-                                                        addressInputFunction:
-                                                            _addressInputFunction,
-                                                        isEndAddress: false,
-                                                        isStartAddress: true,
-                                                        showGeolocationOption:
-                                                            false,
-                                                        isStation: false,
-                                                        title: 'Dein Standort',
-                                                      )));
-                                        }
-                                      },
+                                                addStringToSF(
+                                                    Preferences
+                                                        .stringLocalRequestStartAddress,
+                                                    _startAddress);
+                                                addStringToSF(
+                                                    Preferences
+                                                        .stringLocalRequestEndAddress,
+                                                    _endAddress);
+                                                await RoutingService()
+                                                    .requestRoute(
+                                                  uid: user.uid,
+                                                  startAddress:
+                                                      _getRequestBasedOnDirectionOfUser()
+                                                          .startAddress,
+                                                  startId: '',
+                                                  endAddress:
+                                                      _getRequestBasedOnDirectionOfUser()
+                                                          .endAddress,
+                                                  endId: '',
+                                                  timestamp: DateTime.now(),
+                                                );
+                                                await Navigator.pushNamed(
+                                                  context,
+                                                  UserRoutingScreen.routeName,
+                                                  arguments: Routing(
+                                                    startId: '',
+                                                    endId: '',
+                                                  ),
+                                                );
+                                              } else {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AddressInputScreen(
+                                                              userUid: user.uid,
+                                                              addressInputFunction:
+                                                                  _addressInputFunction,
+                                                              isEndAddress:
+                                                                  false,
+                                                              isStartAddress:
+                                                                  true,
+                                                              showGeolocationOption:
+                                                                  false,
+                                                              isStation: false,
+                                                              title:
+                                                                  'Dein Standort',
+                                                            )));
+                                              }
+                                            },
                                       child: Text('Hinfahren'),
                                     ),
                                   )

@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:provider/provider.dart';
+
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
@@ -5,9 +9,6 @@ import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 enum PartnerStatus {
   active,
@@ -36,7 +37,7 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
   Widget build(BuildContext context) {
     final ProviderUser providerUser = Provider.of<ProviderUser>(context);
     var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 2.5;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
     final _screenWidth = MediaQuery.of(context).size.width;
     final _screenHeight = MediaQuery.of(context).size.height;
@@ -44,7 +45,12 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
     final _bodyHeight = _screenHeight - _navigationHeight;
 
     return Scaffold(
-        bottomNavigationBar: NavigationBarWidget(isProvider: true),
+        bottomNavigationBar: NavigationBarWidget(
+          isProvider: true,
+          setNavigationIndex:
+              providerUser.providerType == ProviderType.taxi ? 2 : 3,
+          providerUser: providerUser,
+        ),
         appBar: AppbarWidget(title: 'Partner'),
         body: SafeArea(
             child: Container(
@@ -144,11 +150,20 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                       style:
                                           Theme.of(context).textTheme.headline1,
                                     ),
-                                    AutoSizeText(
-                                      '${_providerUserList[index].providerName} führt für dich derzeit Transferservices durch.',
-                                      style:
-                                          Theme.of(context).textTheme.caption,
-                                    ),
+                                    if (providerUser.providerType !=
+                                        ProviderType.taxi)
+                                      AutoSizeText(
+                                        '${_providerUserList[index].providerName} führt für dich derzeit Transferservices durch.',
+                                        style:
+                                            Theme.of(context).textTheme.caption,
+                                      ),
+                                    if (providerUser.providerType ==
+                                        ProviderType.taxi)
+                                      AutoSizeText(
+                                        'Du führst Transferservices für ${_providerUserList[index].providerName} durch.',
+                                        style:
+                                            Theme.of(context).textTheme.caption,
+                                      ),
                                     if (partnerStatus ==
                                         PartnerStatus.needsOwnApproval)
                                       Row(

@@ -30,7 +30,7 @@ Future<String> getStringValuesSF(Preferences key) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   //Return String
   String stringValue = prefs.getString(key.toString()) ?? '';
-  return stringValue;
+  return stringValue ?? '';
 }
 
 Future<bool> getBoolValuesSF(Preferences key) async {

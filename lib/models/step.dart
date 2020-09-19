@@ -21,6 +21,7 @@ class Step {
   String stationAddress;
   String stationName;
   String providerName;
+  String userName;
   String lineName;
   String travelMode;
   ProviderUser provider;
@@ -51,6 +52,7 @@ class Step {
     this.stationAddress,
     this.stationName,
     this.providerName,
+    this.userName = '',
     this.lineName,
     this.travelMode,
     this.provider,

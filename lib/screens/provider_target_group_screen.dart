@@ -1,19 +1,20 @@
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/add_to_list.dart';
+import 'package:Sublin/utils/add_string_to_list.dart';
 import 'package:Sublin/utils/is_email_format.dart';
 import 'package:Sublin/utils/remove_from_list.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
-import 'package:crypto/crypto.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ProviderTargetGroupScreen extends StatefulWidget {
   static const routeName = './providerTargetGroupScreenState';
@@ -24,12 +25,20 @@ class ProviderTargetGroupScreen extends StatefulWidget {
 
 class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
   TextEditingController _emailTextController = TextEditingController();
-  FocusNode _emailFocus;
+  // FocusNode _emailFocus;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    // _emailFocus = FocusNode();
+    super.initState();
+  }
 
   @override
   void dispose() {
     _emailTextController.dispose();
-    _emailFocus.dispose();
+
+    // _emailFocus.dispose();
     super.dispose();
   }
 
@@ -43,11 +52,14 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
     final double _seachBarHeight = 100.0;
     final double _navigationHeight = 182.0;
     final _bodyHeight = _screenHeight - _seachBarHeight - _navigationHeight;
-    final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
         resizeToAvoidBottomPadding: false,
-        bottomNavigationBar: NavigationBarWidget(isProvider: true),
+        bottomNavigationBar: NavigationBarWidget(
+          isProvider: true,
+          setNavigationIndex: 2,
+          providerUser: _providerUser,
+        ),
         appBar: AppbarWidget(title: 'Zielgruppe'),
         body: SafeArea(
             child: Container(
@@ -77,8 +89,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                     child: TextFormField(
                                       decoration: InputDecoration(
                                           hintText: 'E-Mailadresse hinzufügen'),
-                                      autofocus: true,
-                                      focusNode: _emailFocus,
+                                      // focusNode: _emailFocus,
                                       controller: _emailTextController,
                                       validator: (e) {
                                         String _message;

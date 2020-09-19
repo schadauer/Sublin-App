@@ -1,4 +1,4 @@
-import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
+import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 
@@ -114,7 +114,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                 children: <Widget>[
                                     if (widget.address != '')
                                       Text(
-                                        convertFormattedAddressToReadableAddress(
+                                        getReadableAddressFromFormattedAddress(
                                             widget.address),
                                         style: Theme.of(context)
                                             .textTheme

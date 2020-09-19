@@ -1,19 +1,19 @@
 import 'dart:async';
 
-import 'package:Sublin/models/delimiter_class.dart';
-import 'package:Sublin/models/user_type_enum.dart';
-import 'package:Sublin/screens/provider_booking_screen.dart';
-import 'package:Sublin/services/user_service.dart';
-import 'package:Sublin/utils/add_to_list.dart';
-import 'package:Sublin/utils/get_city_formatted_address.dart';
-import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
-import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:Sublin/models/delimiter_class.dart';
+import 'package:Sublin/models/user_type_enum.dart';
+import 'package:Sublin/screens/provider_booking_screen.dart';
+import 'package:Sublin/services/user_service.dart';
+import 'package:Sublin/utils/add_string_to_list.dart';
+import 'package:Sublin/utils/get_city_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
+import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
@@ -25,7 +25,6 @@ import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
 import 'package:Sublin/services/provider_user_service.dart';
-
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
 import 'package:Sublin/widgets/time_field_widget.dart';
@@ -287,7 +286,7 @@ class _ProviderRegistrationScreenState
                                     ),
                                   if (user.userType == UserType.provider)
                                     ProviderSelectionWidget(
-                                      title: 'Eigenes Shuttleservice',
+                                      title: 'Shuttleservice',
                                       text: user.userType == UserType.provider
                                           ? 'Du bietest ein Shuttleservice zwischen Bahnhof und deiner Adresse an.'
                                           : '${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.company)} bietet ein eigenes Transferservice zwischen Bahnhof und den Privatadressen des Gemeindegebiets ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',

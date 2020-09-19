@@ -1,7 +1,7 @@
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 
-String convertFormattedAddressToReadableAddress(String formattedAddress) {
+String getReadableAddressFromFormattedAddress(String formattedAddress) {
   if (formattedAddress != '') {
     String station =
         getReadablePartOfFormattedAddress(formattedAddress, Delimiter.station);

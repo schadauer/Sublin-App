@@ -1,9 +1,10 @@
-import 'package:Sublin/models/request_class.dart';
-import 'package:Sublin/services/geolocation_service.dart';
-import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
-import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
+
+import 'package:Sublin/models/request_class.dart';
+import 'package:Sublin/services/geolocation_service.dart';
+import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
+import 'package:Sublin/widgets/appbar_widget.dart';
 
 class AddressInputScreen extends StatefulWidget {
   final String userUid;
@@ -123,9 +124,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                       child: ListView.builder(
                           itemCount: _autocompleteResults.length,
                           itemBuilder: (_, index) {
-                            // if (_autocompleteResults[index]['name']
-                            //     .toString()
-                            //     .contains(widget.restrictions))
                             return GestureDetector(
                               onTap: () {
                                 widget.addressInputFunction(
@@ -146,7 +144,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                       ? Icons.business
                                       : Icons.home),
                                   title: Text(
-                                      convertFormattedAddressToReadableAddress(
+                                      getReadableAddressFromFormattedAddress(
                                           _autocompleteResults[index]
                                               ['name']))),
                             );

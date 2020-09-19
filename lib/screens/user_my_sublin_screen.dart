@@ -1,29 +1,34 @@
 /* Copyright (C) 2020 Andreas Schadauer, andreas@sublin.app - All Rights Reserved */
 
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/my_card_format_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/request_class.dart';
+import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
+import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
+import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_city_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
+import 'package:Sublin/utils/is_route_completed.dart';
+import 'package:Sublin/utils/is_route_confirmed.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/user_my_sublin_card_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 
 enum Filter {
   taxisOnly,
@@ -72,6 +77,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
+    final Routing routingService = Provider.of<Routing>(context);
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
     final double itemHeight =
@@ -80,8 +86,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     final double itemWidth = size.width / 2;
     return Scaffold(
       bottomNavigationBar: NavigationBarWidget(
-          isProvider: user.userType != UserType.user,
-          setNavigationIndex: widget.setNavigationIndex),
+          isProvider: user.userType != UserType.user, setNavigationIndex: 0),
       appBar: AppbarWidget(title: 'Meine Shuttles'),
       body: SafeArea(
         child: Padding(
@@ -130,171 +135,242 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                           user, _providerUsersExcludeTaxis);
                   _lengthProviderUsersWithUnavailables =
                       _providerUsersWithUnavailables.length;
-                  return Column(
+                  return Stack(
                     children: [
-                      Container(
-                        height: 80,
-                        child: Card(
-                          child: Padding(
-                              padding: ThemeConstants.mediumPadding,
-                              child: (_geolocationStatus ==
-                                          GeolocationStatus.granted ||
-                                      _localRequest.startAddress != '')
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                      if (isRouteConfirmed(routingService) &&
+                          !isRouteCompleted(routingService))
+                        Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                height: 100,
+                                child: InkWell(
+                                  onTap: () async {
+                                    await Navigator.pushNamed(
+                                        context, UserRoutingScreen.routeName);
+                                  },
+                                  child: Card(
+                                      child: Padding(
+                                    padding: ThemeConstants.mediumPadding,
+                                    child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
+                                        Container(
+                                            height: 40,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                              color: ThemeConstants
+                                                  .sublinMainColor,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: CircularProgressIndicator()),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
                                         Expanded(
-                                          flex: 1,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 10),
-                                            child: Container(
-                                              width: 50,
-                                              height: 50,
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  '1',
-                                                  style: TextStyle(
-                                                    fontSize: 25,
-                                                    fontFamily: 'Lato',
-                                                    fontWeight: FontWeight.bold,
+                                          child: AutoSizeText(
+                                            'Du hast bereits eine Fahrt gebucht.',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline1,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      Container(
+                        padding: EdgeInsets.only(
+                            bottom: isRouteConfirmed(routingService) &&
+                                    !isRouteCompleted(routingService)
+                                ? 100
+                                : 0),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 80,
+                              child: Card(
+                                child: Padding(
+                                    padding: ThemeConstants.mediumPadding,
+                                    child: (_geolocationStatus ==
+                                                GeolocationStatus.granted ||
+                                            _localRequest.startAddress != '')
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 10),
+                                                  child: Container(
+                                                    width: 50,
+                                                    height: 50,
+                                                    decoration: BoxDecoration(
+                                                      color: Theme.of(context)
+                                                          .primaryColor,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: Center(
+                                                      child: Text(
+                                                        '1',
+                                                        style: TextStyle(
+                                                          fontSize: 25,
+                                                          fontFamily: 'Lato',
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 5,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              AutoSizeText(
-                                                'Dein Standort',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headline1,
+                                              Expanded(
+                                                flex: 5,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    AutoSizeText(
+                                                      'Dein Standort',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headline1,
+                                                    ),
+                                                    AutoSizeText(
+                                                      '${getReadableAddressFromFormattedAddress(_localRequest.startAddress)}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1,
+                                                      // textAlign: TextAlign.center,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              AutoSizeText(
-                                                '${convertFormattedAddressToReadableAddress(_localRequest.startAddress)}',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                                // textAlign: TextAlign.center,
-                                              ),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  AddressInputScreen(
+                                                                    userUid:
+                                                                        user.uid,
+                                                                    addressInputFunction:
+                                                                        _addressInputFunction,
+                                                                    isEndAddress:
+                                                                        false,
+                                                                    isStartAddress:
+                                                                        true,
+                                                                    showGeolocationOption:
+                                                                        true,
+                                                                    isStation:
+                                                                        false,
+                                                                    title:
+                                                                        'Dein Standort',
+                                                                  )));
+                                                    },
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.edit,
+                                                          size: 25,
+                                                        ),
+                                                        Text(
+                                                          'ändern',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .caption,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ))
                                             ],
-                                          ),
-                                        ),
-                                        Expanded(
-                                            flex: 1,
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            AddressInputScreen(
-                                                              userUid: user.uid,
-                                                              addressInputFunction:
-                                                                  _addressInputFunction,
-                                                              isEndAddress:
-                                                                  false,
-                                                              isStartAddress:
-                                                                  true,
-                                                              showGeolocationOption:
-                                                                  true,
-                                                              isStation: false,
-                                                              title:
-                                                                  'Dein Standort',
-                                                            )));
-                                              },
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.edit,
-                                                    size: 25,
-                                                  ),
-                                                  Text(
-                                                    'ändern',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .caption,
-                                                  )
-                                                ],
+                                          )
+                                        : Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 2,
+                                                child: AutoSizeText(
+                                                  'Sublin funktioniert am einfachsten wenn der Ortungsdienst aktiviert ist.',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1,
+                                                  // textAlign: TextAlign.center,
+                                                ),
                                               ),
-                                            ))
-                                      ],
-                                    )
-                                  : Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: AutoSizeText(
-                                            'Sublin funktioniert am einfachsten wenn der Ortungsdienst aktiviert ist.',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText1,
-                                            // textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: FlatButton(
-                                              onPressed: () {
-                                                openAppSettings();
-                                              },
-                                              child: AutoSizeText(
-                                                'Einstellungen',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .caption,
-                                              )),
-                                        )
-                                      ],
-                                    )),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 10,
-                        child: GridView.builder(
-                          itemCount: _lengthProviderUsersWithUnavailables,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: (itemWidth / itemHeight),
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            ProviderUser _providerUser =
-                                _providerUsersWithUnavailables[index];
-                            MyCardFormat _myCardFormat;
-                            if (index < _lengthProviderUsersOfAvailables)
-                              _myCardFormat = MyCardFormat.available;
-                            else if (index == _lengthProviderUsersOfAvailables)
-                              _myCardFormat = MyCardFormat.add;
-                            else
-                              _myCardFormat = MyCardFormat.unavailable;
-                            return UserMySublinCardWidget(
-                                localRequest: _localRequest,
-                                providerUser: _providerUser,
-                                itemWidth: itemWidth,
-                                itemHeight: itemHeight,
-                                user: user,
-                                context: context,
-                                myCardFormat: _myCardFormat);
-                          },
+                                              Expanded(
+                                                flex: 1,
+                                                child: FlatButton(
+                                                    onPressed: () {
+                                                      openAppSettings();
+                                                    },
+                                                    child: AutoSizeText(
+                                                      'Einstellungen',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .caption,
+                                                    )),
+                                              )
+                                            ],
+                                          )),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 10,
+                              child: GridView.builder(
+                                itemCount: _lengthProviderUsersWithUnavailables,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: (itemWidth / itemHeight),
+                                ),
+                                itemBuilder: (BuildContext context, int index) {
+                                  ProviderUser _providerUser =
+                                      _providerUsersWithUnavailables[index];
+                                  MyCardFormat _myCardFormat;
+                                  if (index < _lengthProviderUsersOfAvailables)
+                                    _myCardFormat = MyCardFormat.available;
+                                  else if (index ==
+                                      _lengthProviderUsersOfAvailables)
+                                    _myCardFormat = MyCardFormat.add;
+                                  else
+                                    _myCardFormat = MyCardFormat.unavailable;
+                                  return UserMySublinCardWidget(
+                                    localRequest: _localRequest,
+                                    providerUser: _providerUser,
+                                    itemWidth: itemWidth,
+                                    itemHeight: itemHeight,
+                                    user: user,
+                                    context: context,
+                                    myCardFormat: _myCardFormat,
+                                    isRouteBooked:
+                                        isRouteConfirmed(routingService) &&
+                                            !isRouteCompleted(routingService),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

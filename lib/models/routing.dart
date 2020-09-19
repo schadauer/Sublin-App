@@ -88,6 +88,8 @@ class Routing {
                   data['sublinEndStep']['noShow'] ?? defaultValueStep.noShow,
               endTime:
                   data['sublinEndStep']['endTime'] ?? defaultValueStep.endTime,
+              userName: data['sublinEndStep']['userName'] ??
+                  defaultValueStep.userName,
               provider: (data['sublinEndStep']['provider'] == null)
                   ? defaultValueStep.provider
                   : ProviderUser(
@@ -168,6 +170,8 @@ class Routing {
                   data['sublinStartStep']['noShow'] ?? defaultValueStep.noShow,
               endTime: data['sublinStartStep']['endTime'] ??
                   defaultValueStep.endTime,
+              userName: data['sublinStartStep']['userName'] ??
+                  defaultValueStep.userName,
               provider: (data['sublinStartStep']['provider'] == null)
                   ? defaultValueStep.provider
                   : ProviderUser(

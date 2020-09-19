@@ -2,7 +2,7 @@ import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/step.dart' as sublin;
 import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/convert_formatted_address_to_readable_address.dart';
+import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -118,7 +118,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     AutoSizeText(
-                                                      '${convertFormattedAddressToReadableAddress(step.startAddress)}',
+                                                      '${getReadableAddressFromFormattedAddress(step.startAddress)}',
                                                       maxLines: 2,
                                                       style: ThemeConstants
                                                           .veryLargeHeader,
@@ -257,7 +257,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                       ),
                                                     Expanded(
                                                       child: AutoSizeText(
-                                                        '${convertFormattedAddressToReadableAddress(step.endAddress)}',
+                                                        '${getReadableAddressFromFormattedAddress(step.endAddress)}',
                                                         maxLines: 2,
                                                         style: ThemeConstants
                                                             .veryLargeHeader,

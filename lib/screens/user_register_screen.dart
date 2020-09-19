@@ -1,8 +1,8 @@
-import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/widgets/progress_indicator_widget.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
+import 'package:Sublin/widgets/progress_indicator_widget.dart';
+import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/widgets/provider_selection_widget.dart';
 import 'package:Sublin/screens/user_sign_in_screen.dart';
@@ -348,7 +348,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         active: userType == UserType.provider,
                       ),
                       ProviderSelectionWidget(
-                        title: 'Auftraggeber/Sponsor',
+                        title: 'Sponsor',
                         text:
                             'Du führst selbst keine Personentransfers durch und beauftragst einen Fahrtendienst.',
                         selectionFunction: typeSelectionFunction,

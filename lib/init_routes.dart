@@ -1,4 +1,4 @@
-import 'package:Sublin/screens/provider_scope_screen.dart';
+import 'package:Sublin/screens/provider_settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/user_type_enum.dart';
@@ -41,7 +41,7 @@ class _InitRoutesState extends State<InitRoutes> {
         ProviderPartnerScreen.routeName: (context) => ProviderPartnerScreen(),
         ProviderTargetGroupScreen.routeName: (context) =>
             ProviderTargetGroupScreen(),
-        ProviderScopeScreen.routeName: (context) => ProviderScopeScreen(),
+        ProviderSettingsScreen.routeName: (context) => ProviderSettingsScreen(),
         UserProfileScreen.routeName: (context) => UserProfileScreen(),
         UserMySublinScreen.routeName: (context) => UserMySublinScreen(),
         ProviderRegistrationScreen.routeName: (context) =>
