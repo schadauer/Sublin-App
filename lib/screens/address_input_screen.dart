@@ -1,3 +1,4 @@
+import 'package:Sublin/models/provider_user.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
 
@@ -8,7 +9,7 @@ import 'package:Sublin/widgets/appbar_widget.dart';
 
 class AddressInputScreen extends StatefulWidget {
   final String userUid;
-  final Function addressInputFunction;
+  final Function addressInputCallback;
   final String address;
   final bool isStartAddress;
   final bool isEndAddress;
@@ -21,7 +22,7 @@ class AddressInputScreen extends StatefulWidget {
 
   AddressInputScreen({
     this.userUid = '',
-    this.addressInputFunction,
+    this.addressInputCallback,
     this.address = '',
     this.isStartAddress = false,
     this.isEndAddress = false,
@@ -126,7 +127,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                           itemBuilder: (_, index) {
                             return GestureDetector(
                               onTap: () {
-                                widget.addressInputFunction(
+                                widget.addressInputCallback(
                                     userUid: widget.userUid,
                                     input: _autocompleteResults[index]['name'],
                                     id: _autocompleteResults[index]['id'],

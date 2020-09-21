@@ -51,8 +51,7 @@ class AuthService {
       await authUser.sendEmailVerification();
 
       if (userType == UserType.provider || userType == UserType.sponsor) {
-        await ProviderUserService()
-            .setProviderUserData(uid: authUser.uid, data: providerUser);
+        await ProviderUserService().setProviderUserData(data: providerUser);
       }
       return _userfromFirebseUser(authUser);
     } catch (e) {

@@ -22,7 +22,7 @@ class _FloatingButtonAddCitiesState extends State<FloatingButtonAddCities> {
             label: Container(
               color: ThemeConstants.sublinMainColor,
               child: Text(
-                'Meine Orte bearbeiten',
+                'Deine Orte bearbeiten',
                 style: ThemeConstants.mainButton,
               ),
             ),

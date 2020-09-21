@@ -195,7 +195,6 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                     userName: booking.sublinEndStep?.userName ??
                         booking.sublinStartStep.userName,
                     provider: _getProviderUser(booking));
-                print('bookingStep.userName');
                 bool isEndStep =
                     booking.sublinEndStep?.bookedTime != null ? true : false;
                 int _timeRemaining =

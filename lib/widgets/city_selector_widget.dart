@@ -75,7 +75,7 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => AddressInputScreen(
-                                          addressInputFunction:
+                                          addressInputCallback:
                                               _addCityToCommunesSelectionFunction,
                                           userUid: snapshot.data.uid,
                                           isEndAddress: false,
@@ -123,8 +123,7 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
       }
     }
     if (widget.providerAddress == true) {
-      await ProviderUserService()
-          .setProviderUserData(uid: userUid, data: _providerUserData);
+      await ProviderUserService().setProviderUserData(data: _providerUserData);
       // For providers we nee also to add the addresses as station address
 
     } else if (widget.providerAddress == false) {
@@ -150,7 +149,7 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
       _data.communes.remove(address);
       (widget.providerAddress == true)
           ? await ProviderUserService()
-              .setProviderUserData(uid: userUid, data: _providerUserData)
+              .setProviderUserData(data: _providerUserData)
           : await UserService().writeUserData(uid: userUid, data: _userData);
     }
     setState(() {

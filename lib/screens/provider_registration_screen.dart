@@ -11,7 +11,7 @@ import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/utils/add_string_to_list.dart';
-import 'package:Sublin/utils/get_city_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_city_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/models/auth_class.dart';
@@ -327,7 +327,7 @@ class _ProviderRegistrationScreenState
                                                     : [];
                                             // If sponsor than add the city address
                                             String cityFormattedAddress =
-                                                getCityFormattedAddress(
+                                                getReadableCityFormattedAddress(
                                                     _checkRoutingData
                                                         .endAddress);
                                             if (_providerUser.providerType ==
@@ -337,7 +337,7 @@ class _ProviderRegistrationScreenState
                                                     .contains(
                                                         cityFormattedAddress))
                                               _providerUser.addresses.add(
-                                                  getCityFormattedAddress(
+                                                  getReadableCityFormattedAddress(
                                                       _checkRoutingData
                                                           .endAddress));
                                             _pageViewController.nextPage(
@@ -456,7 +456,7 @@ class _ProviderRegistrationScreenState
                                                               _providerUser
                                                                   .timeStart),
                                                       timespan: Timespan.start,
-                                                      timeInputFunction:
+                                                      timeInputCallback:
                                                           _fromDateTimeToInt,
                                                     )),
                                                 Flexible(
@@ -470,7 +470,7 @@ class _ProviderRegistrationScreenState
                                                               _providerUser
                                                                   .timeEnd),
                                                       timespan: Timespan.end,
-                                                      timeInputFunction:
+                                                      timeInputCallback:
                                                           _fromDateTimeToInt,
                                                     ))
                                               ],
@@ -614,7 +614,7 @@ class _ProviderRegistrationScreenState
                                                           MaterialPageRoute(
                                                               builder: (context) =>
                                                                   AddressInputScreen(
-                                                                    addressInputFunction:
+                                                                    addressInputCallback:
                                                                         _citySelectionFunction,
                                                                     isEndAddress:
                                                                         false,
@@ -663,7 +663,7 @@ class _ProviderRegistrationScreenState
                                                           addStringToList(
                                                               _providerUser
                                                                   .communes,
-                                                              getCityFormattedAddress(
+                                                              getReadableCityFormattedAddress(
                                                                   _providerUser
                                                                           .addresses[
                                                                       0]));
@@ -899,7 +899,7 @@ class _ProviderRegistrationScreenState
         ];
       // Get the formatted city for the communes
       addStringToList(
-          _providerUser.communes, getCityFormattedAddress(userAddress));
+          _providerUser.communes, getReadableCityFormattedAddress(userAddress));
       // _providerUser.addresses.add(userAddress);
     });
   }
@@ -919,17 +919,15 @@ class _ProviderRegistrationScreenState
   }
 
   void _fromDateTimeToInt(Timespan timespan, DateTime time) {
-    setState(() {
-      if (timespan == Timespan.start) {
-        setState(() {
-          _providerUser.timeStart = int.parse(format.format(time));
-        });
-      } else if (timespan == Timespan.end) {
-        setState(() {
-          _providerUser.timeEnd = int.parse(format.format(time));
-        });
-      }
-    });
+    if (timespan == Timespan.start) {
+      setState(() {
+        _providerUser.timeStart = int.parse(format.format(time));
+      });
+    } else if (timespan == Timespan.end) {
+      setState(() {
+        _providerUser.timeEnd = int.parse(format.format(time));
+      });
+    }
   }
 
   DateTime _fromIntToDateTime(int time) {

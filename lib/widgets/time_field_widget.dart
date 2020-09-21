@@ -6,12 +6,12 @@ import 'package:Sublin/models/timespan.dart';
 class TimeFildWidget extends StatelessWidget {
   final format = DateFormat("HH:mm");
   final Timespan timespan;
-  final Function timeInputFunction;
+  final Function timeInputCallback;
   final DateTime initalTime;
 
   TimeFildWidget({
     this.timespan,
-    this.timeInputFunction,
+    this.timeInputCallback,
     this.initalTime,
   });
 
@@ -26,7 +26,7 @@ class TimeFildWidget extends StatelessWidget {
         format: format,
         decoration: InputDecoration(contentPadding: EdgeInsets.all(10)),
         onChanged: (time) {
-          timeInputFunction(timespan, time);
+          timeInputCallback(timespan, time);
         },
         onShowPicker: (context, currentValue) async {
           final time = await showTimePicker(

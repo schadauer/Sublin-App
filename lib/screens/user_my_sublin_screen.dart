@@ -22,7 +22,7 @@ import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
-import 'package:Sublin/utils/get_city_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_city_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/utils/is_route_confirmed.dart';
@@ -119,7 +119,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                       providerUsers: _providerUsersExcludeTaxis,
                       filter: Filter.excludeIfNotPartner,
                       localRequest: _localRequest);
-                  print(_providerUsersExcludeTaxis);
 
                   // Now we filter out the addresses that are within the area of the current position
                   _providerUsersExcludeTaxis = _applyFilterFromList(
@@ -245,17 +244,21 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     AutoSizeText(
-                                                      'Dein Standort',
+                                                      'Mein Standort',
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .headline1,
                                                     ),
-                                                    AutoSizeText(
-                                                      '${getReadableAddressFromFormattedAddress(_localRequest.startAddress)}',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1,
-                                                      // textAlign: TextAlign.center,
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        '${getReadableAddressFromFormattedAddress(_localRequest.startAddress)}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1,
+                                                        maxLines: 2,
+                                                        minFontSize: 14,
+                                                        // textAlign: TextAlign.center,
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -271,7 +274,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                                                   AddressInputScreen(
                                                                     userUid:
                                                                         user.uid,
-                                                                    addressInputFunction:
+                                                                    addressInputCallback:
                                                                         _addressInputFunction,
                                                                     isEndAddress:
                                                                         false,
@@ -469,13 +472,11 @@ List<ProviderUser> _applyFilterFromList(
         if (providerUser.providerType == ProviderType.taxi) isTrue = true;
         break;
       case Filter.excludeStartAddress:
-        if (!providerUser.communes
-            .contains(getCityFormattedAddress(localRequest.startAddress)))
+        if (!providerUser.communes.contains(
+            getReadableCityFormattedAddress(localRequest.startAddress)))
           isTrue = true;
         break;
       case Filter.excludeIfNotPartner:
-        print(providerUser.partnershipConfirmed);
-        print(providerUser.providerName);
         if (providerUser.providerType == ProviderType.sponsor ||
             providerUser.providerType == ProviderType.sponsorShuttle) {
           if (providerUser.partnershipConfirmed == true) isTrue = true;

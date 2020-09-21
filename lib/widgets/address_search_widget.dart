@@ -211,7 +211,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
         MaterialPageRoute(
             builder: (context) => AddressInputScreen(
                   userUid: widget.userUid,
-                  addressInputFunction: widget.addressInputFunction,
+                  addressInputCallback: widget.addressInputFunction,
                   isEndAddress: widget.isEndAddress,
                   isStartAddress: widget.isStartAddress,
                   showGeolocationOption: widget.showGeolocationOption,

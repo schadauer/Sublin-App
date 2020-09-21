@@ -87,20 +87,19 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                   child: Form(
                                     key: _formKey,
                                     child: TextFormField(
-                                      decoration: InputDecoration(
-                                          hintText: 'E-Mailadresse hinzufügen'),
-                                      // focusNode: _emailFocus,
-                                      controller: _emailTextController,
-                                      validator: (e) {
-                                        String _message;
-                                        if (!isEmailFormat(e))
-                                          _message =
-                                              'Bitte gib eine gültige E-Mailadresse an';
-                                        return _message;
-                                      },
-                                      onChanged: (value) =>
-                                          print(_emailTextController.text),
-                                    ),
+                                        decoration: InputDecoration(
+                                            hintText:
+                                                'E-Mailadresse hinzufügen'),
+                                        // focusNode: _emailFocus,
+                                        controller: _emailTextController,
+                                        validator: (e) {
+                                          String _message;
+                                          if (!isEmailFormat(e))
+                                            _message =
+                                                'Bitte gib eine gültige E-Mailadresse an';
+                                          return _message;
+                                        },
+                                        onChanged: null),
                                   ),
                                 ),
                                 InkWell(
@@ -110,7 +109,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                         _targetGroupUser = addStringToList(
                                             _user.targetGroup,
                                             _emailTextController.text);
-                                        print(_emailTextController.text);
+
                                         await UserService()
                                             .updateTargetGroupUserData(
                                                 uid: _user.uid,
@@ -127,7 +126,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                                         _emailTextController
                                                             .text))
                                                     .toString());
-                                        print(_targetGroupProviderUser);
+
                                         await ProviderUserService()
                                             .updateTargetGroupProviderUser(
                                                 uid: _user.uid,

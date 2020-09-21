@@ -23,14 +23,14 @@ class ProviderUserService {
     }
   }
 
-  Future<void> setProviderUserData({String uid, ProviderUser data}) async {
+  Future<void> setProviderUserData({ProviderUser data}) async {
     try {
       // if (!Foundation.kReleaseMode) {
       //   await sublinLogging(Preferences.intLoggingUsers);
       // }
       await _database
           .collection('providers')
-          .doc(uid)
+          .doc(data.uid)
           .set(ProviderUser().toMap(data));
     } catch (e) {
       print('updateProviderUser: $e');

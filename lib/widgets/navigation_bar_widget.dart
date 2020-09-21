@@ -39,14 +39,11 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
   void initState() {
     _currentIndex = widget.setNavigationIndex;
     _providerUser = widget.providerUser ?? ProviderUser();
-    print('State');
-    print(_currentIndex);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(_providerUser.providerType);
     return (widget.isProvider == true)
         ? BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
