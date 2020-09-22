@@ -1,5 +1,6 @@
 /* Copyright (C) 2020 Andreas Schadauer, andreas@sublin.app - All Rights Reserved */
 
+import 'package:Sublin/screens/waiting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:geolocator/geolocator.dart';
@@ -22,7 +23,7 @@ import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
-import 'package:Sublin/utils/get_readable_city_formatted_address.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/utils/is_route_confirmed.dart';
@@ -379,7 +380,10 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                     ],
                   );
                 } else {
-                  return CircularProgressIndicator();
+                  return WaitingScreen(
+                    user: user,
+                    title: 'Wir suchen deine Angebote...',
+                  );
                 }
               }),
         ),
@@ -387,14 +391,17 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     );
   }
 
-  Future<void> _addressInputFunction(
-      {String userUid,
-      String input,
-      String id,
-      bool isCompany,
-      List<dynamic> terms,
-      bool isStartAddress,
-      bool isEndAddress}) async {
+  Future<void> _addressInputFunction({
+    String userUid,
+    String input,
+    String id,
+    bool isCompany,
+    List<dynamic> terms,
+    bool isStartAddress,
+    bool isEndAddress,
+    ProviderUser providerUser,
+    String station,
+  }) async {
     setState(() {
       _localRequest.startAddress = input;
     });
@@ -473,7 +480,7 @@ List<ProviderUser> _applyFilterFromList(
         break;
       case Filter.excludeStartAddress:
         if (!providerUser.communes.contains(
-            getReadableCityFormattedAddress(localRequest.startAddress)))
+            getFormattedCityFromFormattedAddress(localRequest.startAddress)))
           isTrue = true;
         break;
       case Filter.excludeIfNotPartner:

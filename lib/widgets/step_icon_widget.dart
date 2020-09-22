@@ -6,7 +6,8 @@ class StepIconWidget extends StatelessWidget {
   final bool isStartAddress;
   final bool isEndAddress;
   final IconData icon;
-  final bool isWaitingForConfirmation;
+  final bool isBooked;
+  final bool isConfirmed;
   final double iconSize;
 
   StepIconWidget({
@@ -15,7 +16,8 @@ class StepIconWidget extends StatelessWidget {
     this.isStartAddress = false,
     this.icon,
     this.iconSize = 40,
-    this.isWaitingForConfirmation = false,
+    this.isBooked = false,
+    this.isConfirmed = false,
   });
 
   @override
@@ -48,13 +50,19 @@ class StepIconWidget extends StatelessWidget {
                       : Colors.black,
                   shape: BoxShape.circle,
                 ),
-                child: isWaitingForConfirmation
+                child: isBooked && !isConfirmed
                     ? CircularProgressIndicator()
-                    : Icon(
-                        icon,
-                        color: Colors.white,
-                        size: iconSize / 1.5,
-                      )),
+                    : isConfirmed
+                        ? Icon(
+                            Icons.done,
+                            color: Colors.white,
+                            size: iconSize / 1.5,
+                          )
+                        : Icon(
+                            icon,
+                            color: Colors.white,
+                            size: iconSize / 1.5,
+                          )),
           ],
         ),
       ]),

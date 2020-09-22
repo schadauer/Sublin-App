@@ -38,7 +38,7 @@ class _StepWidgetState extends State<StepWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 90,
+      height: 100,
       child: Container(
         child: Stack(children: <Widget>[
           SizedBox(

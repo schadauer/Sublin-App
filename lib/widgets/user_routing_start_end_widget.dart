@@ -1,3 +1,4 @@
+import 'package:Sublin/models/booking_status_enum.dart';
 import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/routing.dart';
 import 'package:Sublin/models/step.dart' as sublin;
@@ -29,15 +30,42 @@ class UserRoutingStartEndWidget extends StatelessWidget {
         : routingService.sublinEndStep;
     // Is it a Sublin service or public service?
     bool _isSublinService = false;
+    BookingStatus bookingStatusStart;
+    BookingStatus bookingStatusEnd;
+    bool _isStartBooked = false;
+    bool _isEndBooked = false;
+    bool _isStartConfirmed = false;
+    bool _isEndConfirmed = false;
+
     if (direction == Direction.start && routingService.startAddressAvailable ||
         direction == Direction.end && routingService.endAddressAvailable)
       _isSublinService = true;
-    bool isStartUserNotificationWidgetOn = routingService.booked == true &&
+
+    if (routingService.booked != null) {
+      _isStartBooked = routingService.booked == true &&
+          direction == Direction.start &&
+          routingService.startAddressAvailable;
+      _isEndBooked = routingService.booked == true &&
+          direction == Direction.end &&
+          routingService.endAddressAvailable;
+    }
+    if (routingService.startAddressAvailable)
+      _isStartConfirmed = routingService.sublinStartStep.confirmed;
+    if (routingService.endAddressAvailable)
+      _isEndConfirmed = routingService.sublinEndStep.confirmed;
+
+    if (routingService.booked == true &&
         direction == Direction.start &&
-        routingService.startAddressAvailable;
-    bool isEndUserNotificationWidgetOn = routingService.booked == true &&
+        routingService.startAddressAvailable)
+      bookingStatusStart = BookingStatus?.booked;
+    if (routingService.booked == true &&
         direction == Direction.end &&
-        routingService.endAddressAvailable;
+        routingService.endAddressAvailable)
+      bookingStatusEnd = BookingStatus?.booked;
+    if (routingService.sublinStartStep.confirmed == true)
+      bookingStatusStart = BookingStatus.confirmed;
+    if (routingService.sublinEndStep.confirmed == true)
+      bookingStatusEnd = BookingStatus.confirmed;
 
     return Column(
       mainAxisAlignment: direction == Direction.start
@@ -112,27 +140,25 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                               Expanded(
                                                 child: Column(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                      MainAxisAlignment.start,
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    AutoSizeText(
-                                                      '${getReadableAddressFromFormattedAddress(step.startAddress)}',
-                                                      maxLines: 2,
-                                                      style: ThemeConstants
-                                                          .veryLargeHeader,
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        '${getReadableAddressFromFormattedAddress(step.startAddress)}',
+                                                        maxLines: 2,
+                                                        style: ThemeConstants
+                                                            .veryLargeHeader,
+                                                      ),
                                                     ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    if (!isStartUserNotificationWidgetOn)
+                                                    if (!_isStartBooked)
                                                       Expanded(
                                                         child: AutoSizeText(
                                                           'Transfer zum Bahnhof durch ${step.provider.providerName}',
                                                         ),
                                                       ),
-                                                    if (isStartUserNotificationWidgetOn)
+                                                    if (_isStartBooked)
                                                       Expanded(
                                                         child: AutoSizeText(
                                                           (routingService
@@ -154,12 +180,15 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                           Icon(Icons
                                                               .keyboard_tab),
                                                           SizedBox(width: 5),
-                                                          AutoSizeText(
-                                                            '${routingService.publicSteps[0].startAddress}',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .caption,
+                                                          Expanded(
+                                                            child: AutoSizeText(
+                                                              '${routingService.publicSteps[0].startAddress}',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .caption,
+                                                              maxLines: 2,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -183,13 +212,13 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                       '${routingService.publicSteps[0].startAddress}',
                                                       style: Theme.of(context)
                                                           .textTheme
-                                                          .headline1,
+                                                          .headline2,
                                                     ),
                                                     AutoSizeText(
                                                       'Fußweg',
                                                       style: Theme.of(context)
                                                           .textTheme
-                                                          .bodyText1,
+                                                          .caption,
                                                     ),
                                                     Row(
                                                       children: [
@@ -218,8 +247,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                               Expanded(
                                                 child: Column(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                      MainAxisAlignment.start,
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
@@ -233,13 +261,13 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                     ),
                                                     if (direction ==
                                                             Direction.end &&
-                                                        !isEndUserNotificationWidgetOn)
+                                                        !_isEndBooked)
                                                       Expanded(
                                                         child: AutoSizeText(
                                                           'Abholung durch ${step.provider.providerName}',
                                                         ),
                                                       ),
-                                                    if (isEndUserNotificationWidgetOn)
+                                                    if (_isEndBooked)
                                                       Expanded(
                                                         child: AutoSizeText(
                                                           (routingService
@@ -259,6 +287,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                       child: AutoSizeText(
                                                         '${getReadableAddressFromFormattedAddress(step.endAddress)}',
                                                         maxLines: 2,
+                                                        minFontSize: 16,
                                                         style: ThemeConstants
                                                             .veryLargeHeader,
                                                       ),
@@ -427,10 +456,12 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                       isSublinService: _isSublinService,
                       isStartAddress: direction == Direction.start,
                       isEndAddress: direction == Direction.end,
-                      isWaitingForConfirmation: direction == Direction.start &&
-                              isStartUserNotificationWidgetOn ||
-                          direction == Direction.end &&
-                              isEndUserNotificationWidgetOn,
+                      isBooked:
+                          direction == Direction.start && _isStartBooked ||
+                              direction == Direction.end && _isEndBooked,
+                      isConfirmed:
+                          direction == Direction.start && _isStartConfirmed ||
+                              direction == Direction.end && _isEndConfirmed,
                       icon: _isSublinService
                           ? Icons.directions_car
                           : Icons.directions_walk,

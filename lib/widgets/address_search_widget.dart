@@ -1,3 +1,4 @@
+import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
@@ -18,6 +19,8 @@ class AddressSearchWidget extends StatefulWidget {
   final String restrictions;
   final String addressTypes;
   final bool isStation;
+  final ProviderUser providerUser;
+  final String station;
 
   AddressSearchWidget({
     this.userUid,
@@ -35,6 +38,8 @@ class AddressSearchWidget extends StatefulWidget {
     this.restrictions = '',
     this.addressTypes = '',
     this.isStation = false,
+    this.providerUser,
+    this.station,
   });
 
   @override

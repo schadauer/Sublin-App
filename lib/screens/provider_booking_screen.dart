@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Sublin/models/provider_type.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,6 +47,11 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
     final completedBookings = Provider.of<List<BookingCompleted>>(context);
     _now = DateTime.now().millisecondsSinceEpoch;
 
+    // * For sponsors and sponsorshuttles we only need done bookings
+    if (providerUser.providerType == ProviderType.sponsor ||
+        providerUser.providerType == ProviderType.sponsorShuttle)
+      _selectedIndex = 2;
+
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppbarWidget(title: 'Aufträge'),
@@ -55,64 +61,66 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                  height: 80,
-                  child: Container(
-                    color: Theme.of(context).primaryColor,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedIndex = 0;
-                              });
-                            },
-                            child: _BookingFilterOption(
-                              bookings: openBookings,
-                              title: 'Offene',
-                              active: _selectedIndex == 0,
-                              bookingStatus: BookingStatus.open,
+              if (providerUser.providerType == ProviderType.taxi ||
+                  providerUser.providerType == ProviderType.shuttle)
+                SizedBox(
+                    height: 80,
+                    child: Container(
+                      color: Theme.of(context).primaryColor,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedIndex = 0;
+                                });
+                              },
+                              child: _BookingFilterOption(
+                                bookings: openBookings,
+                                title: 'Offene',
+                                active: _selectedIndex == 0,
+                                bookingStatus: BookingStatus.open,
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedIndex = 1;
-                              });
-                            },
-                            child: _BookingFilterOption(
-                              bookings: confirmedBookings,
-                              title: 'Bestätigte',
-                              active: _selectedIndex == 1,
-                              bookingStatus: BookingStatus.confirmed,
+                          Expanded(
+                            flex: 3,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedIndex = 1;
+                                });
+                              },
+                              child: _BookingFilterOption(
+                                bookings: confirmedBookings,
+                                title: 'Bestätigte',
+                                active: _selectedIndex == 1,
+                                bookingStatus: BookingStatus.confirmed,
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedIndex = 2;
-                              });
-                            },
-                            child: _BookingFilterOption(
-                              bookings: completedBookings,
-                              title: 'Erledigte',
-                              active: _selectedIndex == 2,
-                              bookingStatus: BookingStatus.completed,
+                          Expanded(
+                            flex: 2,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedIndex = 2;
+                                });
+                              },
+                              child: _BookingFilterOption(
+                                bookings: completedBookings,
+                                title: 'Erledigte',
+                                active: _selectedIndex == 2,
+                                bookingStatus: BookingStatus.completed,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )),
+                        ],
+                      ),
+                    )),
               (() {
                 switch (_selectedIndex) {
                   case 0:
@@ -165,7 +173,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
 
   Widget _bookingList(List<dynamic> bookings) {
     return bookings.isEmpty
-        ? Center(child: Text('Derzeit keine Aufträge'))
+        ? Center(child: Text('Derzeit keine offenen Aufträge'))
         : ListView.builder(
             itemCount: bookings.length,
             itemBuilder: (BuildContext context, int index) {
@@ -316,7 +324,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                       'Abholung um ' +
                                           getDateFormat(bookingStep.startTime),
                                       style:
-                                          Theme.of(context).textTheme.headline1,
+                                          Theme.of(context).textTheme.headline2,
                                     ),
                                     Text(
                                       bookingStep.userName,

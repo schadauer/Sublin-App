@@ -10,7 +10,7 @@ import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
 import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
 import 'package:Sublin/utils/get_list_of_cities_from_a_station.dart';
 import 'package:Sublin/utils/get_list_of_stations.dart';
-import 'package:Sublin/utils/get_readable_city_formatted_address.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/utils/remove_city_from_stations_And_Communes.dart';
 import 'package:Sublin/widgets/provider_operation_time_widget.dart';
@@ -42,138 +42,167 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
   TextEditingController _providerNameFormFieldController =
       TextEditingController();
 
-  @override
-  void initState() {
-    _providerNameFormFieldController.text = _providerUser.providerName;
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   _setProviderFormFieldValue();
+  //   _providerNameFormFieldController.text = _providerUser.providerName;
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
-    _providerUser = Provider.of<ProviderUser>(context);
-
-    final User user = Provider.of<User>(context);
+    ProviderUser _providerUser = Provider.of<ProviderUser>(context);
+    final User _user = Provider.of<User>(context);
 
     return Scaffold(
       bottomNavigationBar: NavigationBarWidget(
-        isProvider: user.userType != UserType.user,
+        isProvider: _user.userType != UserType.user,
         setNavigationIndex: 1,
         providerUser: _providerUser,
       ),
-      appBar: AppbarWidget(title: 'Mein Service', showProfileIcon: false),
+      appBar: AppbarWidget(title: 'Einstellungen'),
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(children: <Widget>[
-                    TextFormField(
-                        validator: (val) => val.length < 3
-                            ? 'Bitte gib hier deinen Unternehmensnamen ein'
-                            : null,
-                        controller: _providerNameFormFieldController,
-                        onChanged: (val) {
-                          setState(() {
-                            _providerUser.providerName = val;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Dein Unternehmensname',
-                          prefixIcon: Icon(Icons.account_circle,
-                              color: Theme.of(context).accentColor),
-                        )),
-                  ]),
-                ),
-              ),
+            Container(
+              child: Builder(builder: (BuildContext context) {
+                if (_providerNameFormFieldController.text == '')
+                  _providerNameFormFieldController.text =
+                      _providerUser.providerName;
+                return Card(
+                  child: Padding(
+                    padding: ThemeConstants.largePadding,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AutoSizeText(
+                          'Dein Betriebsname',
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(children: <Widget>[
+                            TextFormField(
+                                validator: (val) => val.length < 3
+                                    ? 'Bitte gib hier deinen Unternehmensnamen ein'
+                                    : null,
+                                controller: _providerNameFormFieldController,
+                                // onChanged: (val) {
+                                //   setState(() {
+                                //     _providerUser.providerName = val;
+                                //   });
+                                // },
+                                decoration: InputDecoration(
+                                  hintText: 'Dein Unternehmensname',
+                                  prefixIcon: Icon(Icons.account_circle,
+                                      color: Theme.of(context).accentColor),
+                                )),
+                          ]),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
             ),
             SizedBox(
               height: 10,
             ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: getListOfStations(_providerUser).length,
-                  itemBuilder: (BuildContext context, int index) {
-                    List<String> _stations = getListOfStations(_providerUser);
-                    String _station = _stations[index];
-                    return Card(
-                        child: Padding(
-                      padding: ThemeConstants.largePadding,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            getReadablePartOfFormattedAddress(
-                                _station, Delimiter.station),
-                            style: Theme.of(context).textTheme.headline1,
-                          ),
-                          SizedBox(height: 10),
-                          AutoSizeText(
-                            'Folgende Ortschaften werden über diesen Bahnhof bedient:',
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                          SizedBox(height: 10),
-                          Wrap(
-                            direction: Axis.horizontal,
-                            alignment: WrapAlignment.spaceBetween,
-                            spacing: 6.0,
-                            children: getListOfCitiesFromAStation(
-                                    _providerUser, _station)
-                                .map((city) {
-                              return Chip(
-                                  onDeleted: () async {
-                                    ProviderUserService().setProviderUserData(
-                                        data: removeCityFromStationsAndCommunes(
-                                            city: city,
-                                            providerUser: _providerUser));
-                                    // ProviderUser _providerUserTemp =
-                                    //     _removeCityFromStationsAndCommunes(
-                                    //         city: city,
-                                    //         providerUser: _providerUser);
-                                  },
-                                  padding: ThemeConstants.mediumPadding,
-                                  label: Text(getReadablePartOfFormattedAddress(
-                                      city, Delimiter.city)));
-                            }).toList(),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Container(
-                                child: FlatButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _selectedStation = _station;
-                                      });
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AddressInputScreen(
-                                                    addressInputCallback:
-                                                        _citySelectionCallback,
-                                                    isEndAddress: false,
-                                                    isStartAddress: false,
-                                                    cityOnly: true,
-                                                    title:
-                                                        'Ortschaft hinzufügen',
-                                                  )));
-                                    },
-                                    child:
-                                        Text('Weitere Ortschaften Hinzufügen')),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ));
-                  }),
-            ),
             ProviderOperationTimeWidget(
               providerUser: _providerUser,
             ),
+            if (_providerUser.providerType == ProviderType.taxi ||
+                _providerUser.providerType == ProviderType.shuttle)
+              Expanded(
+                child: getListOfStations(_providerUser).length != 0
+                    ? ListView.builder(
+                        itemCount: getListOfStations(_providerUser).length,
+                        itemBuilder: (BuildContext context, int index) {
+                          List<String> _stations =
+                              getListOfStations(_providerUser);
+                          String _station = _stations[index];
+                          return Card(
+                              child: Padding(
+                            padding: ThemeConstants.largePadding,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AutoSizeText(
+                                  getReadablePartOfFormattedAddress(
+                                      _station, Delimiter.station),
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
+                                SizedBox(height: 10),
+                                AutoSizeText(
+                                  'Folgende Ortschaften werden über diesen Bahnhof bedient:',
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                                SizedBox(height: 10),
+                                Wrap(
+                                  direction: Axis.horizontal,
+                                  alignment: WrapAlignment.spaceBetween,
+                                  spacing: 6.0,
+                                  children: getListOfCitiesFromAStation(
+                                          _providerUser, _station)
+                                      .map((city) {
+                                    return Chip(
+                                        onDeleted: () async {
+                                          ProviderUserService().setProviderUserData(
+                                              providerUser:
+                                                  removeCityFromStationsAndCommunes(
+                                                      station: _station,
+                                                      city: city,
+                                                      providerUser:
+                                                          _providerUser),
+                                              uid: _providerUser.uid);
+                                        },
+                                        padding: ThemeConstants.mediumPadding,
+                                        label: Text(
+                                            getReadablePartOfFormattedAddress(
+                                                city, Delimiter.city)));
+                                  }).toList(),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Container(
+                                      child: FlatButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _selectedStation = _station;
+                                              print(_selectedStation);
+                                            });
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddressInputScreen(
+                                                          addressInputCallback:
+                                                              _citySelectionCallback,
+                                                          isEndAddress: false,
+                                                          isStartAddress: false,
+                                                          cityOnly: true,
+                                                          title:
+                                                              'Ortschaft hinzufügen',
+                                                          providerUser:
+                                                              _providerUser,
+                                                          station:
+                                                              _selectedStation,
+                                                        )));
+                                          },
+                                          child: Text(
+                                              'Weitere Ortschaften Hinzufügen')),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ));
+                        })
+                    : Card(child: Text('Keinen Bahnhof bestimmt')),
+              ),
           ],
         ),
       ),
@@ -187,14 +216,16 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
     bool isCompany,
     bool isStartAddress,
     bool isEndAddress,
+    ProviderUser providerUser,
+    String station,
   }) async {
     setState(() {
       _providerUser = addCityToStationsAndCommunes(
           cityFormattedAddress: input,
-          stationFormattedAddress: _selectedStation,
-          providerUser: _providerUser);
+          stationFormattedAddress: station,
+          providerUser: providerUser);
     });
-    print(_providerUser.stations);
-    await ProviderUserService().setProviderUserData(data: _providerUser);
+    await ProviderUserService().setProviderUserData(
+        providerUser: _providerUser, uid: _providerUser.uid);
   }
 }

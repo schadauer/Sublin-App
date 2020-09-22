@@ -110,10 +110,10 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
   }) async {
     dynamic _data;
     User _userData;
-    ProviderUser _providerUserData;
+    ProviderUser _providerUser;
     if (widget.providerAddress == true) {
-      _providerUserData = await ProviderUserService().getProviderUser(userUid);
-      _data = _providerUserData;
+      _providerUser = await ProviderUserService().getProviderUser(userUid);
+      _data = _providerUser;
     } else if (widget.providerAddress == false) {
       _userData = await UserService().getUser(userUid);
 
@@ -123,7 +123,8 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
       }
     }
     if (widget.providerAddress == true) {
-      await ProviderUserService().setProviderUserData(data: _providerUserData);
+      await ProviderUserService().setProviderUserData(
+          providerUser: _providerUser, uid: _providerUser.uid);
       // For providers we nee also to add the addresses as station address
 
     } else if (widget.providerAddress == false) {
@@ -137,10 +138,10 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
   void _removeCityFromCommunes(String userUid, String address) async {
     dynamic _data;
     User _userData;
-    ProviderUser _providerUserData;
+    ProviderUser _providerUser;
     if (widget.providerAddress == true) {
-      _providerUserData = await ProviderUserService().getProviderUser(userUid);
-      _data = _providerUserData;
+      _providerUser = await ProviderUserService().getProviderUser(userUid);
+      _data = _providerUser;
     } else if (widget.providerAddress == false) {
       _userData = await UserService().getUser(userUid);
       _data = _userData;
@@ -148,8 +149,8 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
     if (_data.communes.contains(address)) {
       _data.communes.remove(address);
       (widget.providerAddress == true)
-          ? await ProviderUserService()
-              .setProviderUserData(data: _providerUserData)
+          ? await ProviderUserService().setProviderUserData(
+              providerUser: _providerUser, uid: _providerUser.uid)
           : await UserService().writeUserData(uid: userUid, data: _userData);
     }
     setState(() {

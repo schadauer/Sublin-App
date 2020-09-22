@@ -2,7 +2,7 @@ import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type.dart';
 
 class ProviderUser {
-  final String uid;
+  String uid;
   final bool streamingOn;
   final bool inOperation;
   bool operationRequested;

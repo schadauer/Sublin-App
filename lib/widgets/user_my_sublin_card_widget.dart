@@ -14,7 +14,7 @@ import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/get_readable_city_formatted_address.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:Sublin/utils/get_formatted_city_from_provider_user_addresses.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -343,8 +343,8 @@ class UserMySublinCardWidget extends StatelessWidget {
 
   Direction _getDirectionBasedUserPosition() {
     Direction _direction = Direction.end;
-    if (providerUser.communes
-        .contains(getReadableCityFormattedAddress(localRequest.startAddress)))
+    if (providerUser.communes.contains(
+        getFormattedCityFromFormattedAddress(localRequest.startAddress)))
       _direction = Direction.start;
     return _direction;
   }

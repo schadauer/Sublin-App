@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:Sublin/utils/add_city_to_communes_and_addresses.dart';
+import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +13,7 @@ import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/utils/add_string_to_list.dart';
-import 'package:Sublin/utils/get_readable_city_formatted_address.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/models/auth_class.dart';
@@ -80,8 +82,8 @@ class _ProviderRegistrationScreenState
 
   @override
   void dispose() {
-    _pageViewController ?? _pageViewController.dispose();
-    _routingStream ?? _routingStream.cancel();
+    _pageViewController.dispose();
+    // _routingStream ?? _routingStream.cancel();
     super.dispose();
   }
 
@@ -89,6 +91,8 @@ class _ProviderRegistrationScreenState
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
+
+    print(ProviderUser().toMap(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -326,20 +330,36 @@ class _ProviderRegistrationScreenState
                                                       ]
                                                     : [];
                                             // If sponsor than add the city address
+
                                             String cityFormattedAddress =
-                                                getReadableCityFormattedAddress(
+                                                getFormattedCityFromFormattedAddress(
                                                     _checkRoutingData
                                                         .endAddress);
                                             if (_providerUser.providerType ==
-                                                    ProviderType.sponsor &&
-                                                cityFormattedAddress != '' &&
-                                                !_providerUser.addresses
-                                                    .contains(
-                                                        cityFormattedAddress))
-                                              _providerUser.addresses.add(
-                                                  getReadableCityFormattedAddress(
-                                                      _checkRoutingData
-                                                          .endAddress));
+                                                ProviderType.sponsor)
+                                              setState(() {
+                                                _providerUser =
+                                                    addCityToCommunesAndAddresses(
+                                                        providerUser:
+                                                            _providerUser,
+                                                        cityFormattedAddress:
+                                                            getFormattedCityFromFormattedAddress(
+                                                                _checkRoutingData
+                                                                    .endAddress));
+                                              });
+
+                                            // if (_providerUser.providerType ==
+                                            //         ProviderType.sponsor &&
+                                            //     cityFormattedAddress != '' &&
+                                            //     !_providerUser.addresses
+                                            //         .contains(
+                                            //             cityFormattedAddress))
+
+                                            //   _providerUser.addresses.add(
+                                            //       getReadableCityFormattedAddress(
+                                            //           _checkRoutingData
+                                            //               .endAddress));
+
                                             _pageViewController.nextPage(
                                                 duration:
                                                     Duration(milliseconds: 300),
@@ -663,7 +683,7 @@ class _ProviderRegistrationScreenState
                                                           addStringToList(
                                                               _providerUser
                                                                   .communes,
-                                                              getReadableCityFormattedAddress(
+                                                              getFormattedCityFromFormattedAddress(
                                                                   _providerUser
                                                                           .addresses[
                                                                       0]));
@@ -748,15 +768,39 @@ class _ProviderRegistrationScreenState
                               SizedBox(
                                 height: 20,
                               ),
-                              RegisterNowWidget(
-                                providerUser: _providerUser,
-                                auth: auth,
-                                user: user,
-                                isActive: _providerUser.providerPlan ==
-                                            ProviderPlan.emailOnly &&
-                                        _providerUser.targetGroup.length > 0 ||
-                                    _providerUser.providerPlan ==
-                                        ProviderPlan.all,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  RaisedButton(
+                                    onPressed: _providerUser.providerPlan ==
+                                                    ProviderPlan.emailOnly &&
+                                                _providerUser
+                                                        .targetGroup.length >
+                                                    0 ||
+                                            _providerUser.providerPlan ==
+                                                ProviderPlan.all
+                                        ? () async {
+                                            _providerUser.operationRequested =
+                                                true;
+                                            await ProviderUserService()
+                                                .updateProviderUserData(
+                                                    uid: auth.uid,
+                                                    data: _providerUser);
+                                            User _user = user;
+                                            _user.isRegistrationCompleted =
+                                                true;
+                                            await UserService()
+                                                .updateUserDataIsRegistrationCompleted(
+                                                    uid: user.uid);
+                                            await Navigator.pushNamed(
+                                                context,
+                                                ProviderBookingScreen
+                                                    .routeName);
+                                          }
+                                        : null,
+                                    child: Text('Jetzt registrieren'),
+                                  )
+                                ],
                               )
                             ],
                           ))
@@ -805,6 +849,8 @@ class _ProviderRegistrationScreenState
     bool isCompany,
     bool isStartAddress,
     bool isEndAddress,
+    ProviderUser providerUser,
+    String station,
   }) {
     setState(() {
       _addressFound = true;
@@ -813,13 +859,16 @@ class _ProviderRegistrationScreenState
     });
   }
 
-  void _stationSelectionFunction(
-      {String userUid,
-      String input,
-      String id,
-      bool isCompany,
-      bool isStartAddress,
-      bool isEndAddress}) {
+  void _stationSelectionFunction({
+    String userUid,
+    String input,
+    String id,
+    bool isCompany,
+    bool isStartAddress,
+    bool isEndAddress,
+    ProviderUser providerUser,
+    String station,
+  }) {
     _station = input;
     _setStationFromProviderAddressFunction(
       station: _station,
@@ -834,6 +883,8 @@ class _ProviderRegistrationScreenState
     bool isCompany,
     bool isStartAddress,
     bool isEndAddress,
+    ProviderUser providerUser,
+    String station,
   }) {
     _addCityToStations(input);
   }
@@ -898,8 +949,8 @@ class _ProviderRegistrationScreenState
           userAddress + station,
         ];
       // Get the formatted city for the communes
-      addStringToList(
-          _providerUser.communes, getReadableCityFormattedAddress(userAddress));
+      addStringToList(_providerUser.communes,
+          getFormattedCityFromFormattedAddress(userAddress));
       // _providerUser.addresses.add(userAddress);
     });
   }

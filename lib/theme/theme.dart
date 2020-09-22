@@ -87,13 +87,13 @@ ThemeData themeData(context) {
         fontWeight: FontWeight.normal,
       ),
       headline1: TextStyle(
-        fontSize: 18,
+        fontSize: 20,
         color: Colors.black,
         fontFamily: 'Lato',
         fontWeight: FontWeight.bold,
       ),
       headline2: TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         color: Colors.black,
         fontWeight: FontWeight.bold,
         fontFamily: 'Lato',

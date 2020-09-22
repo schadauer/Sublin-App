@@ -13,5 +13,5 @@ List<String> getListOfStations(ProviderUser providerUser) {
       _stations = addStringToList(_stations, _station);
     }
   });
-  return _stations;
+  return _stations ?? [];
 }

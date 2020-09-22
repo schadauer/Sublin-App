@@ -18,22 +18,23 @@ class ProviderUserService {
         return ProviderUser.fromJson(snap.data());
       });
     } catch (e) {
-      print(e);
+      print('streamProviderUser: $e');
       return null;
     }
   }
 
-  Future<void> setProviderUserData({ProviderUser data}) async {
+  Future<void> setProviderUserData(
+      {ProviderUser providerUser, String uid}) async {
     try {
       // if (!Foundation.kReleaseMode) {
       //   await sublinLogging(Preferences.intLoggingUsers);
       // }
       await _database
           .collection('providers')
-          .doc(data.uid)
-          .set(ProviderUser().toMap(data));
+          .doc(uid)
+          .set(ProviderUser().toMap(providerUser));
     } catch (e) {
-      print('updateProviderUser: $e');
+      print('setProviderUserData: $e');
     }
   }
 
@@ -42,12 +43,12 @@ class ProviderUserService {
       // if (!Foundation.kReleaseMode) {
       //   await sublinLogging(Preferences.intLoggingUsers);
       // }
-      await _database
-          .collection('providers')
-          .doc(uid)
-          .update(ProviderUser().toMap(data));
+      await _database.collection('providers').doc(uid).set(
+            ProviderUser().toMap(data),
+            SetOptions(merge: true),
+          );
     } catch (e) {
-      print('updateProviderUser: $e');
+      print('updateProviderUserData: $e');
     }
   }
 
@@ -72,7 +73,7 @@ class ProviderUserService {
         }).toList();
       });
     } catch (e) {
-      print(e);
+      print('getProviders: $e');
       return null;
     }
   }
@@ -94,7 +95,7 @@ class ProviderUserService {
         }).toList();
       });
     } catch (e) {
-      print(e);
+      print('getProvidersAsPartners: $e');
       return null;
     }
   }
@@ -112,7 +113,7 @@ class ProviderUserService {
         return ProviderUser.fromJson(value.data());
       });
     } catch (e) {
-      print(e);
+      print('getProviderUser: $e');
       return null;
     }
   }
@@ -136,7 +137,7 @@ class ProviderUserService {
         }).toList();
       });
     } catch (e) {
-      print(e);
+      print('getProvidersEmailOnly: $e');
       return null;
     }
   }
@@ -148,12 +149,15 @@ class ProviderUserService {
       // if (!Foundation.kReleaseMode) {
       //   await sublinLogging(Preferences.intLoggingUsers);
       // }
-      await _database.collection('providers').doc(uid).set({
-        'providerPlan': _providerPlanString.substring(
-            _providerPlanString.indexOf('.') + 1, _providerPlanString.length),
-      }, SetOptions(merge: true));
+      await _database.collection('providers').doc(uid).set(
+        {
+          'providerPlan': _providerPlanString.substring(
+              _providerPlanString.indexOf('.') + 1, _providerPlanString.length),
+        },
+        SetOptions(merge: true),
+      );
     } catch (e) {
-      print('updateProviderUser: $e');
+      print('updateProviderPlanProviderUserData: $e');
     }
   }
 
@@ -167,7 +171,7 @@ class ProviderUserService {
         'partners': partners,
       }, SetOptions(merge: true));
     } catch (e) {
-      print('updateProviderUser: $e');
+      print('updatePartnersProviderUser: $e');
     }
   }
 
@@ -181,7 +185,7 @@ class ProviderUserService {
         'targetGroup': targetGroupList,
       }, SetOptions(merge: true));
     } catch (e) {
-      print('updateProviderUser: $e');
+      print('updateTargetGroupProviderUser: $e');
     }
   }
 }

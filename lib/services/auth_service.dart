@@ -11,7 +11,6 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String errorMessage;
 
-  ProviderUser providerUser = ProviderUser();
   UserCredential userCredential;
 
   Stream<Auth> get userStream {
@@ -50,8 +49,11 @@ class AuthService {
       // }
       await authUser.sendEmailVerification();
 
+      ProviderUser providerUser = ProviderUser(uid: authUser.uid);
+      print(ProviderUser().toMap(providerUser));
       if (userType == UserType.provider || userType == UserType.sponsor) {
-        await ProviderUserService().setProviderUserData(data: providerUser);
+        await ProviderUserService()
+            .setProviderUserData(providerUser: providerUser, uid: authUser.uid);
       }
       return _userfromFirebseUser(authUser);
     } catch (e) {

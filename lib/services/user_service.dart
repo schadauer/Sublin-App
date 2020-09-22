@@ -16,7 +16,7 @@ class UserService {
         return User.fromJson(snap.data());
       });
     } catch (e) {
-      print(e);
+      print('streamUser: $e');
       return null;
     }
   }
@@ -30,7 +30,7 @@ class UserService {
         'homeAddress': address,
       }, SetOptions(merge: true));
     } catch (e) {
-      print(e);
+      print('updateHomeAddress: $e');
     }
   }
 
@@ -43,7 +43,7 @@ class UserService {
         return User.fromJson(value.data());
       });
     } catch (e) {
-      print(e);
+      print('getUser: $e');
       return null;
     }
   }
@@ -57,7 +57,7 @@ class UserService {
             User().toJson(data),
           );
     } catch (e) {
-      print(e);
+      print('writeUserData: $e');
     }
   }
 
@@ -70,7 +70,7 @@ class UserService {
         'isRegistrationCompleted': true,
       }, SetOptions(merge: true));
     } catch (e) {
-      print(e);
+      print('updateUserDataIsRegistrationCompleted: $e');
     }
   }
 
@@ -84,7 +84,7 @@ class UserService {
         'targetGroup': targetGroupList,
       }, SetOptions(merge: true));
     } catch (e) {
-      print('updateProviderUser: $e');
+      print('updateTargetGroupUserData: $e');
     }
   }
 }

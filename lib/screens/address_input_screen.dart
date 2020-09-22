@@ -19,6 +19,8 @@ class AddressInputScreen extends StatefulWidget {
   final String addressTypes;
   final bool cityOnly;
   final bool isStation;
+  final ProviderUser providerUser;
+  final String station;
 
   AddressInputScreen({
     this.userUid = '',
@@ -32,6 +34,8 @@ class AddressInputScreen extends StatefulWidget {
     this.addressTypes = '',
     this.cityOnly = false,
     this.isStation = false,
+    this.providerUser,
+    this.station,
   });
 
   @override
@@ -128,13 +132,16 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                             return GestureDetector(
                               onTap: () {
                                 widget.addressInputCallback(
-                                    userUid: widget.userUid,
-                                    input: _autocompleteResults[index]['name'],
-                                    id: _autocompleteResults[index]['id'],
-                                    isCompany: _autocompleteResults[index]
-                                        ['isCompany'],
-                                    isStartAddress: widget.isStartAddress,
-                                    isEndAddress: widget.isEndAddress);
+                                  userUid: widget.userUid,
+                                  input: _autocompleteResults[index]['name'],
+                                  id: _autocompleteResults[index]['id'],
+                                  isCompany: _autocompleteResults[index]
+                                      ['isCompany'],
+                                  isStartAddress: widget.isStartAddress,
+                                  isEndAddress: widget.isEndAddress,
+                                  providerUser: widget.providerUser,
+                                  station: widget.station,
+                                );
                                 Navigator.of(context).pop();
                               },
                               child: ListTile(

@@ -1,4 +1,5 @@
 import 'package:Sublin/models/routing_step_type_enum.dart';
+import 'package:Sublin/screens/waiting_screen.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/services.dart';
 import 'package:Sublin/models/direction_enum.dart';
@@ -58,10 +59,10 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
           : MediaQuery.of(context).size.height;
       double availableHight = screenSize -
           kBottomNavigationBarHeight -
-          160 -
+          140 -
           safePaddingTop -
           safePaddingBottom;
-      double heightOfStepCard = 80.0;
+      double heightOfStepCard = 100.0;
       double numberOfStartOrEndSteps = 0;
       if (routingService.isPubliclyAccessibleEndAddress == true)
         numberOfStartOrEndSteps += 1;
@@ -306,7 +307,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                                               Navigator.pushNamed(context,
                                                   UserMySublinScreen.routeName);
                                             },
-                                            child: Text('Route ändern')),
+                                            child: Text('Andere Fahrt')),
                                         RaisedButton(
                                             onPressed: routingService.booked
                                                 ? null
@@ -328,26 +329,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                     ));
               }
             } else {
-              return Scaffold(
-                bottomNavigationBar: NavigationBarWidget(
-                    isProvider: user.userType == UserType.provider,
-                    setNavigationIndex: 1),
-                appBar: AppbarWidget(title: 'Wir suchen deine Fahrt'),
-                body: Center(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ConstrainedBox(
-                        constraints:
-                            BoxConstraints(minHeight: 80, minWidth: 80),
-                        child: CircularProgressIndicator()),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    AutoSizeText('Wir suchen deine Fahrt ...')
-                  ],
-                )),
-              );
+              return WaitingScreen(user: user, title: 'Wir suchen deine Fahrt');
             }
           } else
             return Container();

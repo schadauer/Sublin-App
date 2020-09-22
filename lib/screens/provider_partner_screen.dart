@@ -24,12 +24,11 @@ class ProviderPartnerScreen extends StatefulWidget {
 
 class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
   TextEditingController _emailTextController = TextEditingController();
-  FocusNode _emailFocus;
+  // FocusNode _emailFocus;
 
   @override
   void dispose() {
     _emailTextController.dispose();
-    _emailFocus.dispose();
     super.dispose();
   }
 
@@ -310,6 +309,7 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
       {ProviderUser providerUser}) async {
     List<ProviderUser> providerUserList = await ProviderUserService()
         .getProvidersAsPartners(uid: providerUser.uid);
+    print(providerUserList);
     List<String> _unapprovedProviderUserListByUid = [...providerUser.partners];
     // Sponsors may have an unapproved partner which we need to show here as well
     if (providerUser.providerType == ProviderType.sponsor ||
