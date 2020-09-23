@@ -1,4 +1,6 @@
+import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/theme/theme.dart';
+import 'package:Sublin/utils/get_icon_for_transportation_type.dart';
 import 'package:flutter/material.dart';
 
 class StepIconWidget extends StatelessWidget {
@@ -9,6 +11,7 @@ class StepIconWidget extends StatelessWidget {
   final bool isBooked;
   final bool isConfirmed;
   final double iconSize;
+  final TransportationType transportationType;
 
   StepIconWidget({
     this.isSublinService = false,
@@ -18,12 +21,13 @@ class StepIconWidget extends StatelessWidget {
     this.iconSize = 40,
     this.isBooked = false,
     this.isConfirmed = false,
+    this.transportationType,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 80,
+      width: 70,
       height: double.infinity,
       child: Stack(children: <Widget>[
         Row(
@@ -52,17 +56,19 @@ class StepIconWidget extends StatelessWidget {
                 ),
                 child: isBooked && !isConfirmed
                     ? CircularProgressIndicator()
-                    : isConfirmed
-                        ? Icon(
-                            Icons.done,
-                            color: Colors.white,
-                            size: iconSize / 1.5,
-                          )
-                        : Icon(
-                            icon,
-                            color: Colors.white,
-                            size: iconSize / 1.5,
-                          )),
+                    : transportationType != null
+                        ? getIconForTransportationType(transportationType)
+                        : isConfirmed
+                            ? Icon(
+                                Icons.done,
+                                color: Colors.white,
+                                size: iconSize / 1.5,
+                              )
+                            : Icon(
+                                icon,
+                                color: Colors.white,
+                                size: iconSize / 1.5,
+                              )),
           ],
         ),
       ]),

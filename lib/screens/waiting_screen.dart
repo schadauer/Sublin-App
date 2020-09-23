@@ -21,7 +21,6 @@ class WaitingScreen extends StatelessWidget {
       bottomNavigationBar: NavigationBarWidget(
           isProvider: user.userType == UserType.provider,
           setNavigationIndex: 1),
-      appBar: AppbarWidget(title: title),
       body: Center(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

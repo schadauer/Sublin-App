@@ -1,6 +1,8 @@
 /* Copyright (C) 2020 Andreas Schadauer, andreas@sublin.app - All Rights Reserved */
 
+import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/screens/waiting_screen.dart';
+import 'package:Sublin/widgets/user_my_sublin_start_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:geolocator/geolocator.dart';
@@ -38,6 +40,14 @@ enum Filter {
   excludeIfNotPartner
 }
 
+enum AddressAvailablilty {
+  notRequested,
+  available,
+  station,
+  publiclyAvailable,
+  notAvailable,
+}
+
 class UserMySublinScreen extends StatefulWidget {
   const UserMySublinScreen({Key key, this.setNavigationIndex})
       : super(key: key);
@@ -55,6 +65,9 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   int _lengthProviderUsersWithUnavailables;
   GeolocationStatus _geolocationStatus;
   Request _localRequest = Request();
+  AddressAvailablilty _startAddressAvailability =
+      AddressAvailablilty.notRequested;
+  AddressAvailablilty _endAddressAvailablity = AddressAvailablilty.notRequested;
 
   @override
   void initState() {
@@ -72,6 +85,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -81,6 +95,9 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     final Routing routingService = Provider.of<Routing>(context);
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
+
+    print(_startAddressAvailability);
+
     final double itemHeight =
         (size.height > 700 ? 700 : size.height - kToolbarHeight - 24) /
             (size.height > 700 ? 2.8 : 2.4);
@@ -90,51 +107,35 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
           isProvider: user.userType != UserType.user, setNavigationIndex: 0),
       appBar: AppbarWidget(title: 'Meine Shuttles'),
       body: SafeArea(
-        child: Padding(
-          padding: ThemeConstants.mediumPadding,
+        child: Container(
+          color: Colors.black38,
           child: FutureBuilder<List<List<ProviderUser>>>(
               // future: ProviderService().getProviders(communes: user.communes),
               future: Future.wait([
-                ProviderUserService().getProviders(communes: user.communes),
+                ProviderUserService()
+                    .getProvidersFromCommunes(communes: user.communes),
                 ProviderUserService().getProvidersEmailOnly(email: user.email),
               ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.data.length != 0) {
-                  List<ProviderUser> _providerUsersAll = [
+                  List<ProviderUser> _providerUsersList = [
                     ...snapshot.data[0],
                     ...snapshot.data[1]
                   ];
 
-                  // Get all available addresses excluding taxis and add one element for user to add new cities
-                  // List<ProviderUser> _data = snapshot.data != ? snapshot.data[0] : null;
-                  List<ProviderUser> _providerUsersExcludeTaxis =
-                      _addUserProviderForUserToAddCity(_applyFilterFromList(
-                          providerUsers: _providerUsersAll,
-                          filter: Filter.excludeTaxis,
-                          localRequest: _localRequest));
-
-                  // --------------------------------------------------------------------- TODO --------------------------------------------------------------
                   // We need to filter out those that are not partners with a taxi
-                  _providerUsersExcludeTaxis = _applyFilterFromList(
-                      providerUsers: _providerUsersExcludeTaxis,
+                  _providerUsersList = _applyFilterFromList(
+                      providerUsers: _providerUsersList,
                       filter: Filter.excludeIfNotPartner,
                       localRequest: _localRequest);
 
                   // Now we filter out the addresses that are within the area of the current position
-                  _providerUsersExcludeTaxis = _applyFilterFromList(
-                      providerUsers: _providerUsersExcludeTaxis,
+                  _providerUsersList = _applyFilterFromList(
+                      providerUsers: _providerUsersList,
                       filter: Filter.excludeStartAddress,
                       localRequest: _localRequest);
 
-                  _lengthProviderUsersOfAvailables =
-                      _providerUsersExcludeTaxis.length - 1;
-                  // Now let's add all unavailable cities which are inactive for the user to view
-                  List<ProviderUser> _providerUsersWithUnavailables =
-                      _addUnavailableCitiesToList(
-                          user, _providerUsersExcludeTaxis);
-                  _lengthProviderUsersWithUnavailables =
-                      _providerUsersWithUnavailables.length;
                   return Stack(
                     children: [
                       if (isRouteConfirmed(routingService) &&
@@ -194,189 +195,73 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                 : 0),
                         child: Column(
                           children: [
-                            Container(
-                              height: 80,
-                              child: Card(
-                                child: Padding(
-                                    padding: ThemeConstants.mediumPadding,
-                                    child: (_geolocationStatus ==
-                                                GeolocationStatus.granted ||
-                                            _localRequest.startAddress != '')
-                                        ? Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 10),
-                                                  child: Container(
-                                                    width: 50,
-                                                    height: 50,
-                                                    decoration: BoxDecoration(
-                                                      color: Theme.of(context)
-                                                          .primaryColor,
-                                                      shape: BoxShape.circle,
-                                                    ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        '1',
-                                                        style: TextStyle(
-                                                          fontSize: 25,
-                                                          fontFamily: 'Lato',
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 5,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    AutoSizeText(
-                                                      'Mein Standort',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headline1,
-                                                    ),
-                                                    Expanded(
-                                                      child: AutoSizeText(
-                                                        '${getReadableAddressFromFormattedAddress(_localRequest.startAddress)}',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyText1,
-                                                        maxLines: 2,
-                                                        minFontSize: 14,
-                                                        // textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Expanded(
-                                                  flex: 1,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  AddressInputScreen(
-                                                                    userUid:
-                                                                        user.uid,
-                                                                    addressInputCallback:
-                                                                        _addressInputFunction,
-                                                                    isEndAddress:
-                                                                        false,
-                                                                    isStartAddress:
-                                                                        true,
-                                                                    showGeolocationOption:
-                                                                        true,
-                                                                    isStation:
-                                                                        false,
-                                                                    title:
-                                                                        'Dein Standort',
-                                                                  )));
-                                                    },
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.edit,
-                                                          size: 25,
-                                                        ),
-                                                        Text(
-                                                          'ändern',
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .caption,
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ))
-                                            ],
-                                          )
-                                        : Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 2,
-                                                child: AutoSizeText(
-                                                  'Sublin funktioniert am einfachsten wenn der Ortungsdienst aktiviert ist.',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText1,
-                                                  // textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: FlatButton(
-                                                    onPressed: () {
-                                                      openAppSettings();
-                                                    },
-                                                    child: AutoSizeText(
-                                                      'Einstellungen',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption,
-                                                    )),
-                                              )
-                                            ],
-                                          )),
-                              ),
+                            UserMySublinStartCardWidget(
+                              startAddress: _localRequest.startAddress,
+                              user: user,
+                              addressInputFunction: _addressInputFunction,
                             ),
                             Expanded(
                               flex: 10,
-                              child: GridView.builder(
-                                itemCount: _lengthProviderUsersWithUnavailables,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: (itemWidth / itemHeight),
-                                ),
-                                itemBuilder: (BuildContext context, int index) {
-                                  ProviderUser _providerUser =
-                                      _providerUsersWithUnavailables[index];
-                                  MyCardFormat _myCardFormat;
-                                  if (index < _lengthProviderUsersOfAvailables)
-                                    _myCardFormat = MyCardFormat.available;
-                                  else if (index ==
-                                      _lengthProviderUsersOfAvailables)
-                                    _myCardFormat = MyCardFormat.add;
-                                  else
-                                    _myCardFormat = MyCardFormat.unavailable;
-                                  return UserMySublinCardWidget(
-                                    localRequest: _localRequest,
-                                    providerUser: _providerUser,
-                                    itemWidth: itemWidth,
-                                    itemHeight: itemHeight,
-                                    user: user,
-                                    context: context,
-                                    myCardFormat: _myCardFormat,
-                                    isRouteBooked:
-                                        isRouteConfirmed(routingService) &&
+                              child: Padding(
+                                padding: ThemeConstants.smallPadding,
+                                child: GridView.builder(
+                                  itemCount: _providerUsersList.length + 1,
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 2.0,
+                                    mainAxisSpacing: 2.0,
+                                    childAspectRatio: (itemWidth / itemHeight),
+                                  ),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    if (index < _providerUsersList.length) {
+                                      ProviderUser _providerUser =
+                                          _providerUsersList[index];
+                                      MyCardFormat _myCardFormat =
+                                          MyCardFormat.available;
+
+                                      return UserMySublinCardWidget(
+                                        transportationType:
+                                            TransportationType.sublin,
+                                        localRequest: _localRequest,
+                                        providerUser: _providerUser,
+                                        itemWidth: itemWidth,
+                                        itemHeight: itemHeight,
+                                        user: user,
+                                        context: context,
+                                        myCardFormat: _myCardFormat,
+                                        isRouteBooked: isRouteConfirmed(
+                                                routingService) &&
                                             !isRouteCompleted(routingService),
-                                  );
-                                },
+                                      );
+                                    } else
+                                      return UserMySublinCardWidget(
+                                        transportationType:
+                                            TransportationType.public,
+                                        localRequest: _localRequest,
+                                        itemWidth: itemWidth,
+                                        itemHeight: itemHeight,
+                                        user: user,
+                                        context: context,
+                                        myCardFormat: MyCardFormat.add,
+                                        isRouteBooked: isRouteConfirmed(
+                                                routingService) &&
+                                            !isRouteCompleted(routingService),
+                                      );
+                                  },
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
+                      AnimatedContainer(
+                        color: Colors.black,
+                        duration: Duration(seconds: 1),
+                        height: 90,
+                        child: Text('dfsdsdf sdklfg dklfg fdlks '),
+                      )
                     ],
                   );
                 } else {
@@ -402,6 +287,17 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     ProviderUser providerUser,
     String station,
   }) async {
+    List<ProviderUser> _providerUsersForStartAddress =
+        await ProviderUserService().getProvidersFromAddress(address: input);
+
+    if (_providerUsersForStartAddress.length > 0) {
+      _startAddressAvailability = AddressAvailablilty.available;
+    } else {
+      _startAddressAvailability = AddressAvailablilty.notAvailable;
+    }
+
+    print(_providerUsersForStartAddress.length);
+
     setState(() {
       _localRequest.startAddress = input;
     });
@@ -435,36 +331,45 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   }
 }
 
-List<ProviderUser> _addUserProviderForUserToAddCity(
-    List<ProviderUser> providerUserList) {
-  int whereToInsert = providerUserList.length;
-  ProviderUser _listWithAdditionalElement = ProviderUser();
-  providerUserList.insert(whereToInsert, _listWithAdditionalElement);
-  return providerUserList;
+bool _transportationTypeOfAddress(String formattedAddress) {
+  String _formattedCity =
+      getFormattedCityFromFormattedAddress(formattedAddress);
 }
 
-List<ProviderUser> _addUnavailableCitiesToList(
-    User user, List<ProviderUser> providerUsersExcludeTaxis) {
-  // First we need to filter out the addresses that are available
-  List<ProviderUser> _providerUsersExcludeTaxisWithUnavailableCities = [
-    ...providerUsersExcludeTaxis
-  ];
-  List<dynamic> communes = user.communes;
+// List<ProviderUser> _addUserProviderForUserToAddCity(
+//     List<ProviderUser> providerUserList) {
+//   int whereToInsert = providerUserList.length;
+//   ProviderUser _listWithAdditionalElement = ProviderUser();
+//   providerUserList.insert(whereToInsert, _listWithAdditionalElement);
+//   return providerUserList;
+// }
 
-  communes = user.communes.where((commune) {
-    bool containsElement = false;
-    providerUsersExcludeTaxis.forEach((providerUser) {
-      if (providerUser.communes.contains(commune)) containsElement = true;
-    });
-    return !containsElement;
-  }).toList();
-  communes.forEach((commune) {
-    _providerUsersExcludeTaxisWithUnavailableCities.add(ProviderUser(
-        providerName:
-            getReadablePartOfFormattedAddress(commune, Delimiter.city)));
-  });
-  return _providerUsersExcludeTaxisWithUnavailableCities;
-}
+// List<ProviderUser> _addUnavailableCitiesFromUserCommunToList({
+//   User user,
+//   List<ProviderUser> providerUsersExcludeTaxis,
+//   String currentStartAddress,
+// }) {
+//   // First we need to filter out the addresses that are available
+//   List<ProviderUser> _providerUsersListWithUnavailableCities = [
+//     ...providerUsersExcludeTaxis
+//   ];
+//   List<dynamic> communes = user.communes;
+
+//   // * We need to take off these cities that
+//   communes = user.communes.where((commune) {
+//     bool containsElement = false;
+//     providerUsersExcludeTaxis.forEach((providerUser) {
+//       if (providerUser.communes.contains(commune)) containsElement = true;
+//     });
+//     return !containsElement;
+//   }).toList();
+//   communes.forEach((commune) {
+//     _providerUsersListWithUnavailableCities.add(ProviderUser(
+//         providerName:
+//             getReadablePartOfFormattedAddress(commune, Delimiter.city)));
+//   });
+//   return _providerUsersListWithUnavailableCities;
+// }
 
 List<ProviderUser> _applyFilterFromList(
     {List<ProviderUser> providerUsers, Filter filter, Request localRequest}) {
@@ -495,16 +400,33 @@ List<ProviderUser> _applyFilterFromList(
   return _providerUsers;
 }
 
-// String _getReadableTaxiFromListOfAllProviders(
-//     ProviderUser providerUser, List<ProviderUser> providerUsersTaxiOnly) {
-//   String _taxi = '';
+// class BottomSheetNavigation extends StatefulWidget {
+//   @override
+//   _BottomSheetNavigationState createState() => _BottomSheetNavigationState();
+// }
 
-//   providerUser.partners.forEach((partnerId) {
-//     providerUsersTaxiOnly.forEach((providerUser) {
-//       if (providerUser.uid == partnerId) {
-//         _taxi = providerUser.providerName;
-//       }
+// class _BottomSheetNavigationState extends State<BottomSheetNavigation> {
+//   PersistentBottomSheetController _controller;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       _controller = showBottomSheet(
+//           context: context,
+//           builder: (context) => Container(child: Text('asdfs')));
 //     });
-//   });
-//   return _taxi;
+//   }
+
+//   // @override
+//   // void dispose() {
+//   //   _controller.close;
+//   //   super.dispose();
+//   // }
+
+//   @override
+//   PersistentBottomSheetController build(BuildContext context) {
+//     return Scaffold.of(context).showBottomSheet((context) => null);
+
+//   }
 // }

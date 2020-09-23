@@ -7,6 +7,7 @@ import 'package:Sublin/models/provider_type.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
@@ -16,7 +17,9 @@ import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:Sublin/utils/get_formatted_city_from_provider_user_addresses.dart';
+import 'package:Sublin/utils/get_icon_for_transportation_type.dart';
 import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
+import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
@@ -24,12 +27,13 @@ class UserMySublinCardWidget extends StatelessWidget {
   const UserMySublinCardWidget(
       {Key key,
       @required this.localRequest,
-      @required this.providerUser,
+      this.providerUser,
       @required this.itemWidth,
       @required this.itemHeight,
       @required this.user,
       @required this.context,
       @required this.myCardFormat,
+      @required this.transportationType,
       @required this.isRouteBooked,
       this.onHeroTap})
       : super(key: key);
@@ -42,12 +46,12 @@ class UserMySublinCardWidget extends StatelessWidget {
   final BuildContext context;
   final MyCardFormat myCardFormat;
   final VoidCallback onHeroTap;
+  final TransportationType transportationType;
   final bool isRouteBooked;
 
   @override
   Widget build(BuildContext context) {
-    bool isShuttle = providerUser.providerType == ProviderType.shuttle ||
-        providerUser.providerType == ProviderType.sponsorShuttle;
+    bool isShuttle = true;
     return (() {
       switch (myCardFormat) {
         case MyCardFormat.available:
@@ -60,7 +64,7 @@ class UserMySublinCardWidget extends StatelessWidget {
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: Padding(
                   padding:
-                      EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 10),
+                      EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,52 +75,22 @@ class UserMySublinCardWidget extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (isShuttle)
-                                FittedBox(
-                                  child: Row(
-                                    children: [
-                                      Transform(
-                                        transform: Matrix4.identity()
-                                          ..scale(0.8),
-                                        child: Chip(
-                                            label: Text(
-                                          'Addresse',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .caption,
-                                        )),
-                                      ),
-                                      if (providerUser.providerPlan ==
-                                          ProviderPlan.emailOnly)
-                                        Transform(
-                                          transform: Matrix4.identity()
-                                            ..scale(0.8),
-                                          child: Chip(
-                                              label: Text(
-                                            'Exklusiv',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption,
-                                          )),
-                                        ),
-                                    ],
+                              Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    shape: BoxShape.circle,
                                   ),
-                                ),
+                                  child: getIconForTransportationType(
+                                      transportationType)),
+                              SizedBox(height: 10),
                               if (isShuttle)
                                 AutoSizeText(
                                   getReadablePartOfFormattedAddress(
                                       providerUser.addresses[0],
                                       Delimiter.company),
                                   style: Theme.of(context).textTheme.headline1,
-                                ),
-                              if (!isShuttle)
-                                Transform(
-                                  transform: Matrix4.identity()..scale(0.8),
-                                  child: Chip(
-                                      label: Text(
-                                    'Ort',
-                                    style: Theme.of(context).textTheme.caption,
-                                  )),
                                 ),
                               if (!isShuttle)
                                 AutoSizeText(
@@ -237,8 +211,8 @@ class UserMySublinCardWidget extends StatelessWidget {
                               userUid: user.uid,
                               isEndAddress: false,
                               isStartAddress: false,
-                              cityOnly: true,
-                              title: 'Ortschaft hinzufügen',
+                              cityOnly: false,
+                              title: 'Zielort suchen',
                             )));
               },
               child: Card(
@@ -256,11 +230,9 @@ class UserMySublinCardWidget extends StatelessWidget {
                         SizedBox(
                           height: 20,
                         ),
-                        Expanded(
-                          child: AutoSizeText(
-                            'Orte hinzufügen, die du gerne besuchen möchtest',
-                            textAlign: TextAlign.center,
-                          ),
+                        AutoSizeText(
+                          'Anderen Zielort suchen',
+                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
@@ -356,6 +328,8 @@ class UserMySublinCardWidget extends StatelessWidget {
     bool isCompany,
     bool isStartAddress,
     bool isEndAddress,
+    ProviderUser providerUser,
+    String station,
   }) async {
     User _data;
     _data = await UserService().getUser(userUid);
@@ -363,10 +337,6 @@ class UserMySublinCardWidget extends StatelessWidget {
       _data.communes.add(input);
     }
     await UserService().writeUserData(uid: userUid, data: _data);
-    // }
-    // setState(() {
-    //   _isLoading = false;
-    // });
   }
 
   Future<void> _addressInputFunction(

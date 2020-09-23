@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:Sublin/models/provider_plan_enum.dart';
+import 'package:Sublin/models/provider_type.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:Sublin/models/provider_user.dart';
@@ -52,7 +53,7 @@ class ProviderUserService {
     }
   }
 
-  Future<List<ProviderUser>> getProviders({
+  Future<List<ProviderUser>> getProvidersFromCommunes({
     List<dynamic> communes,
   }) async {
     try {
@@ -74,6 +75,30 @@ class ProviderUserService {
       });
     } catch (e) {
       print('getProviders: $e');
+      return null;
+    }
+  }
+
+  Future<List<ProviderUser>> getProvidersFromAddress({
+    String address,
+  }) async {
+    try {
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingProviderUser);
+      // }
+      return _database
+          .collection('providers')
+          .where('addresses', arrayContains: address)
+          .where('providerType',
+              whereIn: ['sponsor', 'sponsorShuttle', 'shuttle'])
+          .get()
+          .then((value) {
+            return value.docs.map((e) {
+              return ProviderUser.fromJson(e.data());
+            }).toList();
+          });
+    } catch (e) {
+      print('getProvidersFromAddress: $e');
       return null;
     }
   }

@@ -111,7 +111,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                           padding: EdgeInsets.only(
                             top: 20,
                             bottom: 10,
-                            left: 20,
+                            left: 10,
                             right: 15,
                           ),
                           child: Column(

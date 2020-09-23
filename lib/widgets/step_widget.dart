@@ -60,7 +60,7 @@ class _StepWidgetState extends State<StepWidget> {
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.only(
-                          right: 20, left: 20, top: 10, bottom: 10),
+                          right: 20, left: 10, top: 10, bottom: 10),
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           crossAxisAlignment: CrossAxisAlignment.start,
