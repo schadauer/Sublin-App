@@ -1,8 +1,8 @@
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/routing_status.dart';
-import 'package:Sublin/models/step.dart';
+import 'package:Sublin/models/routing_status_enum.dart';
+import 'package:Sublin/models/step_class.dart';
 
 class Routing {
   final bool streamingOn;

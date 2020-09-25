@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:Sublin/models/provider_user.dart';
@@ -79,7 +79,31 @@ class ProviderUserService {
     }
   }
 
-  Future<List<ProviderUser>> getProvidersFromAddress({
+  Future<List<ProviderUser>> getProvidersEmailOnly({
+    String email,
+  }) async {
+    try {
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingProviderUser);
+      // }
+      return _database
+          .collection('providers')
+          .where('providerPlan', isEqualTo: 'emailOnly')
+          .where('targetGroup',
+              arrayContains: sha256.convert(utf8.encode(email)).toString())
+          .get()
+          .then((value) {
+        return value.docs.map((e) {
+          return ProviderUser.fromJson(e.data());
+        }).toList();
+      });
+    } catch (e) {
+      print('getProvidersEmailOnly: $e');
+      return null;
+    }
+  }
+
+  Future<List<ProviderUser>> getProvidersFromFormattedAddress({
     String address,
   }) async {
     try {
@@ -139,30 +163,6 @@ class ProviderUserService {
       });
     } catch (e) {
       print('getProviderUser: $e');
-      return null;
-    }
-  }
-
-  Future<List<ProviderUser>> getProvidersEmailOnly({
-    String email,
-  }) async {
-    try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingProviderUser);
-      // }
-      return _database
-          .collection('providers')
-          .where('providerPlan', isEqualTo: 'emailOnly')
-          .where('targetGroup',
-              arrayContains: sha256.convert(utf8.encode(email)).toString())
-          .get()
-          .then((value) {
-        return value.docs.map((e) {
-          return ProviderUser.fromJson(e.data());
-        }).toList();
-      });
-    } catch (e) {
-      print('getProvidersEmailOnly: $e');
       return null;
     }
   }

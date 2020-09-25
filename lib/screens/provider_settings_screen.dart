@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:Sublin/models/delimiter_class.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/theme/theme.dart';
@@ -11,7 +11,7 @@ import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
 import 'package:Sublin/utils/get_list_of_cities_from_a_station.dart';
 import 'package:Sublin/utils/get_list_of_stations.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
-import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 import 'package:Sublin/utils/remove_city_from_stations_And_Communes.dart';
 import 'package:Sublin/widgets/provider_operation_time_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -130,7 +130,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 AutoSizeText(
-                                  getReadablePartOfFormattedAddress(
+                                  getReadableAddressPartOfFormattedAddress(
                                       _station, Delimiter.station),
                                   style: Theme.of(context).textTheme.headline1,
                                 ),
@@ -160,7 +160,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                                         },
                                         padding: ThemeConstants.mediumPadding,
                                         label: Text(
-                                            getReadablePartOfFormattedAddress(
+                                            getReadableAddressPartOfFormattedAddress(
                                                 city, Delimiter.city)));
                                   }).toList(),
                                 ),

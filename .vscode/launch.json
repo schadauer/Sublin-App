@@ -8,6 +8,12 @@
       "name": "Android",
       "request": "launch",
       "type": "dart",
+      "deviceId": "emulator-5556"
+    },
+    {
+      "name": "Android API 30",
+      "request": "launch",
+      "type": "dart",
       "deviceId": "emulator-5554"
     },
     {
@@ -28,12 +34,6 @@
       "type": "dart",
       "deviceId": "iPhone 8"
     },
-    // {
-    //   "name": "iPhone 11",
-    //   "request": "launch",
-    //   "type": "dart",
-    //   "deviceId": "iPhone 11"
-    // },
     {
       "name": "iPhone 6",
       "request": "launch",

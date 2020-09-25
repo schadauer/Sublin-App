@@ -16,7 +16,7 @@ import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:Sublin/widgets/user_routing_start_end_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/widgets/step_widget.dart';
 
 class UserRoutingScreen extends StatefulWidget {

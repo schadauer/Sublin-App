@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/routing_class.dart';
 
 class RoutingService {
   final FirebaseFirestore _database = FirebaseFirestore.instance;

@@ -1,5 +1,5 @@
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 
 class ProviderUser {
   String uid;

@@ -1,3 +1,4 @@
+import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
@@ -21,6 +22,7 @@ class AddressInputScreen extends StatefulWidget {
   final bool isStation;
   final ProviderUser providerUser;
   final String station;
+  final List<AddressInfo> addressInfoList;
 
   AddressInputScreen({
     this.userUid = '',
@@ -36,6 +38,7 @@ class AddressInputScreen extends StatefulWidget {
     this.isStation = false,
     this.providerUser,
     this.station,
+    this.addressInfoList,
   });
 
   @override
@@ -45,11 +48,13 @@ class AddressInputScreen extends StatefulWidget {
 class _AddressInputScreenState extends State<AddressInputScreen> {
   GoogleMapService _autocomplete = GoogleMapService();
   TextEditingController _textFormFieldController = TextEditingController();
-  List _autocompleteResults = [];
+  List<AddressInfo> _combinedAddressInfoList = <AddressInfo>[];
   FocusNode _focus;
 
   @override
   void initState() {
+    if (widget.addressInfoList != null)
+      _combinedAddressInfoList = widget.addressInfoList;
     if (widget.showGeolocationOption == true)
       _getStartAddressFromGeolocastion();
     _focus = FocusNode();
@@ -94,9 +99,17 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                 isStation: widget.isStation,
                                 addressTypes: widget.addressTypes);
 
+                        List<AddressInfo> toAddressList;
+
+                        toAddressList = result.map((item) {
+                          print(AddressInfo(formattedAddress: item['name']));
+                          return AddressInfo(formattedAddress: item['name']);
+                        }).toList();
+
                         if (this.mounted) {
                           setState(() {
-                            _autocompleteResults = result ?? [];
+                            _combinedAddressInfoList =
+                                toAddressList ?? <AddressInfo>[];
                           });
                         }
                       },
@@ -112,14 +125,14 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                               icon: Icon(Icons.highlight_off),
                               onPressed: () {
                                 setState(() {
-                                  _autocompleteResults = [];
+                                  _combinedAddressInfoList = [];
                                   _textFormFieldController.text = '';
                                 });
                               })),
                     ),
                   ),
                 )),
-            (_autocompleteResults.isNotEmpty)
+            (_combinedAddressInfoList.isNotEmpty)
                 ? Expanded(
                     child: Container(
                       height: MediaQuery.of(context).size.height -
@@ -127,16 +140,18 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                           MediaQuery.of(context).viewInsets.bottom -
                           75,
                       child: ListView.builder(
-                          itemCount: _autocompleteResults.length,
+                          itemCount: _combinedAddressInfoList.length,
                           itemBuilder: (_, index) {
                             return GestureDetector(
                               onTap: () {
                                 widget.addressInputCallback(
                                   userUid: widget.userUid,
-                                  input: _autocompleteResults[index]['name'],
-                                  id: _autocompleteResults[index]['id'],
-                                  isCompany: _autocompleteResults[index]
-                                      ['isCompany'],
+                                  input: _combinedAddressInfoList[index]
+                                      .formattedAddress,
+                                  addressInfo: _combinedAddressInfoList[index],
+                                  // id: _combinedAddressInfoList[index]['id'],
+                                  // isCompany: _combinedAddressInfoList[index]
+                                  //     ['isCompany'],
                                   isStartAddress: widget.isStartAddress,
                                   isEndAddress: widget.isEndAddress,
                                   providerUser: widget.providerUser,
@@ -147,14 +162,14 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                               child: ListTile(
                                   contentPadding:
                                       EdgeInsets.symmetric(horizontal: 25),
-                                  leading: Icon(_autocompleteResults[index]
-                                          ['isCompany']
-                                      ? Icons.business
-                                      : Icons.home),
+                                  // leading: Icon(_combinedAddressInfoList[index]
+                                  //         ['isCompany']
+                                  //     ? Icons.business
+                                  //     : Icons.home),
                                   title: Text(
                                       getReadableAddressFromFormattedAddress(
-                                          _autocompleteResults[index]
-                                              ['name']))),
+                                          _combinedAddressInfoList[index]
+                                              .formattedAddress))),
                             );
                           }),
                     ),
@@ -171,16 +186,16 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
       Request _geolocation = await GeolocationService().getCurrentCoordinates();
       if (_geolocation != null && this.mounted) {
         setState(() {
-          _autocompleteResults = [
-            {
-              'name': _geolocation.startAddress,
-              'id': _geolocation.startId,
-              'terms': null,
-              'isCompany': false,
-              'isStartAddress': true,
-              'isEndAddress': false,
-            }
-          ];
+          // _combinedAddressInfoList = [
+          //   {
+          //     'name': _geolocation.startAddress,
+          //     'id': _geolocation.startId,
+          //     'terms': null,
+          //     'isCompany': false,
+          //     'isStartAddress': true,
+          //     'isEndAddress': false,
+          //   }
+          // ];
         });
       }
     } catch (e) {

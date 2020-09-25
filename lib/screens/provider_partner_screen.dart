@@ -3,7 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:provider/provider.dart';
 
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/theme/theme.dart';
@@ -144,24 +144,33 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                         ],
                                       ),
                                     SizedBox(height: 20),
-                                    AutoSizeText(
-                                      _providerUserList[index].providerName,
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
+                                    Expanded(
+                                      child: AutoSizeText(
+                                        _providerUserList[index].providerName,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1,
+                                      ),
                                     ),
                                     if (providerUser.providerType !=
                                         ProviderType.taxi)
-                                      AutoSizeText(
-                                        '${_providerUserList[index].providerName} führt für dich derzeit Transferservices durch.',
-                                        style:
-                                            Theme.of(context).textTheme.caption,
+                                      Expanded(
+                                        child: AutoSizeText(
+                                          '${_providerUserList[index].providerName} führt für dich derzeit Transferservices durch.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                        ),
                                       ),
                                     if (providerUser.providerType ==
                                         ProviderType.taxi)
-                                      AutoSizeText(
-                                        'Du führst Transferservices für ${_providerUserList[index].providerName} durch.',
-                                        style:
-                                            Theme.of(context).textTheme.caption,
+                                      Expanded(
+                                        child: AutoSizeText(
+                                          'Du führst Transferservices für ${_providerUserList[index].providerName} durch.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                        ),
                                       ),
                                     if (partnerStatus ==
                                         PartnerStatus.needsOwnApproval)

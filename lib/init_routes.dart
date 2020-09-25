@@ -1,6 +1,6 @@
 import 'package:Sublin/screens/provider_settings_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/provider_partner_screen.dart';

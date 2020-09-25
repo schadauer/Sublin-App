@@ -1,3 +1,4 @@
+import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
@@ -13,12 +14,14 @@ class UserMySublinStartCardWidget extends StatelessWidget {
   final User user;
   final Function addressInputFunction;
   final TransportationType transportationType;
+  final List<AddressInfo> addressInfoList;
 
   UserMySublinStartCardWidget({
     this.startAddress = '',
     this.user,
     this.addressInputFunction,
     this.transportationType,
+    this.addressInfoList,
   });
 
   @override
@@ -81,6 +84,7 @@ class UserMySublinStartCardWidget extends StatelessWidget {
                                         showGeolocationOption: true,
                                         isStation: false,
                                         title: 'Dein Standort',
+                                        addressInfoList: addressInfoList,
                                       )));
                         },
                         child: Column(

@@ -1,7 +1,7 @@
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 
 class ProviderSelectionWidget extends StatelessWidget {
   final String title;

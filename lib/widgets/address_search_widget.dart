@@ -1,5 +1,6 @@
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 
@@ -118,12 +119,16 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                     if (widget.address != '')
-                                      Text(
-                                        getReadableAddressFromFormattedAddress(
-                                            widget.address),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
+                                      Expanded(
+                                        child: AutoSizeText(
+                                          getReadableAddressFromFormattedAddress(
+                                              widget.address),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                          maxLines: 3,
+                                          minFontSize: 14,
+                                        ),
                                       ),
                                     if (widget.isEndAddress ||
                                         widget.isStartAddress ||

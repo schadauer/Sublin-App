@@ -1,6 +1,6 @@
 import 'package:Sublin/models/direction_enum.dart';
-import 'package:Sublin/models/routing.dart';
-import 'package:Sublin/models/step.dart' as sublin;
+import 'package:Sublin/models/routing_class.dart';
+import 'package:Sublin/models/step_class.dart' as sublin;
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';

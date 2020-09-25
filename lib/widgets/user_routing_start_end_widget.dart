@@ -1,7 +1,7 @@
 import 'package:Sublin/models/booking_status_enum.dart';
 import 'package:Sublin/models/direction_enum.dart';
-import 'package:Sublin/models/routing.dart';
-import 'package:Sublin/models/step.dart' as sublin;
+import 'package:Sublin/models/routing_class.dart';
+import 'package:Sublin/models/step_class.dart' as sublin;
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';

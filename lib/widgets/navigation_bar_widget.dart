@@ -1,5 +1,5 @@
 import 'package:Sublin/models/preferences_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';

@@ -107,7 +107,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                     try {
                                       if (_formKey.currentState.validate()) {
                                         _targetGroupUser = addStringToList(
-                                            _user.targetGroup,
+                                            _user.targetGroup.cast<String>(),
                                             _emailTextController.text);
 
                                         await UserService()
@@ -120,11 +120,13 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                                 .getProviderUser(_user.uid);
                                         _targetGroupProviderUser =
                                             addStringToList(
-                                                _providerUser.targetGroup,
+                                                _providerUser.targetGroup
+                                                    .cast<String>(),
                                                 sha256
-                                                    .convert(utf8.encode(
-                                                        _emailTextController
-                                                            .text))
+                                                    .convert(
+                                                        utf8.encode(
+                                                            _emailTextController
+                                                                .text))
                                                     .toString());
 
                                         await ProviderUserService()

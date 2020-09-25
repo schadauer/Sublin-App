@@ -1,5 +1,5 @@
 import 'package:Sublin/models/direction_enum.dart';
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/utils/is_sublin_available.dart';
 
 bool isRouteCompleted(Routing routing) {

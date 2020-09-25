@@ -1,5 +1,5 @@
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/timespan.dart';
+import 'package:Sublin/models/timespan_enum.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_date_time_from_int.dart';

@@ -1,7 +1,12 @@
 /* Copyright (C) 2020 Andreas Schadauer, andreas@sublin.app - All Rights Reserved */
 
+import 'package:Sublin/models/address_class.dart';
+import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/screens/waiting_screen.dart';
+import 'package:Sublin/services/address_service.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
+import 'package:Sublin/utils/get_list_of_address_info_from_list_of_provider_users_and_user.dart';
 import 'package:Sublin/widgets/user_my_sublin_start_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -12,10 +17,10 @@ import 'package:provider/provider.dart';
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/my_card_format_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/request_class.dart';
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
@@ -26,7 +31,7 @@ import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
-import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/utils/is_route_confirmed.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
@@ -68,6 +73,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   AddressAvailablilty _startAddressAvailability =
       AddressAvailablilty.notRequested;
   AddressAvailablilty _endAddressAvailablity = AddressAvailablilty.notRequested;
+  List<ProviderUser> _providerUsersList;
+  List<AddressInfo> _addressInfoList;
 
   @override
   void initState() {
@@ -96,8 +103,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
 
-    print(_startAddressAvailability);
-
     final double itemHeight =
         (size.height > 700 ? 700 : size.height - kToolbarHeight - 24) /
             (size.height > 700 ? 2.8 : 2.4);
@@ -119,10 +124,16 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.data.length != 0) {
-                  List<ProviderUser> _providerUsersList = [
+                  _providerUsersList = [
                     ...snapshot.data[0],
                     ...snapshot.data[1]
                   ];
+
+                  // We need to filter out taxis
+                  _providerUsersList = _applyFilterFromList(
+                      providerUsers: _providerUsersList,
+                      filter: Filter.excludeTaxis,
+                      localRequest: _localRequest);
 
                   // We need to filter out those that are not partners with a taxi
                   _providerUsersList = _applyFilterFromList(
@@ -130,11 +141,23 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                       filter: Filter.excludeIfNotPartner,
                       localRequest: _localRequest);
 
+                  print(_providerUsersList.length);
+                  _providerUsersList.forEach((element) {
+                    print(ProviderUser().toMap(element));
+                  });
+                  // We convert the list to a list of Addressinfo instances
+                  _addressInfoList =
+                      getListOfAddressInfoFromListOfProviderUsersAndUser(
+                          providerUserList: _providerUsersList, user: user);
                   // Now we filter out the addresses that are within the area of the current position
-                  _providerUsersList = _applyFilterFromList(
-                      providerUsers: _providerUsersList,
-                      filter: Filter.excludeStartAddress,
-                      localRequest: _localRequest);
+                  List<ProviderUser> _providerUsersListForCurrentPosition =
+                      _applyFilterFromList(
+                          providerUsers: _providerUsersList,
+                          filter: Filter.excludeStartAddress,
+                          localRequest: _localRequest);
+
+                  print(getListOfAddressInfoFromListOfProviderUsersAndUser(
+                      providerUserList: _providerUsersList, user: user));
 
                   return Stack(
                     children: [
@@ -199,13 +222,20 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                               startAddress: _localRequest.startAddress,
                               user: user,
                               addressInputFunction: _addressInputFunction,
+                              addressInfoList:
+                                  getListOfAddressInfoFromListOfProviderUsersAndUser(
+                                      providerUserList: _providerUsersList,
+                                      user: user),
                             ),
                             Expanded(
                               flex: 10,
                               child: Padding(
                                 padding: ThemeConstants.smallPadding,
                                 child: GridView.builder(
-                                  itemCount: _providerUsersList.length + 1,
+                                  itemCount:
+                                      _providerUsersListForCurrentPosition
+                                              .length +
+                                          1,
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
@@ -215,9 +245,12 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                   ),
                                   itemBuilder:
                                       (BuildContext context, int index) {
-                                    if (index < _providerUsersList.length) {
+                                    if (index <
+                                        _providerUsersListForCurrentPosition
+                                            .length) {
                                       ProviderUser _providerUser =
-                                          _providerUsersList[index];
+                                          _providerUsersListForCurrentPosition[
+                                              index];
                                       MyCardFormat _myCardFormat =
                                           MyCardFormat.available;
 
@@ -256,12 +289,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                           ],
                         ),
                       ),
-                      AnimatedContainer(
-                        color: Colors.black,
-                        duration: Duration(seconds: 1),
-                        height: 90,
-                        child: Text('dfsdsdf sdklfg dklfg fdlks '),
-                      )
                     ],
                   );
                 } else {
@@ -286,22 +313,56 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     bool isEndAddress,
     ProviderUser providerUser,
     String station,
+    AddressInfo addressInfo,
   }) async {
-    List<ProviderUser> _providerUsersForStartAddress =
-        await ProviderUserService().getProvidersFromAddress(address: input);
-
-    if (_providerUsersForStartAddress.length > 0) {
-      _startAddressAvailability = AddressAvailablilty.available;
-    } else {
-      _startAddressAvailability = AddressAvailablilty.notAvailable;
+    bool _startAddressAccepted = false;
+    // First we check if an address from the list of available addresses or
+    // from the list of user requestedAddresses are picked
+    if (_addressInfoList.length != 0) {
+      _addressInfoList.forEach((address) {
+        if (address.formattedAddress == addressInfo.formattedAddress)
+          setState(() {
+            _localRequest.startAddress = addressInfo.formattedAddress;
+            _startAddressAccepted = true;
+          });
+      });
     }
-
-    print(_providerUsersForStartAddress.length);
-
-    setState(() {
-      _localRequest.startAddress = input;
-    });
-    addStringToSF(Preferences.stringLocalRequestStartAddress, input);
+    if (!_startAddressAccepted) {
+      // We try to find addresses fro
+      // TODO We need to filter out the emailOnly offers
+      List<ProviderUser> _providerUsersForStartAddress =
+          await ProviderUserService().getProvidersFromFormattedAddress(
+              address: addressInfo.formattedAddress);
+      if (_providerUsersForStartAddress.length > 0) {
+        _startAddressAvailability = AddressAvailablilty.available;
+      } else {
+        _startAddressAvailability = AddressAvailablilty.notAvailable;
+        // * We lookup the addresses collection to find the nearest train station for the user
+        String _inputFormattedCity =
+            getFormattedCityFromFormattedAddress(addressInfo.formattedAddress);
+        Address _address = await AddressService()
+            .getProvidersFromAddress(formattedCity: _inputFormattedCity);
+        if (_address != null && _address.stations.length > 0) {
+          _address.stations.where((station) {
+            return getFormattedCityFromFormattedStation(station) ==
+                _inputFormattedCity;
+          }).toList();
+          // If we find a train station
+          setState(() {
+            _startAddressAvailability = AddressAvailablilty.station;
+            _localRequest.startAddress = _address.stations[0];
+            addStringToSF(Preferences.stringLocalRequestStartAddress,
+                _localRequest.startAddress);
+          });
+        } else {
+          // We don't find a train station
+          setState(() {
+            _localRequest.startAddress = input;
+            _startAddressAvailability = AddressAvailablilty.notAvailable;
+          });
+        }
+      }
+    }
   }
 
   Future<void> _getStartAddressFromGeolocastion() async {
@@ -331,44 +392,9 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   }
 }
 
-bool _transportationTypeOfAddress(String formattedAddress) {
-  String _formattedCity =
-      getFormattedCityFromFormattedAddress(formattedAddress);
-}
-
-// List<ProviderUser> _addUserProviderForUserToAddCity(
-//     List<ProviderUser> providerUserList) {
-//   int whereToInsert = providerUserList.length;
-//   ProviderUser _listWithAdditionalElement = ProviderUser();
-//   providerUserList.insert(whereToInsert, _listWithAdditionalElement);
-//   return providerUserList;
-// }
-
-// List<ProviderUser> _addUnavailableCitiesFromUserCommunToList({
-//   User user,
-//   List<ProviderUser> providerUsersExcludeTaxis,
-//   String currentStartAddress,
-// }) {
-//   // First we need to filter out the addresses that are available
-//   List<ProviderUser> _providerUsersListWithUnavailableCities = [
-//     ...providerUsersExcludeTaxis
-//   ];
-//   List<dynamic> communes = user.communes;
-
-//   // * We need to take off these cities that
-//   communes = user.communes.where((commune) {
-//     bool containsElement = false;
-//     providerUsersExcludeTaxis.forEach((providerUser) {
-//       if (providerUser.communes.contains(commune)) containsElement = true;
-//     });
-//     return !containsElement;
-//   }).toList();
-//   communes.forEach((commune) {
-//     _providerUsersListWithUnavailableCities.add(ProviderUser(
-//         providerName:
-//             getReadablePartOfFormattedAddress(commune, Delimiter.city)));
-//   });
-//   return _providerUsersListWithUnavailableCities;
+// bool _transportationTypeOfAddress(String formattedAddress) {
+//   String _formattedCity =
+//       getFormattedCityFromFormattedAddress(formattedAddress);
 // }
 
 List<ProviderUser> _applyFilterFromList(
@@ -399,34 +425,3 @@ List<ProviderUser> _applyFilterFromList(
   }).toList();
   return _providerUsers;
 }
-
-// class BottomSheetNavigation extends StatefulWidget {
-//   @override
-//   _BottomSheetNavigationState createState() => _BottomSheetNavigationState();
-// }
-
-// class _BottomSheetNavigationState extends State<BottomSheetNavigation> {
-//   PersistentBottomSheetController _controller;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       _controller = showBottomSheet(
-//           context: context,
-//           builder: (context) => Container(child: Text('asdfs')));
-//     });
-//   }
-
-//   // @override
-//   // void dispose() {
-//   //   _controller.close;
-//   //   super.dispose();
-//   // }
-
-//   @override
-//   PersistentBottomSheetController build(BuildContext context) {
-//     return Scaffold.of(context).showBottomSheet((context) => null);
-
-//   }
-// }

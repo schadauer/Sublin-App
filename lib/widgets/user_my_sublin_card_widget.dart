@@ -1,12 +1,13 @@
+import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/my_card_format_enum.dart';
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/request_class.dart';
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
@@ -18,7 +19,7 @@ import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:Sublin/utils/get_formatted_city_from_provider_user_addresses.dart';
 import 'package:Sublin/utils/get_icon_for_transportation_type.dart';
-import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -87,14 +88,14 @@ class UserMySublinCardWidget extends StatelessWidget {
                               SizedBox(height: 10),
                               if (isShuttle)
                                 AutoSizeText(
-                                  getReadablePartOfFormattedAddress(
+                                  getReadableAddressPartOfFormattedAddress(
                                       providerUser.addresses[0],
                                       Delimiter.company),
                                   style: Theme.of(context).textTheme.headline1,
                                 ),
                               if (!isShuttle)
                                 AutoSizeText(
-                                  getReadablePartOfFormattedAddress(
+                                  getReadableAddressPartOfFormattedAddress(
                                       getFormattedCityFromListProviderUserAddresses(
                                           providerUser, user),
                                       Delimiter.city),
@@ -207,7 +208,7 @@ class UserMySublinCardWidget extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => AddressInputScreen(
                               addressInputCallback:
-                                  _addCityToCommunesSelectionFunction,
+                                  _addCityToCommunesSelectionCallback,
                               userUid: user.uid,
                               isEndAddress: false,
                               isStartAddress: false,
@@ -321,7 +322,7 @@ class UserMySublinCardWidget extends StatelessWidget {
     return _direction;
   }
 
-  void _addCityToCommunesSelectionFunction({
+  void _addCityToCommunesSelectionCallback({
     String userUid,
     String input,
     String id,
@@ -330,6 +331,7 @@ class UserMySublinCardWidget extends StatelessWidget {
     bool isEndAddress,
     ProviderUser providerUser,
     String station,
+    AddressInfo addressInfo,
   }) async {
     User _data;
     _data = await UserService().getUser(userUid);
@@ -339,14 +341,18 @@ class UserMySublinCardWidget extends StatelessWidget {
     await UserService().writeUserData(uid: userUid, data: _data);
   }
 
-  Future<void> _addressInputFunction(
-      {String userUid,
-      String input,
-      String id,
-      bool isCompany,
-      List<dynamic> terms,
-      bool isStartAddress,
-      bool isEndAddress}) async {
+  Future<void> _addressInputFunction({
+    String userUid,
+    String input,
+    String id,
+    bool isCompany,
+    List<dynamic> terms,
+    bool isStartAddress,
+    bool isEndAddress,
+    ProviderUser providerUser,
+    String station,
+    AddressInfo addressInfo,
+  }) async {
     // setState(() {
     //   _localRequest.startAddress = input;
     // });

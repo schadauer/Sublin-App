@@ -1,7 +1,7 @@
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/models/step.dart';
+import 'package:Sublin/models/step_class.dart';
 
 class Booking {
   String bookingId;

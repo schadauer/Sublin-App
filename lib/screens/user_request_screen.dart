@@ -17,7 +17,7 @@ import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/services/routing_service.dart';
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
 
 class UserRequestScreen extends StatefulWidget {

@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Sublin/models/step.dart' as step;
+import 'package:Sublin/models/step_class.dart' as step;
 
 import 'package:Sublin/models/booking_class.dart';
 import 'package:Sublin/models/booking_completed_class.dart';

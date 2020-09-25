@@ -14,15 +14,15 @@ import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/utils/add_string_to_list.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
-import 'package:Sublin/utils/get_readable_part_of_formatted_address.dart';
+import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type.dart';
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/request_class.dart';
-import 'package:Sublin/models/routing.dart';
-import 'package:Sublin/models/timespan.dart';
+import 'package:Sublin/models/routing_class.dart';
+import 'package:Sublin/models/timespan_enum.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
@@ -220,7 +220,7 @@ class _ProviderRegistrationScreenState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    'Grüße nach ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
+                                    'Grüße nach ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
                                     style:
                                         Theme.of(context).textTheme.headline3,
                                     textAlign: TextAlign.left,
@@ -230,10 +230,10 @@ class _ProviderRegistrationScreenState
                                   ),
                                   if (!_checkRoutingData.endAddressAvailable)
                                     Text(
-                                        'Für ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
+                                        'Für ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
                                   if (_checkRoutingData.endAddressAvailable)
                                     Text(
-                                        '${_checkRoutingData.sublinEndStep.provider.providerName} hat sich bereits für ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} registriert und führt voraussichtlich Shuttleservice vom und zum Bahnhof durch.'),
+                                        '${_checkRoutingData.sublinEndStep.provider.providerName} hat sich bereits für ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} registriert und führt voraussichtlich Shuttleservice vom und zum Bahnhof durch.'),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -252,7 +252,7 @@ class _ProviderRegistrationScreenState
                                           'Zwischen Bahnhof und deiner Betriebsaddresse',
                                       text: user.userType == UserType.provider
                                           ? 'Transfers werden zwischen deiner Address und dem Bahnhof von ${_checkRoutingData.sublinEndStep.provider.providerName} durchgeführt.'
-                                          : '${_checkRoutingData.sublinEndStep.provider.providerName} führt Transfers zwischen dem Bahnhof und den Privatadressen des Gemeindegebiets ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
+                                          : '${_checkRoutingData.sublinEndStep.provider.providerName} führt Transfers zwischen dem Bahnhof und den Privatadressen des Gemeindegebiets ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       caption: '',
                                       providerTypeSelection:
                                           ProviderType.sponsorShuttle,
@@ -265,10 +265,10 @@ class _ProviderRegistrationScreenState
                                       user.userType == UserType.sponsor)
                                     ProviderSelectionWidget(
                                       title:
-                                          'Gesamtes Gemeindegebiet ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
+                                          'Gesamtes Gemeindegebiet ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
                                       text: user.userType == UserType.provider
                                           ? 'Du übernimmst die Kosten für Transfers zwischen dem Bahnhof von ${_checkRoutingData.sublinEndStep.provider.providerName} durchgeführt.'
-                                          : '${_checkRoutingData.sublinEndStep.provider.providerName} führt Transfers zwischen dem Bahnhof und den Privatadressen des Gemeindegebiets ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
+                                          : '${_checkRoutingData.sublinEndStep.provider.providerName} führt Transfers zwischen dem Bahnhof und den Privatadressen des Gemeindegebiets ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       caption: '',
                                       providerTypeSelection:
                                           ProviderType.sponsor,
@@ -281,7 +281,7 @@ class _ProviderRegistrationScreenState
                                     ProviderSelectionWidget(
                                       title: 'Taxi- oder Mietwagenservice',
                                       text:
-                                          'vom Bahnhof zu den Adressen in ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}. Gewerbeberechtigung notwendig.',
+                                          'vom Bahnhof zu den Adressen in ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}. Gewerbeberechtigung notwendig.',
                                       providerTypeSelection: ProviderType.taxi,
                                       selectionFunction:
                                           _providerSelectionFunction,
@@ -293,7 +293,7 @@ class _ProviderRegistrationScreenState
                                       title: 'Shuttleservice',
                                       text: user.userType == UserType.provider
                                           ? 'Du bietest ein Shuttleservice zwischen Bahnhof und deiner Adresse an.'
-                                          : '${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.company)} bietet ein eigenes Transferservice zwischen Bahnhof und den Privatadressen des Gemeindegebiets ${getReadablePartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
+                                          : '${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.company)} bietet ein eigenes Transferservice zwischen Bahnhof und den Privatadressen des Gemeindegebiets ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       providerTypeSelection:
                                           ProviderType.shuttle,
                                       selectionFunction:
@@ -757,8 +757,8 @@ class _ProviderRegistrationScreenState
                               ProviderSelectionWidget(
                                 title: 'Alle',
                                 text: user.userType == UserType.provider
-                                    ? 'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getReadablePartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beautragen.'
-                                    : 'Alle Personen, die den Transferservice zwischen Bahnhof und den Adressen des Gemeindegebiets ${getReadablePartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beauftragen',
+                                    ? 'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getReadableAddressPartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beautragen.'
+                                    : 'Alle Personen, die den Transferservice zwischen Bahnhof und den Adressen des Gemeindegebiets ${getReadableAddressPartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beauftragen',
                                 providerPlanSelection: ProviderPlan.all,
                                 selectionFunction:
                                     _providerPlanSelectionFunction,
@@ -893,9 +893,8 @@ class _ProviderRegistrationScreenState
     bool cityExists = false;
     _providerUser.stations.map((station) {
       String cityFromFormattedAddress =
-          getReadablePartOfFormattedAddress(formattedAddress, Delimiter.city);
-      String cityFromStation =
-          getReadablePartOfFormattedAddress(station, Delimiter.city);
+          getFormattedCityFromFormattedAddress(formattedAddress);
+      String cityFromStation = getFormattedCityFromFormattedAddress(station);
 
       if (cityFromFormattedAddress == cityFromStation) {
         cityExists = true;
@@ -941,15 +940,13 @@ class _ProviderRegistrationScreenState
     // If Taxi the scope is the postcode
     // If not Taxi the scope is the full address
     if (_providerUser.providerType == ProviderType.taxi)
-      userAddress = getReadablePartOfFormattedAddress(
-          _providerUser.addresses[0], delimiter);
+      userAddress =
+          getFormattedCityFromFormattedAddress(_providerUser.addresses[0]);
     setState(() {
-      if (station != '')
-        _providerUser.stations = [
-          userAddress + station,
-        ];
+      _providerUser.stations =
+          addStringToList(_providerUser.stations, userAddress + station);
       // Get the formatted city for the communes
-      addStringToList(_providerUser.communes,
+      _providerUser.communes = addStringToList(_providerUser.communes,
           getFormattedCityFromFormattedAddress(userAddress));
       // _providerUser.addresses.add(userAddress);
     });
@@ -959,7 +956,7 @@ class _ProviderRegistrationScreenState
     setState(() {
       int removeIndex;
       for (var i = 0; i < _providerUser.stations.length; i++) {
-        String cityFromAddress = getReadablePartOfFormattedAddress(
+        String cityFromAddress = getReadableAddressPartOfFormattedAddress(
             _providerUser.stations[i], Delimiter.city);
         if (city == cityFromAddress) {
           removeIndex = i;
@@ -999,12 +996,12 @@ class _ProviderRegistrationScreenState
           alignment: WrapAlignment.spaceBetween,
           spacing: 8.0,
           children: communes.map((address) {
-            String city =
-                getReadablePartOfFormattedAddress(address, Delimiter.city);
+            String city = getReadableAddressPartOfFormattedAddress(
+                address, Delimiter.city);
             return Chip(
               label: Text(city),
               onDeleted: city ==
-                      getReadablePartOfFormattedAddress(
+                      getReadableAddressPartOfFormattedAddress(
                           _providerUser.communes[0], Delimiter.city)
                   ? null
                   : () => _removeCityFromStation(city),

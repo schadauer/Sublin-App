@@ -10,7 +10,7 @@ import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Sublin/models/routing.dart';
+import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/theme/theme.dart';

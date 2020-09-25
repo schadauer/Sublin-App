@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:Sublin/models/timespan.dart';
+import 'package:Sublin/models/timespan_enum.dart';
 
 class TimeFildWidget extends StatelessWidget {
   final format = DateFormat("HH:mm");
