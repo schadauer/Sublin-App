@@ -19,16 +19,17 @@ import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:Sublin/utils/get_formatted_city_from_provider_user_addresses.dart';
 import 'package:Sublin/utils/get_icon_for_transportation_type.dart';
+import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
-class UserMySublinCardWidget extends StatelessWidget {
-  const UserMySublinCardWidget(
+class UserMySublinEndWidget extends StatelessWidget {
+  const UserMySublinEndWidget(
       {Key key,
       @required this.localRequest,
-      this.providerUser,
+      this.addressInfo,
       @required this.itemWidth,
       @required this.itemHeight,
       @required this.user,
@@ -40,7 +41,7 @@ class UserMySublinCardWidget extends StatelessWidget {
       : super(key: key);
 
   final Request localRequest;
-  final ProviderUser providerUser;
+  final AddressInfo addressInfo;
   final double itemWidth;
   final double itemHeight;
   final User user;
@@ -52,7 +53,6 @@ class UserMySublinCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isShuttle = true;
     return (() {
       switch (myCardFormat) {
         case MyCardFormat.available:
@@ -86,21 +86,14 @@ class UserMySublinCardWidget extends StatelessWidget {
                                   child: getIconForTransportationType(
                                       transportationType)),
                               SizedBox(height: 10),
-                              if (isShuttle)
-                                AutoSizeText(
-                                  getReadableAddressPartOfFormattedAddress(
-                                      providerUser.addresses[0],
-                                      Delimiter.company),
-                                  style: Theme.of(context).textTheme.headline1,
+                              Expanded(
+                                child: AutoSizeText(
+                                  getReadableAddressFromFormattedAddress(
+                                      addressInfo.formattedAddress),
+                                  style: Theme.of(context).textTheme.headline2,
+                                  maxLines: 2,
                                 ),
-                              if (!isShuttle)
-                                AutoSizeText(
-                                  getReadableAddressPartOfFormattedAddress(
-                                      getFormattedCityFromListProviderUserAddresses(
-                                          providerUser, user),
-                                      Delimiter.city),
-                                  style: Theme.of(context).textTheme.headline1,
-                                ),
+                              ),
                               AutoSizeText(
                                 'Bahnhof-Shuttle',
                                 style: Theme.of(context).textTheme.caption,
@@ -114,7 +107,7 @@ class UserMySublinCardWidget extends StatelessWidget {
                               ),
                               Expanded(
                                 child: AutoSizeText(
-                                  providerUser.providerName,
+                                  addressInfo.title,
                                   style: Theme.of(context).textTheme.caption,
                                   maxLines: 2,
                                 ),
@@ -128,64 +121,42 @@ class UserMySublinCardWidget extends StatelessWidget {
                                       onPressed: (isRouteBooked)
                                           ? null
                                           : () async {
-                                              if (localRequest?.startAddress !=
-                                                  '') {
-                                                String _startAddress =
-                                                    _getRequestBasedOnDirectionOfUser()
-                                                        .startAddress;
-                                                String _endAddress =
-                                                    _getRequestBasedOnDirectionOfUser()
-                                                        .endAddress;
+                                              String _startAddress =
+                                                  _getRequestBasedOnDirectionOfUser()
+                                                      .startAddress;
+                                              String _endAddress =
+                                                  _getRequestBasedOnDirectionOfUser()
+                                                      .endAddress;
 
-                                                addStringToSF(
-                                                    Preferences
-                                                        .stringLocalRequestStartAddress,
-                                                    _startAddress);
-                                                addStringToSF(
-                                                    Preferences
-                                                        .stringLocalRequestEndAddress,
-                                                    _endAddress);
-                                                await RoutingService()
-                                                    .requestRoute(
-                                                  uid: user.uid,
-                                                  startAddress:
-                                                      _getRequestBasedOnDirectionOfUser()
-                                                          .startAddress,
+                                              addStringToSF(
+                                                  Preferences
+                                                      .stringLocalRequestStartAddress,
+                                                  _startAddress);
+                                              addStringToSF(
+                                                  Preferences
+                                                      .stringLocalRequestEndAddress,
+                                                  _endAddress);
+                                              await RoutingService()
+                                                  .requestRoute(
+                                                uid: user.uid,
+                                                startAddress:
+                                                    _getRequestBasedOnDirectionOfUser()
+                                                        .startAddress,
+                                                startId: '',
+                                                endAddress:
+                                                    _getRequestBasedOnDirectionOfUser()
+                                                        .endAddress,
+                                                endId: '',
+                                                timestamp: DateTime.now(),
+                                              );
+                                              await Navigator.pushNamed(
+                                                context,
+                                                UserRoutingScreen.routeName,
+                                                arguments: Routing(
                                                   startId: '',
-                                                  endAddress:
-                                                      _getRequestBasedOnDirectionOfUser()
-                                                          .endAddress,
                                                   endId: '',
-                                                  timestamp: DateTime.now(),
-                                                );
-                                                await Navigator.pushNamed(
-                                                  context,
-                                                  UserRoutingScreen.routeName,
-                                                  arguments: Routing(
-                                                    startId: '',
-                                                    endId: '',
-                                                  ),
-                                                );
-                                              } else {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            AddressInputScreen(
-                                                              userUid: user.uid,
-                                                              addressInputCallback:
-                                                                  _addressInputFunction,
-                                                              isEndAddress:
-                                                                  false,
-                                                              isStartAddress:
-                                                                  true,
-                                                              showGeolocationOption:
-                                                                  false,
-                                                              isStation: false,
-                                                              title:
-                                                                  'Dein Standort',
-                                                            )));
-                                              }
+                                                ),
+                                              );
                                             },
                                       child: Text('Hinfahren'),
                                     ),
@@ -210,7 +181,7 @@ class UserMySublinCardWidget extends StatelessWidget {
                               addressInputCallback:
                                   _addCityToCommunesSelectionCallback,
                               userUid: user.uid,
-                              isEndAddress: false,
+                              isEndAddress: true,
                               isStartAddress: false,
                               cityOnly: false,
                               title: 'Zielort suchen',
@@ -265,7 +236,7 @@ class UserMySublinCardWidget extends StatelessWidget {
                                 height: 10,
                               ),
                               AutoSizeText(
-                                providerUser.providerName,
+                                addressInfo.title,
                                 style: Theme.of(context).textTheme.headline1,
                                 maxLines: 2,
                               ),
@@ -300,7 +271,7 @@ class UserMySublinCardWidget extends StatelessWidget {
   Request _getRequestBasedOnDirectionOfUser() {
     Request request = Request();
     request.startAddress = localRequest.startAddress;
-    request.endAddress = providerUser.addresses[0];
+    request.endAddress = addressInfo.formattedAddress;
 
     // if (_getDirectionBasedUserPosition() == Direction.end) {
     // } else {
@@ -314,13 +285,13 @@ class UserMySublinCardWidget extends StatelessWidget {
     return request;
   }
 
-  Direction _getDirectionBasedUserPosition() {
-    Direction _direction = Direction.end;
-    if (providerUser.communes.contains(
-        getFormattedCityFromFormattedAddress(localRequest.startAddress)))
-      _direction = Direction.start;
-    return _direction;
-  }
+  // Direction _getDirectionBasedUserPosition() {
+  //   Direction _direction = Direction.end;
+  //   if (providerUser.communes.contains(
+  //       getFormattedCityFromFormattedAddress(localRequest.startAddress)))
+  //     _direction = Direction.start;
+  //   return _direction;
+  // }
 
   void _addCityToCommunesSelectionCallback({
     String userUid,

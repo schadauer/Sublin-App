@@ -4,11 +4,11 @@ import 'package:Sublin/models/transportation_type_enum.dart';
 class AddressInfo {
   String title;
   String formattedAddress;
-  String sponsor;
+  String provider;
   TransportationType transportationType;
   AddressInfo({
     this.title,
-    this.sponsor,
+    this.provider,
     this.formattedAddress,
     this.transportationType,
   });

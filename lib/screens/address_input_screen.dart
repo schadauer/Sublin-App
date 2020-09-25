@@ -1,5 +1,7 @@
 import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/theme/theme.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
 
@@ -16,6 +18,7 @@ class AddressInputScreen extends StatefulWidget {
   final bool isEndAddress;
   final bool showGeolocationOption;
   final String title;
+  final String message;
   final String restrictions;
   final String addressTypes;
   final bool cityOnly;
@@ -32,6 +35,7 @@ class AddressInputScreen extends StatefulWidget {
     this.isEndAddress = false,
     this.showGeolocationOption = false,
     this.title = 'Addresse suchen',
+    this.message = '',
     this.restrictions = '',
     this.addressTypes = '',
     this.cityOnly = false,
@@ -86,50 +90,87 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
             Container(
                 padding: const EdgeInsets.all(15.0),
                 child: Material(
-                  child: SizedBox(
-                    height: 50,
-                    child: TextFormField(
-                      focusNode: _focus,
-                      onChanged: (input) async {
-                        var result =
-                            await _autocomplete.getGoogleAddressAutocomplete(
-                                input: input,
-                                restrictions: widget.restrictions,
-                                cityOnly: widget.cityOnly,
-                                isStation: widget.isStation,
-                                addressTypes: widget.addressTypes);
+                  child: Column(
+                    children: [
+                      if (widget.message != '')
+                        Card(
+                          color: Theme.of(context).primaryColor,
+                          child: SizedBox(
+                            height: 80,
+                            child: Padding(
+                              padding: ThemeConstants.mediumPadding,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: Icon(
+                                        Icons.error,
+                                        size: 40,
+                                      )),
+                                  Expanded(
+                                    flex: 5,
+                                    child: AutoSizeText(
+                                      widget.message,
+                                      style:
+                                          Theme.of(context).textTheme.headline2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        height: 50,
+                        child: TextFormField(
+                          focusNode: _focus,
+                          onChanged: (input) async {
+                            var result = await _autocomplete
+                                .getGoogleAddressAutocomplete(
+                                    input: input,
+                                    restrictions: widget.restrictions,
+                                    cityOnly: widget.cityOnly,
+                                    isStation: widget.isStation,
+                                    addressTypes: widget.addressTypes);
 
-                        List<AddressInfo> toAddressList;
+                            List<AddressInfo> toAddressList;
 
-                        toAddressList = result.map((item) {
-                          print(AddressInfo(formattedAddress: item['name']));
-                          return AddressInfo(formattedAddress: item['name']);
-                        }).toList();
+                            toAddressList = result.map((item) {
+                              print(
+                                  AddressInfo(formattedAddress: item['name']));
+                              return AddressInfo(
+                                  formattedAddress: item['name']);
+                            }).toList();
 
-                        if (this.mounted) {
-                          setState(() {
-                            _combinedAddressInfoList =
-                                toAddressList ?? <AddressInfo>[];
-                          });
-                        }
-                      },
-                      controller: _textFormFieldController,
-                      decoration: InputDecoration(
-                          fillColor: Colors.black12,
-                          filled: true,
-                          border: InputBorder.none,
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0)),
-                          prefixIcon: Icon(Icons.home),
-                          suffixIcon: IconButton(
-                              icon: Icon(Icons.highlight_off),
-                              onPressed: () {
-                                setState(() {
-                                  _combinedAddressInfoList = [];
-                                  _textFormFieldController.text = '';
-                                });
-                              })),
-                    ),
+                            if (this.mounted) {
+                              setState(() {
+                                _combinedAddressInfoList =
+                                    toAddressList ?? <AddressInfo>[];
+                              });
+                            }
+                          },
+                          controller: _textFormFieldController,
+                          decoration: InputDecoration(
+                              fillColor: Colors.black12,
+                              filled: true,
+                              border: InputBorder.none,
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5.0)),
+                              prefixIcon: Icon(Icons.home),
+                              suffixIcon: IconButton(
+                                  icon: Icon(Icons.highlight_off),
+                                  onPressed: () {
+                                    setState(() {
+                                      _combinedAddressInfoList = [];
+                                      _textFormFieldController.text = '';
+                                    });
+                                  })),
+                        ),
+                      ),
+                    ],
                   ),
                 )),
             (_combinedAddressInfoList.isNotEmpty)

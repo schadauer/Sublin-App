@@ -9,14 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 
-class UserMySublinStartCardWidget extends StatelessWidget {
+class UserMySublinStartWidget extends StatelessWidget {
   final String startAddress;
   final User user;
   final Function addressInputFunction;
   final TransportationType transportationType;
   final List<AddressInfo> addressInfoList;
 
-  UserMySublinStartCardWidget({
+  UserMySublinStartWidget({
     this.startAddress = '',
     this.user,
     this.addressInputFunction,

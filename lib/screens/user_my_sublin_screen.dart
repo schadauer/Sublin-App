@@ -7,7 +7,7 @@ import 'package:Sublin/screens/waiting_screen.dart';
 import 'package:Sublin/services/address_service.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
 import 'package:Sublin/utils/get_list_of_address_info_from_list_of_provider_users_and_user.dart';
-import 'package:Sublin/widgets/user_my_sublin_start_card_widget.dart';
+import 'package:Sublin/widgets/user_my_sublin_start_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:geolocator/geolocator.dart';
@@ -35,7 +35,7 @@ import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/utils/is_route_confirmed.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
-import 'package:Sublin/widgets/user_my_sublin_card_widget.dart';
+import 'package:Sublin/widgets/user_my_sublin_end_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 
 enum Filter {
@@ -75,6 +75,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   AddressAvailablilty _endAddressAvailablity = AddressAvailablilty.notRequested;
   List<ProviderUser> _providerUsersList;
   List<AddressInfo> _addressInfoList;
+  List<AddressInfo> _addressInfoListWithCurrentPositionFilter;
 
   @override
   void initState() {
@@ -141,14 +142,12 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                       filter: Filter.excludeIfNotPartner,
                       localRequest: _localRequest);
 
-                  print(_providerUsersList.length);
-                  _providerUsersList.forEach((element) {
-                    print(ProviderUser().toMap(element));
-                  });
-                  // We convert the list to a list of Addressinfo instances
+                  //* We convert the list to a list of Addressinfo instances
+                  //* We need it for the address search as suggestions
                   _addressInfoList =
                       getListOfAddressInfoFromListOfProviderUsersAndUser(
                           providerUserList: _providerUsersList, user: user);
+
                   // Now we filter out the addresses that are within the area of the current position
                   List<ProviderUser> _providerUsersListForCurrentPosition =
                       _applyFilterFromList(
@@ -156,8 +155,16 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                           filter: Filter.excludeStartAddress,
                           localRequest: _localRequest);
 
-                  print(getListOfAddressInfoFromListOfProviderUsersAndUser(
-                      providerUserList: _providerUsersList, user: user));
+                  //* This is for the end address selection which should only show addresses
+                  //* that are not within the bounds of the start address
+                  _addressInfoListWithCurrentPositionFilter =
+                      getListOfAddressInfoFromListOfProviderUsersAndUser(
+                          providerUserList:
+                              _providerUsersListForCurrentPosition,
+                          user: user);
+
+                  print(_addressInfoListWithCurrentPositionFilter);
+                  print(_addressInfoList);
 
                   return Stack(
                     children: [
@@ -218,14 +225,11 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                 : 0),
                         child: Column(
                           children: [
-                            UserMySublinStartCardWidget(
+                            UserMySublinStartWidget(
                               startAddress: _localRequest.startAddress,
                               user: user,
-                              addressInputFunction: _addressInputFunction,
-                              addressInfoList:
-                                  getListOfAddressInfoFromListOfProviderUsersAndUser(
-                                      providerUserList: _providerUsersList,
-                                      user: user),
+                              addressInputFunction: _addressInputCallback,
+                              addressInfoList: _addressInfoList,
                             ),
                             Expanded(
                               flex: 10,
@@ -246,19 +250,19 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     if (index <
-                                        _providerUsersListForCurrentPosition
+                                        _addressInfoListWithCurrentPositionFilter
                                             .length) {
-                                      ProviderUser _providerUser =
-                                          _providerUsersListForCurrentPosition[
+                                      AddressInfo _addressInfo =
+                                          _addressInfoListWithCurrentPositionFilter[
                                               index];
                                       MyCardFormat _myCardFormat =
                                           MyCardFormat.available;
 
-                                      return UserMySublinCardWidget(
+                                      return UserMySublinEndWidget(
                                         transportationType:
                                             TransportationType.sublin,
                                         localRequest: _localRequest,
-                                        providerUser: _providerUser,
+                                        addressInfo: _addressInfo,
                                         itemWidth: itemWidth,
                                         itemHeight: itemHeight,
                                         user: user,
@@ -269,7 +273,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                             !isRouteCompleted(routingService),
                                       );
                                     } else
-                                      return UserMySublinCardWidget(
+                                      return UserMySublinEndWidget(
                                         transportationType:
                                             TransportationType.public,
                                         localRequest: _localRequest,
@@ -303,7 +307,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     );
   }
 
-  Future<void> _addressInputFunction({
+  Future<void> _addressInputCallback({
     String userUid,
     String input,
     String id,
@@ -315,52 +319,85 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     String station,
     AddressInfo addressInfo,
   }) async {
+    //* Here we check if the address that the user was looking for is either
+    //* 1. an address for the current list of sublin addresses
+    //* 2. any other available Sublin address for the user
+    //* 3. a station address
+    //* 4. an publicly available address
     bool _startAddressAccepted = false;
-    // First we check if an address from the list of available addresses or
-    // from the list of user requestedAddresses are picked
+    //* First we check if an address from the list of available addresses or
+    //* from the list of user requestedAddresses are picked
     if (_addressInfoList.length != 0) {
       _addressInfoList.forEach((address) {
         if (address.formattedAddress == addressInfo.formattedAddress)
           setState(() {
+            _startAddressAvailability = AddressAvailablilty.station;
             _localRequest.startAddress = addressInfo.formattedAddress;
             _startAddressAccepted = true;
           });
       });
     }
+    //* Now we check if it is any other Sublin address
     if (!_startAddressAccepted) {
-      // We try to find addresses fro
-      // TODO We need to filter out the emailOnly offers
+      //* We try to find addresses fro
       List<ProviderUser> _providerUsersForStartAddress =
           await ProviderUserService().getProvidersFromFormattedAddress(
               address: addressInfo.formattedAddress);
       if (_providerUsersForStartAddress.length > 0) {
-        _startAddressAvailability = AddressAvailablilty.available;
-      } else {
-        _startAddressAvailability = AddressAvailablilty.notAvailable;
-        // * We lookup the addresses collection to find the nearest train station for the user
-        String _inputFormattedCity =
-            getFormattedCityFromFormattedAddress(addressInfo.formattedAddress);
-        Address _address = await AddressService()
-            .getProvidersFromAddress(formattedCity: _inputFormattedCity);
-        if (_address != null && _address.stations.length > 0) {
+        setState(() {
+          _startAddressAvailability = AddressAvailablilty.available;
+          _localRequest.startAddress = addressInfo.formattedAddress;
+          _startAddressAccepted = true;
+        });
+      }
+    }
+    // * We lookup the addresses collection to find the nearest train station for the user
+    if (!_startAddressAccepted) {
+      String _startAddress;
+      String _inputFormattedCity =
+          getFormattedCityFromFormattedAddress(addressInfo.formattedAddress);
+      Address _address = await AddressService()
+          .getAddressesFromAddress(formattedCity: _inputFormattedCity);
+      if (_address != null) {
+        if (_address.stations.length > 0) {
           _address.stations.where((station) {
             return getFormattedCityFromFormattedStation(station) ==
                 _inputFormattedCity;
           }).toList();
-          // If we find a train station
-          setState(() {
-            _startAddressAvailability = AddressAvailablilty.station;
-            _localRequest.startAddress = _address.stations[0];
-            addStringToSF(Preferences.stringLocalRequestStartAddress,
-                _localRequest.startAddress);
-          });
+          _startAddress = _address.stations[0];
+          // If no station is found we assue that it is publicly available
+          // and we will use the user input address
         } else {
-          // We don't find a train station
-          setState(() {
-            _localRequest.startAddress = input;
-            _startAddressAvailability = AddressAvailablilty.notAvailable;
-          });
+          _startAddress = addressInfo.formattedAddress;
         }
+        // If we find a train station
+        setState(() {
+          _startAddressAvailability = AddressAvailablilty.station;
+          _startAddressAccepted = true;
+          _localRequest.startAddress = _startAddress;
+          addStringToSF(Preferences.stringLocalRequestStartAddress,
+              _localRequest.startAddress);
+        });
+      }
+      if (!_startAddressAccepted) {
+        // We don't find a train station
+        setState(() {
+          _startAddressAvailability = AddressAvailablilty.notAvailable;
+        });
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AddressInputScreen(
+                    userUid: userUid,
+                    addressInputCallback: _addressInputCallback,
+                    isEndAddress: false,
+                    isStartAddress: true,
+                    showGeolocationOption: true,
+                    isStation: true,
+                    title: 'Bahnhof',
+                    address: input,
+                    message:
+                        'Diese Addresse ist derzeit leider nicht erreichbar. Bitte gib deinen nächstgelegenen Bahnhof ein:')));
       }
     }
   }
@@ -392,11 +429,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   }
 }
 
-// bool _transportationTypeOfAddress(String formattedAddress) {
-//   String _formattedCity =
-//       getFormattedCityFromFormattedAddress(formattedAddress);
-// }
-
 List<ProviderUser> _applyFilterFromList(
     {List<ProviderUser> providerUsers, Filter filter, Request localRequest}) {
   List<ProviderUser> _providerUsers;
@@ -410,6 +442,9 @@ List<ProviderUser> _applyFilterFromList(
         if (providerUser.providerType == ProviderType.taxi) isTrue = true;
         break;
       case Filter.excludeStartAddress:
+        print(providerUser.providerName);
+        print(providerUser.communes);
+        print(getFormattedCityFromFormattedAddress(localRequest.startAddress));
         if (!providerUser.communes.contains(
             getFormattedCityFromFormattedAddress(localRequest.startAddress)))
           isTrue = true;
