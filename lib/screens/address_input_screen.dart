@@ -1,5 +1,6 @@
 import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:Sublin/widgets/appbar_widget.dart';
 
 class AddressInputScreen extends StatefulWidget {
   final String userUid;
+  final User user;
   final Function addressInputCallback;
   final String address;
   final bool isStartAddress;
@@ -29,6 +31,7 @@ class AddressInputScreen extends StatefulWidget {
 
   AddressInputScreen({
     this.userUid = '',
+    this.user,
     this.addressInputCallback,
     this.address = '',
     this.isStartAddress = false,
@@ -72,7 +75,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
 
   @override
   void dispose() {
-    // Clean up the focus node when the Form is disposed.
     _focus.dispose();
     super.dispose();
   }
@@ -112,7 +114,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                     child: AutoSizeText(
                                       widget.message,
                                       style:
-                                          Theme.of(context).textTheme.headline2,
+                                          Theme.of(context).textTheme.bodyText1,
                                     ),
                                   ),
                                 ],
@@ -139,8 +141,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                             List<AddressInfo> toAddressList;
 
                             toAddressList = result.map((item) {
-                              print(
-                                  AddressInfo(formattedAddress: item['name']));
                               return AddressInfo(
                                   formattedAddress: item['name']);
                             }).toList();
@@ -190,6 +190,8 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                   input: _combinedAddressInfoList[index]
                                       .formattedAddress,
                                   addressInfo: _combinedAddressInfoList[index],
+                                  user:
+                                      widget.user != null ? widget.user : null,
                                   // id: _combinedAddressInfoList[index]['id'],
                                   // isCompany: _combinedAddressInfoList[index]
                                   //     ['isCompany'],

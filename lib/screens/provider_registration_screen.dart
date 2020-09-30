@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/utils/add_city_to_communes_and_addresses.dart';
+import 'package:Sublin/utils/add_city_to_station_and_communes.dart';
 import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -91,8 +93,6 @@ class _ProviderRegistrationScreenState
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
-
-    print(ProviderUser().toMap(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -635,13 +635,17 @@ class _ProviderRegistrationScreenState
                                                               builder: (context) =>
                                                                   AddressInputScreen(
                                                                     addressInputCallback:
-                                                                        _citySelectionFunction,
+                                                                        _citySelectionCallback,
                                                                     isEndAddress:
                                                                         false,
                                                                     isStartAddress:
                                                                         false,
                                                                     cityOnly:
                                                                         true,
+                                                                    providerUser:
+                                                                        _providerUser,
+                                                                    station:
+                                                                        _station,
                                                                     title:
                                                                         'Ortschaft hinzufügen',
                                                                   )));
@@ -850,6 +854,7 @@ class _ProviderRegistrationScreenState
     bool isStartAddress,
     bool isEndAddress,
     ProviderUser providerUser,
+    AddressInfo addressInfo,
     String station,
   }) {
     setState(() {
@@ -876,7 +881,7 @@ class _ProviderRegistrationScreenState
     );
   }
 
-  void _citySelectionFunction({
+  void _citySelectionCallback({
     String userUid,
     String input,
     String id,
@@ -886,7 +891,13 @@ class _ProviderRegistrationScreenState
     ProviderUser providerUser,
     String station,
   }) {
-    _addCityToStations(input);
+    setState(() {
+      _providerUser = addCityToStationsAndCommunes(
+          cityFormattedAddress: input,
+          stationFormattedAddress: station,
+          providerUser: providerUser);
+    });
+    // _addCityToStations(input);
   }
 
   void _addCityToStations(String formattedAddress) {

@@ -2,7 +2,7 @@
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/utils/add_string_to_list.dart';
-import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_commune.dart';
 import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 
 ProviderUser addCityToStationsAndCommunes({
@@ -12,13 +12,13 @@ ProviderUser addCityToStationsAndCommunes({
 }) {
   bool cityExists = false;
   providerUser.stations.forEach((station) {
-    String cityFromStation = getFormattedCityFromFormattedStation(station);
+    String cityFromStation =
+        getFormattedCityFromFormattedStationWithCommune(station);
     if (cityFormattedAddress == cityFromStation) {
       cityExists = true;
     }
   });
   if (cityExists == false) {
-    print('false');
     providerUser.stations.add(cityFormattedAddress + stationFormattedAddress);
     providerUser.communes =
         addStringToList(providerUser.communes, cityFormattedAddress);

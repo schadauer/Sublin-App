@@ -253,14 +253,6 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                                           if (_formKey.currentState
                                               .validate()) {
                                             FocusScope.of(context).unfocus();
-                                            // dynamic register = await AuthService()
-                                            //     .registerWithEmailAndPassword(
-                                            //         email: _emailTextController
-                                            //             .text,
-                                            //         password:
-                                            //             _passwortTextController
-                                            //                 .text);
-
                                             setState(() {
                                               _pageStep = 1;
                                             });
@@ -268,18 +260,6 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                                                 duration:
                                                     Duration(milliseconds: 300),
                                                 curve: Curves.easeOut);
-
-                                            // if (register is UserCredential) {
-                                            // } else if (register ==
-                                            //     SublinError.emailAlreadyInUse) {
-                                            //   setState(() {
-                                            //     _emailAlreadyInUse = true;
-                                            //   });
-                                            //   print(
-                                            //       'Email ist bereits vorhanden');
-                                            // } else {
-                                            //   print('something Went wrong');
-                                            // }
                                           }
                                         } catch (e) {
                                           print(e);
@@ -411,7 +391,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   // Future<void> _getCurrentCoordinates() async {
   //   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   //   try {
-  //     // print(await isLocationPermissionGranted());
+  //      print(await isLocationPermissionGranted());
   //     await geolocator.getCurrentPosition(
   //         desiredAccuracy: LocationAccuracy.bestForNavigation);
   //   } catch (e) {

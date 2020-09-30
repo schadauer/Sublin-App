@@ -28,6 +28,8 @@ import 'package:flutter/material.dart';
 class UserMySublinEndWidget extends StatelessWidget {
   const UserMySublinEndWidget(
       {Key key,
+      @required this.addressInputCallback,
+      @required this.removeRequestedAddressCallback,
       @required this.localRequest,
       this.addressInfo,
       @required this.itemWidth,
@@ -40,6 +42,8 @@ class UserMySublinEndWidget extends StatelessWidget {
       this.onHeroTap})
       : super(key: key);
 
+  final Function addressInputCallback;
+  final Function removeRequestedAddressCallback;
   final Request localRequest;
   final AddressInfo addressInfo;
   final double itemWidth;
@@ -76,15 +80,30 @@ class UserMySublinEndWidget extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                  height: 30,
-                                  width: 30,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: getIconForTransportationType(
-                                      transportationType)),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                      height: 30,
+                                      width: 30,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: getIconForTransportationType(
+                                          addressInfo.transportationType)),
+                                  if (addressInfo.byProvider == false)
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () async {
+                                        removeRequestedAddressCallback(
+                                            addressInfo: addressInfo,
+                                            uid: user.uid);
+                                      },
+                                    )
+                                ],
+                              ),
                               SizedBox(height: 10),
                               Expanded(
                                 child: AutoSizeText(
@@ -105,13 +124,14 @@ class UserMySublinEndWidget extends StatelessWidget {
                                 'Gesponsert von',
                                 style: Theme.of(context).textTheme.caption,
                               ),
-                              Expanded(
-                                child: AutoSizeText(
-                                  addressInfo.title,
-                                  style: Theme.of(context).textTheme.caption,
-                                  maxLines: 2,
+                              if (addressInfo.sponsor != null)
+                                Expanded(
+                                  child: AutoSizeText(
+                                    addressInfo.sponsor,
+                                    style: Theme.of(context).textTheme.caption,
+                                    maxLines: 2,
+                                  ),
                                 ),
-                              ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -178,13 +198,13 @@ class UserMySublinEndWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => AddressInputScreen(
-                              addressInputCallback:
-                                  _addCityToCommunesSelectionCallback,
+                              addressInputCallback: addressInputCallback,
                               userUid: user.uid,
+                              user: user,
                               isEndAddress: true,
                               isStartAddress: false,
                               cityOnly: false,
-                              title: 'Zielort suchen',
+                              title: 'Anderen Zielort suchen',
                             )));
               },
               child: Card(
@@ -236,7 +256,7 @@ class UserMySublinEndWidget extends StatelessWidget {
                                 height: 10,
                               ),
                               AutoSizeText(
-                                addressInfo.title,
+                                addressInfo.sponsor,
                                 style: Theme.of(context).textTheme.headline1,
                                 maxLines: 2,
                               ),

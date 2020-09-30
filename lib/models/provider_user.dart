@@ -10,6 +10,7 @@ class ProviderUser {
   ProviderPlan providerPlan;
   bool outOfWork;
   String providerName;
+  String phone;
   String id;
   List<String>
       targetGroup; // This value is sha256 hashed - find the readable email in user type
@@ -30,6 +31,7 @@ class ProviderUser {
     this.inOperation: false,
     this.outOfWork: false,
     this.providerName: '',
+    this.phone,
     this.id: '',
     this.targetGroup: const [],
     this.communes: const [],
@@ -59,6 +61,7 @@ class ProviderUser {
       inOperation: data['inOperation'] ?? defaultValues.inOperation,
       outOfWork: data['outOfWork'] ?? defaultValues.inOperation,
       providerName: data['providerName'] ?? defaultValues.providerName,
+      phone: data['phone'] ?? defaultValues.phone,
       id: data['id'] ?? defaultValues.id,
       targetGroup: (data['targetGroup'] == null)
           ? defaultValues.addresses
@@ -106,6 +109,7 @@ class ProviderUser {
       if (data.inOperation != null) 'inOperation': data.inOperation,
       if (data.outOfWork != null) 'outOfWork': data.outOfWork,
       if (data.providerName != null) 'providerName': data.providerName,
+      if (data.phone != null) 'phone': data.phone,
       if (data.targetGroup != null) 'targetGroup': data.targetGroup,
       if (data.communes != null) 'communes': data.communes,
       if (data.addresses != null) 'addresses': data.addresses,

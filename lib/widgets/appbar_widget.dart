@@ -26,7 +26,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           this.title,
           style: Theme.of(context).textTheme.headline1,
         ),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.white,
         elevation: 0.0,
         actions: [
           if (showProfileIcon)

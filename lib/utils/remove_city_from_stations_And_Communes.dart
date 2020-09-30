@@ -1,5 +1,5 @@
 import 'package:Sublin/models/provider_user.dart';
-import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_commune.dart';
 import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
 
 ProviderUser removeCityFromStationsAndCommunes({
@@ -21,14 +21,9 @@ ProviderUser removeCityFromStationsAndCommunes({
       _stationCount += 1;
   });
 
-  print(_stationCount);
-  print(city);
-
   for (var i = 0; i < providerUser.stations.length; i++) {
-    String _cityFromStation =
-        getFormattedCityFromFormattedStation(providerUser.stations[i]);
-    print('cityFromStation');
-    print(_cityFromStation);
+    String _cityFromStation = getFormattedCityFromFormattedStationWithCommune(
+        providerUser.stations[i]);
     if (city == _cityFromStation && _stationCount > 1) {
       _removeIndexStations = i;
     } else if (_stationCount == 1)

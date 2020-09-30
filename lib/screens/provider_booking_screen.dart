@@ -65,61 +65,58 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                   providerUser.providerType == ProviderType.shuttle)
                 SizedBox(
                     height: 80,
-                    child: Container(
-                      color: Theme.of(context).primaryColor,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _selectedIndex = 0;
-                                });
-                              },
-                              child: _BookingFilterOption(
-                                bookings: openBookings,
-                                title: 'Offene',
-                                active: _selectedIndex == 0,
-                                bookingStatus: BookingStatus.open,
-                              ),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        Container(
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 0;
+                              });
+                            },
+                            child: _BookingFilterOption(
+                              key: Key(BookingStatus.booked.toString()),
+                              bookings: openBookings,
+                              title: 'Offene',
+                              active: _selectedIndex == 0,
+                              bookingStatus: BookingStatus.open,
                             ),
                           ),
-                          Expanded(
-                            flex: 3,
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _selectedIndex = 1;
-                                });
-                              },
-                              child: _BookingFilterOption(
-                                bookings: confirmedBookings,
-                                title: 'Bestätigte',
-                                active: _selectedIndex == 1,
-                                bookingStatus: BookingStatus.confirmed,
-                              ),
+                        ),
+                        Container(
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 1;
+                              });
+                            },
+                            child: _BookingFilterOption(
+                              key: Key(BookingStatus.confirmed.toString()),
+                              bookings: confirmedBookings,
+                              title: 'Bestätigte',
+                              active: _selectedIndex == 1,
+                              bookingStatus: BookingStatus.confirmed,
                             ),
                           ),
-                          Expanded(
-                            flex: 2,
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _selectedIndex = 2;
-                                });
-                              },
-                              child: _BookingFilterOption(
-                                bookings: completedBookings,
-                                title: 'Erledigte',
-                                active: _selectedIndex == 2,
-                                bookingStatus: BookingStatus.completed,
-                              ),
+                        ),
+                        Container(
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 2;
+                              });
+                            },
+                            child: _BookingFilterOption(
+                              key: Key(BookingStatus.completed.toString()),
+                              bookings: completedBookings,
+                              title: 'Erledigte',
+                              active: _selectedIndex == 2,
+                              bookingStatus: BookingStatus.completed,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     )),
               (() {
                 switch (_selectedIndex) {
@@ -212,11 +209,15 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                   // color: Theme.of(context).primaryColor,
                   margin: EdgeInsets.all(5.0),
                   child: Padding(
-                    padding: ThemeConstants.mediumPadding,
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
+                        // Container(
+                        //   color: ThemeConstants.backgroundColor,
+                        //   height: 40,
+                        // ),
                         Container(
-                          height: 140,
+                          height: 150,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,29 +322,67 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Abholung um ' +
-                                          getDateFormat(bookingStep.startTime),
+                                      getDateFormat(bookingStep.startTime),
                                       style:
-                                          Theme.of(context).textTheme.headline2,
+                                          Theme.of(context).textTheme.headline1,
                                     ),
-                                    Text(
-                                      bookingStep.userName,
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.home,
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        Expanded(
+                                          child: AutoSizeText(
+                                            getReadableAddressFromFormattedAddress(
+                                                bookingStep.startAddress),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      'von: ' +
-                                          getReadableAddressFromFormattedAddress(
-                                              bookingStep.startAddress),
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.assistant_photo,
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        Expanded(
+                                          child: AutoSizeText(
+                                            getReadableAddressFromFormattedAddress(
+                                                bookingStep.endAddress),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      'nach: ' +
-                                          getReadableAddressFromFormattedAddress(
-                                              bookingStep.endAddress),
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.person,
+                                        ),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                        Expanded(
+                                          child: AutoSizeText(
+                                            bookingStep.userName != ''
+                                                ? bookingStep.userName
+                                                : 'Name nicht verfügbar',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .caption,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -398,7 +437,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                 child: Text('Nicht erschienen'),
                               ),
                               RaisedButton(
-                                onPressed: (_timeRemaining < 0)
+                                onPressed: (_timeRemaining < 1000)
                                     ? () {
                                         _loadingFunction(index);
                                         BookingService().completedBooking(

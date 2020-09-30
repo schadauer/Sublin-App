@@ -94,7 +94,7 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                   title: Text('Zielgruppe'),
                 ),
               if (widget.providerUser == null ||
-                  _providerUser?.providerType != ProviderType.sponsorShuttle)
+                  _providerUser?.providerType != ProviderType.shuttle)
                 BottomNavigationBarItem(
                   icon: Icon(Icons.verified_user),
                   title: Text('Partner'),

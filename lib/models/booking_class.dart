@@ -48,6 +48,8 @@ class Booking {
                   defaultValueStep.startTime,
               endTime:
                   data['sublinEndStep']['endTime'] ?? defaultValueStep.endTime,
+              userName: data['sublinEndStep']['userName'] ??
+                  defaultValueStep.userName,
               provider: (data['sublinEndStep']['provider'] == null)
                   ? defaultValueStep.provider
                   : ProviderUser(
@@ -105,6 +107,8 @@ class Booking {
                   defaultValueStep.startTime,
               endTime: data['sublinStartStep']['endTime'] ??
                   defaultValueStep.endTime,
+              userName: data['sublinStartStep']['userName'] ??
+                  defaultValueStep.userName,
               provider: (data['sublinStartStep']['provider'] == null)
                   ? defaultValueStep.provider
                   : ProviderUser(

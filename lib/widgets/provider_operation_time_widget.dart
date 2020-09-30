@@ -20,7 +20,6 @@ class ProviderOperationTimeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => null, // _pickTime(),
       child: Card(
         child: Padding(
           padding: ThemeConstants.largePadding,
@@ -38,7 +37,6 @@ class ProviderOperationTimeWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Flexible(flex: 1, child: Text('Von')),
                   Flexible(
                       flex: 2,
                       child: TimeFildWidget(

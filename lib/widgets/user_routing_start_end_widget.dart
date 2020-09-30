@@ -5,6 +5,7 @@ import 'package:Sublin/models/step_class.dart' as sublin;
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
+import 'package:Sublin/utils/launch_caller.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -62,9 +63,9 @@ class UserRoutingStartEndWidget extends StatelessWidget {
         direction == Direction.end &&
         routingService.endAddressAvailable)
       bookingStatusEnd = BookingStatus?.booked;
-    if (routingService.sublinStartStep.confirmed == true)
+    if (routingService.sublinStartStep?.confirmed == true)
       bookingStatusStart = BookingStatus.confirmed;
-    if (routingService.sublinEndStep.confirmed == true)
+    if (routingService.sublinEndStep?.confirmed == true)
       bookingStatusEnd = BookingStatus.confirmed;
 
     return Column(
@@ -160,18 +161,27 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                       ),
                                                     if (_isStartBooked)
                                                       Expanded(
-                                                        child: AutoSizeText(
-                                                          (routingService
-                                                                      .sublinStartStep
-                                                                      .confirmed ==
-                                                                  false)
-                                                              ? 'Wir benachrichten dich, sobald ${step.provider?.providerName} deine Abholung bestätigt hat.'
-                                                              : routingService
-                                                                          .sublinStartStep
-                                                                          .completed ==
-                                                                      false
-                                                                  ? '${step.provider?.providerName} hat deine Abholung bestätigt.'
-                                                                  : '${step.provider?.providerName} hat deine Abholung ab abgeschlossen.',
+                                                        child: Row(
+                                                          children: [
+                                                            SizedBox(
+                                                                width: 50,
+                                                                child: Icon(Icons
+                                                                    .phone)),
+                                                            Expanded(
+                                                              child:
+                                                                  AutoSizeText(
+                                                                (routingService
+                                                                            .sublinStartStep
+                                                                            .confirmed ==
+                                                                        false)
+                                                                    ? 'Wir benachrichten dich, sobald ${step.provider?.providerName} deine Abholung bestätigt hat.'
+                                                                    : routingService.sublinStartStep.completed ==
+                                                                            false
+                                                                        ? '${step.provider?.providerName} hat deine Abholung bestätigt.'
+                                                                        : '${step.provider?.providerName} hat deine Abholung ab abgeschlossen.',
+                                                              ),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     Expanded(
@@ -269,18 +279,41 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                       ),
                                                     if (_isEndBooked)
                                                       Expanded(
-                                                        child: AutoSizeText(
-                                                          (routingService
-                                                                      .sublinEndStep
-                                                                      .confirmed ==
-                                                                  false)
-                                                              ? 'Wir benachrichten dich, sobald ${step.provider?.providerName} deine Abholung bestätigt hat.'
-                                                              : routingService
-                                                                          .sublinEndStep
-                                                                          .completed ==
-                                                                      false
-                                                                  ? '${step.provider?.providerName} hat deine Abholung bestätigt.'
-                                                                  : '${step.provider?.providerName} hat deine Abholung ab abgeschlossen.',
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            if (step.provider
+                                                                    .phone !=
+                                                                null)
+                                                              launchCaller(step
+                                                                  .provider
+                                                                  .phone);
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child:
+                                                                    AutoSizeText(
+                                                                  (routingService
+                                                                              .sublinEndStep
+                                                                              .confirmed ==
+                                                                          false)
+                                                                      ? 'Wir benachrichten dich, sobald ${step.provider?.providerName} deine Abholung bestätigt hat.'
+                                                                      : routingService.sublinEndStep.completed ==
+                                                                              false
+                                                                          ? '${step.provider?.providerName} hat deine Abholung bestätigt.'
+                                                                          : '${step.provider?.providerName} hat deine Abholung ab abgeschlossen.',
+                                                                ),
+                                                              ),
+                                                              if (step.provider
+                                                                      .phone !=
+                                                                  null)
+                                                                SizedBox(
+                                                                    width: 50,
+                                                                    child: Icon(
+                                                                        Icons
+                                                                            .phone)),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     Expanded(

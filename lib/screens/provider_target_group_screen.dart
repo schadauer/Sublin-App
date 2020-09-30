@@ -202,8 +202,8 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                         child: SizedBox(
                                           width: 50.0,
                                           child: Icon(
-                                            Icons.remove,
-                                            size: 40.0,
+                                            Icons.delete,
+                                            size: 30.0,
                                           ),
                                         ),
                                       )

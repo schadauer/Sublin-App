@@ -1,3 +1,5 @@
+import 'package:Sublin/screens/waiting_screen.dart';
+import 'package:Sublin/widgets/waiting_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:provider/provider.dart';
@@ -308,7 +310,7 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                     ],
                   );
                 } else {
-                  return CircularProgressIndicator();
+                  return WaitingWidget(title: 'Die Partner werden geladen');
                 }
               }),
         )));
@@ -318,7 +320,6 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
       {ProviderUser providerUser}) async {
     List<ProviderUser> providerUserList = await ProviderUserService()
         .getProvidersAsPartners(uid: providerUser.uid);
-    print(providerUserList);
     List<String> _unapprovedProviderUserListByUid = [...providerUser.partners];
     // Sponsors may have an unapproved partner which we need to show here as well
     if (providerUser.providerType == ProviderType.sponsor ||

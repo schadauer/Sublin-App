@@ -12,14 +12,14 @@ import 'package:Sublin/utils/get_time_format.dart';
 class UserMySublinStartWidget extends StatelessWidget {
   final String startAddress;
   final User user;
-  final Function addressInputFunction;
+  final Function addressInputCallback;
   final TransportationType transportationType;
   final List<AddressInfo> addressInfoList;
 
   UserMySublinStartWidget({
     this.startAddress = '',
     this.user,
-    this.addressInputFunction,
+    this.addressInputCallback,
     this.transportationType,
     this.addressInfoList,
   });
@@ -77,8 +77,9 @@ class UserMySublinStartWidget extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (context) => AddressInputScreen(
                                         userUid: user.uid,
+                                        user: user,
                                         addressInputCallback:
-                                            addressInputFunction,
+                                            addressInputCallback,
                                         isEndAddress: false,
                                         isStartAddress: true,
                                         showGeolocationOption: true,

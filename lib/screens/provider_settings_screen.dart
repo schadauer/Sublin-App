@@ -1,31 +1,26 @@
-import 'dart:io';
+// import 'dart:io';
+import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/add_city_to_station_and_communes.dart';
-import 'package:Sublin/utils/add_string_to_list.dart';
-import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
-import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
 import 'package:Sublin/utils/get_list_of_cities_from_a_station.dart';
 import 'package:Sublin/utils/get_list_of_stations.dart';
-import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 import 'package:Sublin/utils/remove_city_from_stations_And_Communes.dart';
 import 'package:Sublin/widgets/provider_operation_time_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart'; // For Image Picker
-import 'package:path/path.dart' as Path;
-
+// import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
+// import 'package:path/path.dart' as Path;
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProviderSettingsScreen extends StatefulWidget {
@@ -39,6 +34,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
   final picker = ImagePicker();
   ProviderUser _providerUser;
   String _selectedStation;
+  bool _editProviderName = false;
   TextEditingController _providerNameFormFieldController =
       TextEditingController();
 
@@ -80,40 +76,80 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                           'Dein Betriebsname',
                           style: Theme.of(context).textTheme.headline1,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Column(children: <Widget>[
-                            TextFormField(
-                                validator: (val) => val.length < 3
-                                    ? 'Bitte gib hier deinen Unternehmensnamen ein'
-                                    : null,
-                                controller: _providerNameFormFieldController,
-                                // onChanged: (val) {
-                                //   setState(() {
-                                //     _providerUser.providerName = val;
-                                //   });
-                                // },
-                                decoration: InputDecoration(
-                                  hintText: 'Dein Unternehmensname',
-                                  prefixIcon: Icon(Icons.account_circle,
-                                      color: Theme.of(context).accentColor),
-                                )),
-                          ]),
-                        ),
+                        SizedBox(height: 10),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  if (_editProviderName == false)
+                                    Expanded(
+                                        flex: 5,
+                                        child:
+                                            Text(_providerUser.providerName)),
+                                  if (_editProviderName == true)
+                                    Expanded(
+                                      flex: 5,
+                                      child: TextFormField(
+                                          validator: (val) => val.length < 3
+                                              ? 'Bitte gib hier deinen Unternehmensnamen ein'
+                                              : null,
+                                          controller:
+                                              _providerNameFormFieldController,
+                                          // onChanged: (val) {
+                                          //   setState(() {
+                                          //     _providerUser.providerName = val;
+                                          //   });
+                                          // },
+                                          decoration: InputDecoration(
+                                            hintText: 'Dein Unternehmensname',
+                                            prefixIcon: Icon(
+                                              Icons.home,
+                                            ),
+                                          )),
+                                    ),
+                                  if (_editProviderName == false)
+                                    SizedBox(
+                                      width: 40,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            _editProviderName = true;
+                                          });
+                                        },
+                                        icon: Icon(
+                                          Icons.edit,
+                                          size: 30,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              if (_editProviderName == true)
+                                RaisedButton(
+                                    onPressed: () async {
+                                      await ProviderUserService()
+                                          .updateProviderNameProviderUser(
+                                              uid: _providerUser.uid,
+                                              providerName:
+                                                  _providerNameFormFieldController
+                                                      .text);
+                                      setState(() {
+                                        _editProviderName = false;
+                                      });
+                                    },
+                                    child: AutoSizeText('speichern')),
+                            ]),
                       ],
                     ),
                   ),
                 );
               }),
             ),
-            SizedBox(
-              height: 10,
-            ),
             ProviderOperationTimeWidget(
               providerUser: _providerUser,
             ),
-            if (_providerUser.providerType == ProviderType.taxi ||
-                _providerUser.providerType == ProviderType.shuttle)
+            if (_providerUser.providerType == ProviderType.taxi)
               Expanded(
                 child: getListOfStations(_providerUser).length != 0
                     ? ListView.builder(
@@ -172,7 +208,6 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                                           onPressed: () {
                                             setState(() {
                                               _selectedStation = _station;
-                                              print(_selectedStation);
                                             });
                                             Navigator.push(
                                                 context,
@@ -217,6 +252,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
     bool isStartAddress,
     bool isEndAddress,
     ProviderUser providerUser,
+    AddressInfo addressInfo,
     String station,
   }) async {
     setState(() {

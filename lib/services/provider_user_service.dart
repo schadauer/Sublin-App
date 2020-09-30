@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type_enum.dart';
+import 'package:Sublin/models/user_class.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:Sublin/models/provider_user.dart';
@@ -51,6 +53,22 @@ class ProviderUserService {
     } catch (e) {
       print('updateProviderUserData: $e');
     }
+  }
+
+  Future<List<ProviderUser>> getProvidersForAnAddressAndForAUser(
+      {String formattedAddress, User user}) async {
+    List<ProviderUser> providersFromCommunes = await getProvidersFromCommunes(
+        communes: [getFormattedCityFromFormattedAddress(formattedAddress)]);
+    List<ProviderUser> providersEmailAddress =
+        await getProvidersEmailOnly(email: user.email);
+    // List<ProviderUser> providersFromFormattedAddress =
+    //     await getProvidersFromFormattedAddress(
+    //         formattedAddress: formattedAddress);
+    return [
+      ...providersFromCommunes,
+      ...providersEmailAddress,
+      // ...providersFromFormattedAddress
+    ];
   }
 
   Future<List<ProviderUser>> getProvidersFromCommunes({
@@ -104,7 +122,7 @@ class ProviderUserService {
   }
 
   Future<List<ProviderUser>> getProvidersFromFormattedAddress({
-    String address,
+    String formattedAddress,
   }) async {
     try {
       // if (!Foundation.kReleaseMode) {
@@ -112,7 +130,7 @@ class ProviderUserService {
       // }
       return _database
           .collection('providers')
-          .where('addresses', arrayContains: address)
+          .where('addresses', arrayContains: formattedAddress)
           .where('providerType',
               whereIn: ['sponsor', 'sponsorShuttle', 'shuttle'])
           .get()
@@ -208,6 +226,20 @@ class ProviderUserService {
       // }
       await _database.collection('providers').doc(uid).set({
         'targetGroup': targetGroupList,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('updateTargetGroupProviderUser: $e');
+    }
+  }
+
+  Future<void> updateProviderNameProviderUser(
+      {String uid, String providerName}) async {
+    try {
+      // if (!Foundation.kReleaseMode) {
+      //   await sublinLogging(Preferences.intLoggingUsers);
+      // }
+      await _database.collection('providers').doc(uid).set({
+        'providerName': providerName,
       }, SetOptions(merge: true));
     } catch (e) {
       print('updateTargetGroupProviderUser: $e');

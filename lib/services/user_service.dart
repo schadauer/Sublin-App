@@ -63,9 +63,6 @@ class UserService {
 
   Future<void> updateUserDataIsRegistrationCompleted({String uid}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('users').doc(uid).set({
         'isRegistrationCompleted': true,
       }, SetOptions(merge: true));
@@ -74,12 +71,20 @@ class UserService {
     }
   }
 
+  Future<void> updateUserDataRequestedAddresses(
+      {String uid, List<String> requestedAddresses}) async {
+    try {
+      await _database.collection('users').doc(uid).set({
+        'requestedAddresses': requestedAddresses,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('updateUserDataRequestedAddresses $e');
+    }
+  }
+
   Future<void> updateTargetGroupUserData(
       {String uid, List<dynamic> targetGroupList}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('users').doc(uid).set({
         'targetGroup': targetGroupList,
       }, SetOptions(merge: true));
