@@ -2,12 +2,15 @@ import 'package:Sublin/models/booking_completed_class.dart';
 import 'package:Sublin/models/booking_confirmed_class.dart';
 import 'package:Sublin/models/booking_open_class.dart';
 import 'package:Sublin/models/provider_user.dart';
+import 'package:launch_review/launch_review.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/init_routes.dart';
+import 'package:Sublin/models/versioning_class.dart';
 import 'package:Sublin/screens/user_register_screen.dart';
 import 'package:Sublin/services/booking_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/routing_class.dart';
@@ -23,12 +26,47 @@ class StreamProviders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<Auth>(context);
+    final versioning = Provider.of<Versioning>(context);
 
-    if (auth == null) {
+    bool _appNeedsToBeUpdated() {
+      return false;
+    }
+
+    if (auth == null || versioning == null) {
       // If auth is not logged in show Authentication screen
       return MaterialApp(
         theme: themeData(context),
         home: UserRegisterScreen(),
+      );
+    } else if (_appNeedsToBeUpdated()) {
+      return MaterialApp(
+        theme: themeData(context),
+        home: Scaffold(
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Image.asset('assets/images/Sublin.png'),
+                Icon(
+                  Icons.system_update,
+                  size: 50,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                AutoSizeText(
+                  'App Update',
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                RaisedButton(
+                    onPressed: () {
+                      LaunchReview.launch();
+                    },
+                    child: Text('Zum AppStore'))
+              ],
+            ),
+          ),
+        ),
       );
     } else {
       return MultiProvider(providers: [

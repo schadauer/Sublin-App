@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:Sublin/models/address_info_class.dart';
-import 'package:Sublin/utils/add_city_to_communes_and_addresses.dart';
+import 'package:Sublin/utils/add_city_to_provider_user_communes_and_addresses.dart';
 import 'package:Sublin/utils/add_city_to_station_and_communes.dart';
 import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -339,7 +339,7 @@ class _ProviderRegistrationScreenState
                                                 ProviderType.sponsor)
                                               setState(() {
                                                 _providerUser =
-                                                    addCityToCommunesAndAddresses(
+                                                    addCityToProviderUserCommunesAndAddresses(
                                                         providerUser:
                                                             _providerUser,
                                                         cityFormattedAddress:

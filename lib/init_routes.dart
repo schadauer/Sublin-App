@@ -1,5 +1,9 @@
-import 'package:Sublin/screens/provider_settings_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:package_info/package_info.dart';
+
+import 'package:Sublin/models/versioning_class.dart';
+import 'package:Sublin/screens/provider_settings_screen.dart';
 import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
@@ -8,7 +12,6 @@ import 'package:Sublin/screens/provider_target_group_screen.dart';
 import 'package:Sublin/screens/user_profile_screen.dart';
 import 'package:Sublin/screens/user_my_sublin_screen.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
-import 'package:provider/provider.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
@@ -26,9 +29,9 @@ class InitRoutes extends StatefulWidget {
 class _InitRoutesState extends State<InitRoutes> {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final User user = Provider.of<User>(context);
     final Routing routingService = Provider.of<Routing>(context);
-    final providerUser = Provider.of<ProviderUser>(context);
+    final ProviderUser providerUser = Provider.of<ProviderUser>(context);
 
     if (user.streamingOn == false && providerUser.streamingOn == false)
       return MaterialApp(

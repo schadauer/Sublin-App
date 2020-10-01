@@ -3,10 +3,9 @@
 import 'package:Sublin/models/address_class.dart';
 import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/transportation_type_enum.dart';
-import 'package:Sublin/screens/waiting_screen.dart';
 import 'package:Sublin/services/address_service.dart';
 import 'package:Sublin/services/user_service.dart';
-import 'package:Sublin/utils/add_string_to_list.dart';
+import 'package:Sublin/utils/add_city_to_user_communes_and_addresses.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_commune.dart';
 import 'package:Sublin/utils/get_list_of_address_info_from_list_of_provider_users_and_user.dart';
@@ -15,7 +14,6 @@ import 'package:Sublin/widgets/waiting_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:Sublin/models/delimiter_class.dart';
@@ -33,9 +31,7 @@ import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
 import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
-import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/utils/is_route_confirmed.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
@@ -96,7 +92,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
 
   @override
   Widget build(BuildContext context) {
-    user = Provider.of<User>(context);
+    final user = Provider.of<User>(context);
     final Routing routingService = Provider.of<Routing>(context);
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
@@ -126,6 +122,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                     ...snapshot.data[0],
                     ...snapshot.data[1]
                   ];
+                  print(snapshot.data[0]);
                   // We need to filter out taxis
                   _providerUsersList = _applyFilterFromList(
                       providerUsers: _providerUsersList,
@@ -313,7 +310,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     String station,
     AddressInfo addressInfo,
   }) async {
-    print(addressInfo.formattedAddress);
     //* Here we check if the address that the user was looking for is either
     //* 1. an address for the current list of sublin addresses
     //* 2. any other available Sublin address for the user
@@ -323,7 +319,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     //* This instance of this class will be filled with the right address information
     AddressInfo _addressInfoResult = AddressInfo();
     //* First we check if an address from the list of available addresses or
-    //* from the list of user requestedAddresses are picked
+    //* from the list of user addresses are picked
     if (_addressInfoList != null && _addressInfoList.length != 0) {
       _addressInfoList.forEach((addressInfoItem) {
         if (addressInfoItem.formattedAddress == addressInfo.formattedAddress)
@@ -332,12 +328,17 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     }
     //* Now we check if it is any other Sublin address
     if (_addressInfoResult.formattedAddress == null) {
-      //* We try to find addresses
+      //* We try to find communes of the addresses from the user input
       List<ProviderUser> _providerUsersForStartAddress =
-          await ProviderUserService().getProvidersForAnAddressAndForAUser(
-              formattedAddress: input, user: user);
+          await ProviderUserService().getProvidersFromCommunes(
+        communes: [
+          getFormattedCityFromFormattedAddress(addressInfo.formattedAddress)
+        ],
+      );
+
       if (_providerUsersForStartAddress.length > 0) {
         _addressInfoResult.formattedAddress = addressInfo.formattedAddress;
+        await _addToRequestedUserAddressesAndCommunes(_addressInfoResult);
       }
     }
     // * We lookup the addresses collection to find the nearest train station for the user or
@@ -360,7 +361,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
         else {
           _addressInfoResult.formattedAddress = addressInfo.formattedAddress;
         }
-        await _addToRequestedAddresses(_addressInfoResult, userUid);
+        await _addToRequestedUserAddressesAndCommunes(_addressInfoResult);
       }
     }
 
@@ -377,7 +378,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                     getFormattedCityFromFormattedStation(
                         addressInfo.formattedAddress)) +
                 addressInfo.formattedAddress);
-        await _addToRequestedAddresses(_addressInfoResult, userUid);
+        await _addToRequestedUserAddressesAndCommunes(_addressInfoResult);
       }
     }
 
@@ -388,6 +389,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
           MaterialPageRoute(
               builder: (context) => AddressInputScreen(
                   userUid: userUid,
+                  user: user,
                   addressInputCallback: addressInputCallback,
                   isEndAddress: isEndAddress,
                   isStartAddress: isStartAddress,
@@ -396,7 +398,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                   title: 'Bahnhof',
                   address: input,
                   message:
-                      'Diese Addresse ist derzeit leider nicht erreichbar. Bitte gib deinen nächstgelegenen Bahnhof ein:')));
+                      'Für diese Addresse gibt es noch keinen Zubringerdienst zum Bahnhof. Bitte gib deinen nächstgelegenen Bahnhof bekannt, damit wir die Route zu anderen Orten berechnen können.')));
     } else {
       // If this is an available address of any kind we will set the direction and the Shared Preference
       setState(() {
@@ -412,29 +414,27 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
 
   Future<void> _removeRequestedAddressCallback(
       {AddressInfo addressInfo, String uid}) async {
-    List<String> requestedAddresses = user.requestedAddresses.cast<String>();
+    List<String> addresses = user.addresses;
     List<String> updatedRequestAddresses;
-    updatedRequestAddresses = requestedAddresses.where((requestedAddress) {
-      if (requestedAddress == addressInfo.formattedAddress)
+    updatedRequestAddresses = addresses.where((address) {
+      if (address == addressInfo.formattedAddress)
         return false;
       else
         return true;
     }).toList();
     // print(updatedRequestAddresses);
-    await UserService().updateUserDataRequestedAddresses(
-        requestedAddresses: updatedRequestAddresses, uid: uid);
+    // await UserService()
+    //     .updateUserAddressesAndCommu(addresses: updatedRequestAddresses, uid: uid);
   }
 
-  Future<void> _addToRequestedAddresses(
+  Future<void> _addToRequestedUserAddressesAndCommunes(
     AddressInfo addressInfoResult,
-    String userUid,
   ) async {
-    //* Add addresses to the requestedAddresses of the user
-    List<String> requestedAddresses = user.requestedAddresses.cast<String>();
-    requestedAddresses =
-        addStringToList(requestedAddresses, addressInfoResult.formattedAddress);
-    UserService().updateUserDataRequestedAddresses(
-        uid: userUid, requestedAddresses: requestedAddresses);
+    //* Add addresses to the addresses of the user
+    User _user = addCityToUserCommunesAndAddresses(
+        formattedAddress: addressInfoResult.formattedAddress, user: user);
+    UserService().updateUserAddressesAndCommunes(
+        uid: user.uid, addresses: _user.addresses, communes: _user.communes);
   }
 
   Future<void> _getStartAddressFromGeolocastion() async {

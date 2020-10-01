@@ -45,7 +45,6 @@ class ProviderUser {
 
   factory ProviderUser.fromJson(Map data) {
     ProviderUser defaultValues = ProviderUser();
-
     data = data ?? {};
     return ProviderUser(
       streamingOn: true,
@@ -75,8 +74,8 @@ class ProviderUser {
             }).toList(),
       addresses: (data['addresses'] == null)
           ? defaultValues.addresses
-          : data['addresses'].map<String>((postcode) {
-              return postcode.toString();
+          : data['addresses'].map<String>((address) {
+              return address.toString();
             }).toList(),
       stations: (data['stations'] == null)
           ? defaultValues.stations
@@ -95,7 +94,7 @@ class ProviderUser {
     );
   }
 
-  Map<String, dynamic> toMap(ProviderUser data) {
+  Map<String, dynamic> toJson(ProviderUser data) {
     String providerType =
         data.providerType != null ? data.providerType.toString() : '';
     String providerPlan =

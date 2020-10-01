@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:Sublin/models/provider_plan_enum.dart';
-import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,7 +34,7 @@ class ProviderUserService {
       await _database
           .collection('providers')
           .doc(uid)
-          .set(ProviderUser().toMap(providerUser));
+          .set(ProviderUser().toJson(providerUser));
     } catch (e) {
       print('setProviderUserData: $e');
     }
@@ -47,7 +46,7 @@ class ProviderUserService {
       //   await sublinLogging(Preferences.intLoggingUsers);
       // }
       await _database.collection('providers').doc(uid).set(
-            ProviderUser().toMap(data),
+            ProviderUser().toJson(data),
             SetOptions(merge: true),
           );
     } catch (e) {
@@ -61,9 +60,6 @@ class ProviderUserService {
         communes: [getFormattedCityFromFormattedAddress(formattedAddress)]);
     List<ProviderUser> providersEmailAddress =
         await getProvidersEmailOnly(email: user.email);
-    // List<ProviderUser> providersFromFormattedAddress =
-    //     await getProvidersFromFormattedAddress(
-    //         formattedAddress: formattedAddress);
     return [
       ...providersFromCommunes,
       ...providersEmailAddress,
@@ -72,7 +68,7 @@ class ProviderUserService {
   }
 
   Future<List<ProviderUser>> getProvidersFromCommunes({
-    List<dynamic> communes,
+    List<String> communes,
   }) async {
     try {
       // if (!Foundation.kReleaseMode) {
@@ -219,7 +215,7 @@ class ProviderUserService {
   }
 
   Future<void> updateTargetGroupProviderUser(
-      {String uid, List<dynamic> targetGroupList}) async {
+      {String uid, List<String> targetGroupList}) async {
     try {
       // if (!Foundation.kReleaseMode) {
       //   await sublinLogging(Preferences.intLoggingUsers);

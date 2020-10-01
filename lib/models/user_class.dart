@@ -8,9 +8,9 @@ class User {
   final String secondName;
   final String homeAddress;
   final UserType userType;
-  final List<dynamic> communes;
-  final List<dynamic> targetGroup;
-  final List<dynamic> requestedAddresses;
+  List<String> targetGroup;
+  List<String> communes;
+  List<String> addresses;
   bool isRegistrationCompleted;
 
   User({
@@ -23,7 +23,7 @@ class User {
     this.userType = UserType.user,
     this.communes = const [],
     this.targetGroup = const [],
-    this.requestedAddresses = const [],
+    this.addresses = const [],
     this.isRegistrationCompleted = false,
   });
 
@@ -37,20 +37,32 @@ class User {
     final User defaultValues = User();
     data = data ?? {};
     return User(
-        streamingOn: true,
-        uid: data['uid'] ?? defaultValues.uid,
-        email: data['email'] ?? defaultValues.email,
-        firstName: data['firstName'] ?? defaultValues.firstName,
-        secondName: data['secondName'] ?? defaultValues.secondName,
-        homeAddress: data['homeAddress'] ?? defaultValues.homeAddress,
-        userType: UserType.values.firstWhere(
-            (e) => e.toString() == 'UserType.' + (data['userType'] ?? '')),
-        isRegistrationCompleted: data['isRegistrationCompleted'] ??
-            defaultValues.isRegistrationCompleted,
-        communes: data['communes'] ?? defaultValues.communes,
-        targetGroup: data['targetGroup'] ?? defaultValues.targetGroup,
-        requestedAddresses:
-            data['requestedAddresses'] ?? defaultValues.requestedAddresses);
+      streamingOn: true,
+      uid: data['uid'] ?? defaultValues.uid,
+      email: data['email'] ?? defaultValues.email,
+      firstName: data['firstName'] ?? defaultValues.firstName,
+      secondName: data['secondName'] ?? defaultValues.secondName,
+      homeAddress: data['homeAddress'] ?? defaultValues.homeAddress,
+      userType: UserType.values.firstWhere(
+          (e) => e.toString() == 'UserType.' + (data['userType'] ?? '')),
+      isRegistrationCompleted: data['isRegistrationCompleted'] ??
+          defaultValues.isRegistrationCompleted,
+      communes: (data['communes'] == null)
+          ? defaultValues.addresses
+          : data['communes'].map<String>((commune) {
+              return commune.toString();
+            }).toList(),
+      addresses: (data['addresses'] == null)
+          ? defaultValues.addresses
+          : data['addresses'].map<String>((postcode) {
+              return postcode.toString();
+            }).toList(),
+      targetGroup: (data['targetGroup'] == null)
+          ? defaultValues.targetGroup
+          : data['targetGroup'].map<String>((target) {
+              return target.toString();
+            }).toList(),
+    );
   }
 
   Map<String, dynamic> toJson(User data) {
@@ -76,9 +88,8 @@ class User {
         'communes': data.communes ?? defaultValues.communes,
       if (data.targetGroup != null)
         'targetGroup': data.targetGroup ?? defaultValues.targetGroup,
-      if (data.requestedAddresses != null)
-        'requestedAddresses':
-            data.requestedAddresses ?? defaultValues.requestedAddresses
+      if (data.addresses != null)
+        'addresses': data.addresses ?? defaultValues.addresses
     };
   }
 }

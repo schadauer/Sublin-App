@@ -23,9 +23,6 @@ class UserService {
 
   Future<void> updateHomeAddress({String uid, String address}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('users').doc(uid).set({
         'homeAddress': address,
       }, SetOptions(merge: true));
@@ -36,9 +33,6 @@ class UserService {
 
   Future<User> getUser(String uid) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       return await _database.collection('users').doc(uid).get().then((value) {
         return User.fromJson(value.data());
       });
@@ -50,9 +44,6 @@ class UserService {
 
   Future<void> writeUserData({String uid, User data}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('users').doc(uid).set(
             User().toJson(data),
           );
@@ -71,19 +62,20 @@ class UserService {
     }
   }
 
-  Future<void> updateUserDataRequestedAddresses(
-      {String uid, List<String> requestedAddresses}) async {
+  Future<void> updateUserAddressesAndCommunes(
+      {String uid, List<String> addresses, List<String> communes}) async {
     try {
       await _database.collection('users').doc(uid).set({
-        'requestedAddresses': requestedAddresses,
+        'addresses': addresses,
+        'communes': communes,
       }, SetOptions(merge: true));
     } catch (e) {
-      print('updateUserDataRequestedAddresses $e');
+      print('updateUserAddressesAndCommunes $e');
     }
   }
 
   Future<void> updateTargetGroupUserData(
-      {String uid, List<dynamic> targetGroupList}) async {
+      {String uid, List<String> targetGroupList}) async {
     try {
       await _database.collection('users').doc(uid).set({
         'targetGroup': targetGroupList,

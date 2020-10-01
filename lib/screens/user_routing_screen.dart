@@ -79,7 +79,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                 snapshot.data[1] == routingService.endAddress) {
               if (!_isRouteAvailable()) {
                 return Scaffold(
-                    appBar: AppbarWidget(title: 'Meine aktuelle Fahrt'),
+                    appBar: AppbarWidget(title: 'Meine Fahrt'),
                     body: Center(
                       child: Padding(
                         padding: ThemeConstants.largePadding,

@@ -25,8 +25,8 @@ List<AddressInfo> getListOfAddressInfoFromListOfProviderUsersAndUser({
       }
     });
   });
-  if (user.requestedAddresses.length != 0) {
-    user.requestedAddresses.forEach((address) {
+  if (user.addresses.length != 0) {
+    user.addresses.forEach((address) {
       if (!_addressInfoList.contains(address) &&
           getFormattedCityFromFormattedAddress(localRequest?.startAddress) !=
               getFormattedCityFromFormattedAddress(address)) {
@@ -39,7 +39,7 @@ List<AddressInfo> getListOfAddressInfoFromListOfProviderUsersAndUser({
       }
     });
   }
-  // Now filter if the lcoalRequest parameter has any value
+  // Now filter if the localRequest parameter has any value
   _addressInfoListFilter = _addressInfoList.where((addressInfo) {
     if (getFormattedCityFromFormattedAddress(localRequest?.startAddress) ==
         getFormattedCityFromFormattedAddress(addressInfo.formattedAddress))

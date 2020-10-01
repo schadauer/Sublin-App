@@ -2,7 +2,7 @@
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/utils/add_string_to_list.dart';
 
-ProviderUser addCityToCommunesAndAddresses({
+ProviderUser addCityToProviderUserCommunesAndAddresses({
   String cityFormattedAddress,
   ProviderUser providerUser,
 }) {

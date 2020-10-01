@@ -66,7 +66,7 @@ class UserShowRoutingScreen extends StatelessWidget {
           isProvider: user.userType == UserType.provider,
           setNavigationIndex: 1,
         ),
-        appBar: AppbarWidget(title: 'Meine aktuelle Fahrt'),
+        appBar: AppbarWidget(title: 'Meine Fahrt'),
         body: Container(
           child: SafeArea(
             child: Stack(
