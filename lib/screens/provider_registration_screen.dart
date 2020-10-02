@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:Sublin/models/address_info_class.dart';
-import 'package:Sublin/utils/add_city_to_provider_user_communes_and_addresses.dart';
-import 'package:Sublin/utils/add_city_to_station_and_communes.dart';
-import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
+import 'package:Sublin/screens/test_period_screen.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import 'package:Sublin/utils/add_city_to_provider_user_communes_and_addresses.dart';
+import 'package:Sublin/utils/add_city_to_station_and_communes.dart';
+import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/provider_booking_screen.dart';
@@ -83,16 +83,11 @@ class _ProviderRegistrationScreenState
   }
 
   @override
-  void dispose() {
-    _pageViewController.dispose();
-    // _routingStream ?? _routingStream.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
+
+    print(ProviderUser().toJson(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -219,7 +214,7 @@ class _ProviderRegistrationScreenState
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(
+                                  AutoSizeText(
                                     'Grüße nach ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
                                     style:
                                         Theme.of(context).textTheme.headline3,
@@ -229,25 +224,34 @@ class _ProviderRegistrationScreenState
                                     height: 15,
                                   ),
                                   if (!_checkRoutingData.endAddressAvailable)
-                                    Text(
+                                    AutoSizeText(
                                         'Für ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
                                   if (_checkRoutingData.endAddressAvailable)
-                                    Text(
+                                    AutoSizeText(
                                         '${_checkRoutingData.sublinEndStep.provider.providerName} hat sich bereits für ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} registriert und führt voraussichtlich Shuttleservice vom und zum Bahnhof durch.'),
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  AutoSizeText(
-                                    'Bitte wähle die Leistung an, die du anbieten möchtest.',
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                  ),
+                                  if (!_checkRoutingData.endAddressAvailable &&
+                                      user.userType == UserType.sponsor)
+                                    AutoSizeText(
+                                      'Sobald sich ein Anbieter für dieses Gebiet registriert hat, werden wir dich benachrichtigen.',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
+                                  if (!_checkRoutingData.endAddressAvailable &&
+                                      user.userType != UserType.sponsor)
+                                    AutoSizeText(
+                                      'Bitte wähle die Leistung an, die du anbieten möchtest.',
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                    ),
                                   SizedBox(
                                     height: 15,
                                   ),
                                   if (_checkRoutingData.endAddressAvailable &&
                                       user.userType == UserType.sponsor)
-                                    ProviderSelectionWidget(
+                                    ProviderTypeSelectionWidget(
                                       title:
                                           'Zwischen Bahnhof und deiner Betriebsaddresse',
                                       text: user.userType == UserType.provider
@@ -256,14 +260,14 @@ class _ProviderRegistrationScreenState
                                       caption: '',
                                       providerTypeSelection:
                                           ProviderType.sponsorShuttle,
-                                      selectionFunction:
-                                          _providerSelectionFunction,
+                                      selectionCallback:
+                                          _providerTypeSelectionCallback,
                                       active: ProviderType.sponsorShuttle ==
                                           _providerUser.providerType,
                                     ),
                                   if (_checkRoutingData.endAddressAvailable &&
                                       user.userType == UserType.sponsor)
-                                    ProviderSelectionWidget(
+                                    ProviderTypeSelectionWidget(
                                       title:
                                           'Gesamtes Gemeindegebiet ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}',
                                       text: user.userType == UserType.provider
@@ -272,32 +276,33 @@ class _ProviderRegistrationScreenState
                                       caption: '',
                                       providerTypeSelection:
                                           ProviderType.sponsor,
-                                      selectionFunction:
-                                          _providerSelectionFunction,
+                                      selectionCallback:
+                                          _providerTypeSelectionCallback,
                                       active: ProviderType.sponsor ==
                                           _providerUser.providerType,
                                     ),
-                                  if (!_checkRoutingData.endAddressAvailable)
-                                    ProviderSelectionWidget(
+                                  if (!_checkRoutingData.endAddressAvailable &&
+                                      user.userType != UserType.sponsor)
+                                    ProviderTypeSelectionWidget(
                                       title: 'Taxi- oder Mietwagenservice',
                                       text:
                                           'vom Bahnhof zu den Adressen in ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)}. Gewerbeberechtigung notwendig.',
                                       providerTypeSelection: ProviderType.taxi,
-                                      selectionFunction:
-                                          _providerSelectionFunction,
+                                      selectionCallback:
+                                          _providerTypeSelectionCallback,
                                       active: ProviderType.taxi ==
                                           _providerUser.providerType,
                                     ),
                                   if (user.userType == UserType.provider)
-                                    ProviderSelectionWidget(
+                                    ProviderTypeSelectionWidget(
                                       title: 'Shuttleservice',
                                       text: user.userType == UserType.provider
                                           ? 'Du bietest ein Shuttleservice zwischen Bahnhof und deiner Adresse an.'
                                           : '${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.company)} bietet ein eigenes Transferservice zwischen Bahnhof und den Privatadressen des Gemeindegebiets ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} durch.',
                                       providerTypeSelection:
                                           ProviderType.shuttle,
-                                      selectionFunction:
-                                          _providerSelectionFunction,
+                                      selectionCallback:
+                                          _providerTypeSelectionCallback,
                                       active: ProviderType.shuttle ==
                                           _providerUser.providerType,
                                     ),
@@ -309,65 +314,65 @@ class _ProviderRegistrationScreenState
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
-                                  RaisedButton(
-                                    onPressed: _providerUser.providerType !=
-                                            null
-                                        ? () {
-                                            // Add the taxi partner
-                                            _providerUser.partners =
-                                                _providerUser.providerType ==
-                                                            ProviderType
-                                                                .sponsor ||
-                                                        _providerUser
-                                                                .providerType ==
-                                                            ProviderType
-                                                                .sponsorShuttle
-                                                    ? [
-                                                        _checkRoutingData
-                                                            .sublinEndStep
-                                                            .provider
-                                                            .id
-                                                      ]
-                                                    : [];
-                                            // If sponsor than add the city address
-
-                                            String cityFormattedAddress =
-                                                getFormattedCityFromFormattedAddress(
-                                                    _checkRoutingData
-                                                        .endAddress);
-                                            if (_providerUser.providerType ==
-                                                ProviderType.sponsor)
-                                              setState(() {
-                                                _providerUser =
-                                                    addCityToProviderUserCommunesAndAddresses(
-                                                        providerUser:
-                                                            _providerUser,
-                                                        cityFormattedAddress:
-                                                            getFormattedCityFromFormattedAddress(
-                                                                _checkRoutingData
-                                                                    .endAddress));
-                                              });
-
-                                            // if (_providerUser.providerType ==
-                                            //         ProviderType.sponsor &&
-                                            //     cityFormattedAddress != '' &&
-                                            //     !_providerUser.addresses
-                                            //         .contains(
-                                            //             cityFormattedAddress))
-
-                                            //   _providerUser.addresses.add(
-                                            //       getReadableCityFormattedAddress(
-                                            //           _checkRoutingData
-                                            //               .endAddress));
-
-                                            _pageViewController.nextPage(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                curve: Curves.easeOut);
-                                          }
-                                        : null,
-                                    child: Text('Weiter'),
-                                  )
+                                  if (!_checkRoutingData.endAddressAvailable &&
+                                      user.userType == UserType.sponsor)
+                                    RaisedButton(
+                                        onPressed: () async {
+                                          //* This is for the test period to redirect users to the TestPeriodScreen
+                                          UserService()
+                                              .updateIsTestPeriodRegistrationCompleted(
+                                                  uid: user.uid,
+                                                  isTestPeriodRegistrationCompleted:
+                                                      true);
+                                          Navigator.pushReplacementNamed(
+                                              context,
+                                              TestPeriodScreen.routeName);
+                                        },
+                                        child:
+                                            Text('Vorübergehend abschließen')),
+                                  if (!_checkRoutingData.endAddressAvailable &&
+                                      user.userType != UserType.sponsor)
+                                    RaisedButton(
+                                      onPressed: _providerUser.providerType !=
+                                              null
+                                          ? () {
+                                              // Add the taxi partner
+                                              _providerUser
+                                                  .partners = _providerUser
+                                                              .providerType ==
+                                                          ProviderType
+                                                              .sponsor ||
+                                                      _providerUser
+                                                              .providerType ==
+                                                          ProviderType
+                                                              .sponsorShuttle
+                                                  ? [
+                                                      _checkRoutingData
+                                                          .sublinEndStep
+                                                          .provider
+                                                          .id
+                                                    ]
+                                                  : [];
+                                              if (_providerUser.providerType ==
+                                                  ProviderType.sponsor)
+                                                setState(() {
+                                                  _providerUser =
+                                                      addCityToProviderUserCommunesAndAddresses(
+                                                          providerUser:
+                                                              _providerUser,
+                                                          cityFormattedAddress:
+                                                              getFormattedCityFromFormattedAddress(
+                                                                  _checkRoutingData
+                                                                      .endAddress));
+                                                });
+                                              _pageViewController.nextPage(
+                                                  duration: Duration(
+                                                      milliseconds: 300),
+                                                  curve: Curves.easeOut);
+                                            }
+                                          : null,
+                                      child: Text('Weiter'),
+                                    )
                                 ],
                               )
                             ],
@@ -740,31 +745,32 @@ class _ProviderRegistrationScreenState
                                 'Wer kann Shuttleservices in Anspruch nehmen?',
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
-                              ProviderSelectionWidget(
+                              ProviderTypeSelectionWidget(
                                 title: 'Nur bestimmte Personen',
                                 text:
                                     'Nur Personen mit einer bestimmten E-Mail-Adressen. Du kannst jederzeit E-Mails hinzufügen oder entfernen',
-                                buttonFunction: ProviderPlan.emailOnly ==
-                                        _providerUser.providerPlan
-                                    ? pushToEmailListScreen
-                                    : null,
+                                buttonSelectionCallback:
+                                    ProviderPlan.emailOnly ==
+                                            _providerUser.providerPlan
+                                        ? pushToEmailListScreen
+                                        : null,
                                 buttonText:
                                     _providerUser.targetGroup.length == 0
                                         ? 'E-Mails hinzufügen'
                                         : 'E-Mails verwalten',
                                 providerPlanSelection: ProviderPlan.emailOnly,
-                                selectionFunction:
+                                selectionCallback:
                                     _providerPlanSelectionFunction,
                                 active: ProviderPlan.emailOnly ==
                                     _providerUser.providerPlan,
                               ),
-                              ProviderSelectionWidget(
+                              ProviderTypeSelectionWidget(
                                 title: 'Alle',
                                 text: user.userType == UserType.provider
                                     ? 'Alle Personen, die den Service zwischen Bahnhof und deiner Address in ${getReadableAddressPartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beautragen.'
                                     : 'Alle Personen, die den Transferservice zwischen Bahnhof und den Adressen des Gemeindegebiets ${getReadableAddressPartOfFormattedAddress(_providerUser.addresses[0], Delimiter.city)} beauftragen',
                                 providerPlanSelection: ProviderPlan.all,
-                                selectionFunction:
+                                selectionCallback:
                                     _providerPlanSelectionFunction,
                                 active: ProviderPlan.all ==
                                     _providerUser.providerPlan,
@@ -784,6 +790,7 @@ class _ProviderRegistrationScreenState
                                             _providerUser.providerPlan ==
                                                 ProviderPlan.all
                                         ? () async {
+                                            _pageViewController.dispose();
                                             _providerUser.operationRequested =
                                                 true;
                                             await ProviderUserService()
@@ -839,15 +846,18 @@ class _ProviderRegistrationScreenState
     });
   }
 
-  void _providerSelectionFunction(ProviderType selection) {
+  void _providerTypeSelectionCallback(ProviderType selection) {
     setState(() {
       _providerUser.providerType = selection;
+      if (selection == ProviderType.taxi)
+        _providerUser.providerPlan = ProviderPlan.all;
       _pageSteps = 3;
     });
   }
 
   void _addressSelectionFunction({
     String userUid,
+    User user,
     String input,
     String id,
     bool isCompany,
@@ -866,15 +876,18 @@ class _ProviderRegistrationScreenState
 
   void _stationSelectionFunction({
     String userUid,
+    User user,
     String input,
     String id,
     bool isCompany,
     bool isStartAddress,
     bool isEndAddress,
     ProviderUser providerUser,
+    AddressInfo addressInfo,
     String station,
   }) {
     _station = input;
+    print(_station);
     _setStationFromProviderAddressFunction(
       station: _station,
       delimiter: Delimiter.city,
@@ -883,12 +896,14 @@ class _ProviderRegistrationScreenState
 
   void _citySelectionCallback({
     String userUid,
+    User user,
     String input,
     String id,
     bool isCompany,
     bool isStartAddress,
     bool isEndAddress,
     ProviderUser providerUser,
+    AddressInfo addressInfo,
     String station,
   }) {
     setState(() {
@@ -959,7 +974,10 @@ class _ProviderRegistrationScreenState
       // Get the formatted city for the communes
       _providerUser.communes = addStringToList(_providerUser.communes,
           getFormattedCityFromFormattedAddress(userAddress));
-      // _providerUser.addresses.add(userAddress);
+      //* If it's a taxi add the city address to the providerUser addresses
+      if (_providerUser.providerType == ProviderType.taxi) ;
+      _providerUser.addresses = addStringToList(_providerUser.addresses,
+          getFormattedCityFromFormattedAddress(userAddress));
     });
   }
 

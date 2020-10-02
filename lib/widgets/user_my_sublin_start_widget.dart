@@ -7,7 +7,6 @@ import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
-import 'package:Sublin/utils/get_time_format.dart';
 
 class UserMySublinStartWidget extends StatelessWidget {
   final String startAddress;
@@ -26,8 +25,10 @@ class UserMySublinStartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AddressInfo _addressInfo =
+        _getAddressInfoFromFormattedAddress(addressInfoList, startAddress);
     return SizedBox(
-      height: 100,
+      height: 130,
       child: Stack(children: <Widget>[
         SizedBox(
           height: double.infinity,
@@ -48,22 +49,46 @@ class UserMySublinStartWidget extends StatelessWidget {
                 ),
                 Expanded(
                   flex: 6,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AutoSizeText(
-                        'Mein Standort',
-                        style: Theme.of(context).textTheme.headline1,
-                      ),
-                      AutoSizeText(
-                        '${getReadableAddressFromFormattedAddress(startAddress)}',
-                        style: Theme.of(context).textTheme.bodyText1,
-                        maxLines: 2,
-                        minFontSize: 16,
-                        // textAlign: TextAlign.center,
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AutoSizeText(
+                          'Mein Standort',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                        AutoSizeText(
+                          '${getReadableAddressFromFormattedAddress(startAddress)}',
+                          style: Theme.of(context).textTheme.headline2,
+                          maxLines: 2,
+                          minFontSize: 16,
+                          // textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        if (_addressInfo.transportationType ==
+                            TransportationType.public)
+                          AutoSizeText(
+                            'Öffentlicher Verkehr',
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                        if (_addressInfo.transportationType ==
+                            TransportationType.privat)
+                          AutoSizeText(
+                            'Leider kein Sublin Service zum Bahnhof',
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                        if (_addressInfo.transportationType ==
+                            TransportationType.sublin)
+                          AutoSizeText(
+                            'Shuttle Service zum Bahnhof',
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
@@ -108,13 +133,23 @@ class UserMySublinStartWidget extends StatelessWidget {
           ),
         ),
         StepIconWidget(
-          transportationType: TransportationType.public,
+          transportationType: _addressInfo.transportationType,
           isStartAddress: true,
-          isEndAddress: false,
+          isEndAddress: true,
           icon: Icons.train,
           iconSize: 40.0,
         ),
       ]),
     );
   }
+}
+
+AddressInfo _getAddressInfoFromFormattedAddress(
+    List<AddressInfo> addressInfoList, String formattedAddress) {
+  AddressInfo _addressInfo;
+  addressInfoList.forEach((addressInfo) {
+    if (addressInfo.formattedAddress.contains(formattedAddress))
+      _addressInfo = addressInfo;
+  });
+  return _addressInfo;
 }

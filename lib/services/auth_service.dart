@@ -48,9 +48,7 @@ class AuthService {
       //   sublinLogging(Preferences.intLoggingUsers);
       // }
       await authUser.sendEmailVerification();
-
       ProviderUser providerUser = ProviderUser(uid: authUser.uid);
-      print(ProviderUser().toJson(providerUser));
       if (userType == UserType.provider || userType == UserType.sponsor) {
         await ProviderUserService()
             .setProviderUserData(providerUser: providerUser, uid: authUser.uid);

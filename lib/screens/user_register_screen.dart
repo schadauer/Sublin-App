@@ -97,7 +97,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                             height: 20,
                           ),
                           AutoSizeText(
-                            'Diese App soll dir in der Zukunft ermöglichen, bequem ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase. Melde dich an und gib deine Plätze bekannt, die du ohne eigenes Auto erreichen willst. Damit können wir gezielter dort nach Anbietern suchen, wo du sie benötigst.',
+                            'Diese App soll dir in der Zukunft ermöglichen, bequem ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase mit einer ausgewählten Testgruppe. Du kannst dich jedoch jetzt schon anmelden. Wir informieren dich dann, sobald das Service für dich verfügbar ist',
                             style: Theme.of(context).textTheme.bodyText1,
                             maxLines: 8,
                           ),
@@ -311,27 +311,27 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                       SizedBox(
                         height: 15,
                       ),
-                      ProviderSelectionWidget(
+                      ProviderTypeSelectionWidget(
                         title: 'Fahrgast',
                         text:
                             'Du möchtest bequem ohne eigenes Auto überall hin mit öffentlichen Verkehr und Sublin für die "letzte Meile".',
-                        selectionFunction: typeSelectionFunction,
+                        selectionCallback: typeSelectionFunction,
                         userType: UserType.user,
                         active: userType == UserType.user,
                       ),
-                      ProviderSelectionWidget(
+                      ProviderTypeSelectionWidget(
                         title: 'Anbieter',
                         text:
                             'Du bietest Transferdienste an, entweder zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets.',
-                        selectionFunction: typeSelectionFunction,
+                        selectionCallback: typeSelectionFunction,
                         userType: UserType.provider,
                         active: userType == UserType.provider,
                       ),
-                      ProviderSelectionWidget(
+                      ProviderTypeSelectionWidget(
                         title: 'Sponsor',
                         text:
                             'Du führst selbst keine Personentransfers durch und beauftragst einen Fahrtendienst.',
-                        selectionFunction: typeSelectionFunction,
+                        selectionCallback: typeSelectionFunction,
                         userType: UserType.sponsor,
                         active: userType == UserType.sponsor,
                       ),

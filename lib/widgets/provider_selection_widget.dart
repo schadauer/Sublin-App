@@ -3,26 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type_enum.dart';
 
-class ProviderSelectionWidget extends StatelessWidget {
+class ProviderTypeSelectionWidget extends StatelessWidget {
   final String title;
   final String text;
   final String caption;
-  final Function buttonFunction;
+  final Function buttonSelectionCallback;
   final String buttonText;
   final ProviderType providerTypeSelection;
   final ProviderPlan providerPlanSelection;
   final UserType userType;
-  final Function selectionFunction;
+  final Function selectionCallback;
   final bool active;
-  const ProviderSelectionWidget({
+  const ProviderTypeSelectionWidget({
     this.title,
     this.text = '',
     this.caption,
-    this.buttonFunction,
+    this.buttonSelectionCallback,
     this.buttonText: '',
     this.providerTypeSelection,
     this.userType,
-    this.selectionFunction,
+    this.selectionCallback,
     this.providerPlanSelection,
     this.active,
     Key key,
@@ -34,7 +34,7 @@ class ProviderSelectionWidget extends StatelessWidget {
       color: Theme.of(context).accentColor,
       child: InkWell(
         onTap: () {
-          selectionFunction(
+          selectionCallback(
               userType ?? providerTypeSelection ?? providerPlanSelection);
         },
         child: Padding(
@@ -64,7 +64,7 @@ class ProviderSelectionWidget extends StatelessWidget {
                         if (text != '')
                           Text(text,
                               style: Theme.of(context).textTheme.caption),
-                        if (buttonFunction != null)
+                        if (buttonSelectionCallback != null)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
@@ -75,7 +75,7 @@ class ProviderSelectionWidget extends StatelessWidget {
                                   ),
                                   RaisedButton(
                                       onPressed: () {
-                                        buttonFunction(context);
+                                        buttonSelectionCallback(context);
                                       },
                                       child: Text(buttonText)),
                                 ],

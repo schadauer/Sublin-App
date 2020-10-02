@@ -1,8 +1,9 @@
+import 'package:Sublin/models/versioning_class.dart';
+import 'package:Sublin/screens/test_period_screen.dart';
+import 'package:Sublin/screens/waiting_screen.dart';
+import 'package:Sublin/services/provider_user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:package_info/package_info.dart';
-
-import 'package:Sublin/models/versioning_class.dart';
 import 'package:Sublin/screens/provider_settings_screen.dart';
 import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
@@ -32,6 +33,9 @@ class _InitRoutesState extends State<InitRoutes> {
     final User user = Provider.of<User>(context);
     final Routing routingService = Provider.of<Routing>(context);
     final ProviderUser providerUser = Provider.of<ProviderUser>(context);
+    final Versioning versioning = Provider.of<Versioning>(context);
+
+    print(versioning.latestVersion);
 
     if (user.streamingOn == false && providerUser.streamingOn == false)
       return MaterialApp(
@@ -39,33 +43,53 @@ class _InitRoutesState extends State<InitRoutes> {
         home: Loading(),
       );
     return MaterialApp(
-      routes: {
-        ProviderBookingScreen.routeName: (context) => ProviderBookingScreen(),
-        ProviderPartnerScreen.routeName: (context) => ProviderPartnerScreen(),
-        ProviderTargetGroupScreen.routeName: (context) =>
-            ProviderTargetGroupScreen(),
-        ProviderSettingsScreen.routeName: (context) => ProviderSettingsScreen(),
-        UserProfileScreen.routeName: (context) => UserProfileScreen(),
-        UserMySublinScreen.routeName: (context) => UserMySublinScreen(),
-        ProviderRegistrationScreen.routeName: (context) =>
-            ProviderRegistrationScreen(),
-        UserRoutingScreen.routeName: (context) => UserRoutingScreen(),
-        EmailListScreen.routeName: (context) => EmailListScreen(),
-      },
-      title: 'Sublin',
-      theme: themeData(context),
-      home: (user.userType != UserType.user)
-          ? providerUser.operationRequested
-              ? ProviderBookingScreen()
-              : ProviderRegistrationScreen()
-          : routingService.booked == true && !isRouteCompleted(routingService)
-              ? UserRoutingScreen(
-                  setNavigationIndex: 1,
-                )
-              : UserMySublinScreen(
-                  setNavigationIndex: 0,
-                ),
-    );
+        routes: {
+          ProviderBookingScreen.routeName: (context) => ProviderBookingScreen(),
+          ProviderPartnerScreen.routeName: (context) => ProviderPartnerScreen(),
+          ProviderTargetGroupScreen.routeName: (context) =>
+              ProviderTargetGroupScreen(),
+          ProviderSettingsScreen.routeName: (context) =>
+              ProviderSettingsScreen(),
+          UserProfileScreen.routeName: (context) => UserProfileScreen(),
+          UserMySublinScreen.routeName: (context) => UserMySublinScreen(),
+          ProviderRegistrationScreen.routeName: (context) =>
+              ProviderRegistrationScreen(),
+          UserRoutingScreen.routeName: (context) => UserRoutingScreen(),
+          EmailListScreen.routeName: (context) => EmailListScreen(),
+          TestPeriodScreen.routeName: (context) => TestPeriodScreen(),
+        },
+        title: 'Sublin',
+        theme: themeData(context),
+        home: FutureBuilder<List<ProviderUser>>(
+            future: ProviderUserService()
+                .getProvidersWithProviderPlanEmailOnly(email: user.email),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<ProviderUser>> providerUserList) {
+              if (providerUserList.hasData) {
+                //* This is temporary as we need to restrict access for only
+                //* permitted users and exclude sponsors
+                return (user.isTestPeriodRegistrationCompleted == true ||
+                        (providerUserList.data.length == 0 &&
+                            user.userType == UserType.user))
+                    ? TestPeriodScreen()
+                    : (user.userType != UserType.user)
+                        ? providerUser.operationRequested
+                            ? ProviderBookingScreen()
+                            : ProviderRegistrationScreen()
+                        : routingService.booked == true &&
+                                !isRouteCompleted(routingService)
+                            ? UserRoutingScreen(
+                                setNavigationIndex: 1,
+                              )
+                            : UserMySublinScreen(
+                                setNavigationIndex: 0,
+                              );
+              } else {
+                return WaitingScreen(
+                  title: 'Sublin, auf geht\'s',
+                );
+              }
+            }));
   }
 
   showProviderMenu() {
@@ -75,4 +99,6 @@ class _InitRoutesState extends State<InitRoutes> {
           return Text('Appbar');
         });
   }
+
+  bool _isValidVersion() {}
 }

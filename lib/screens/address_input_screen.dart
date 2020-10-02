@@ -5,7 +5,6 @@ import 'package:Sublin/theme/theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/services/google_map_service.dart';
-
 import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/services/geolocation_service.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
@@ -139,11 +138,11 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                     addressTypes: widget.addressTypes);
 
                             List<AddressInfo> toAddressList;
-
-                            toAddressList = result.map((item) {
-                              return AddressInfo(
-                                  formattedAddress: item['name']);
-                            }).toList();
+                            if (result != null || result?.length == 0)
+                              toAddressList = result.map((item) {
+                                return AddressInfo(
+                                    formattedAddress: item['name']);
+                              }).toList();
 
                             if (this.mounted) {
                               setState(() {
@@ -192,9 +191,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                   addressInfo: _combinedAddressInfoList[index],
                                   user:
                                       widget.user != null ? widget.user : null,
-                                  // id: _combinedAddressInfoList[index]['id'],
-                                  // isCompany: _combinedAddressInfoList[index]
-                                  //     ['isCompany'],
                                   isStartAddress: widget.isStartAddress,
                                   isEndAddress: widget.isEndAddress,
                                   providerUser: widget.providerUser,
@@ -205,10 +201,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                               child: ListTile(
                                   contentPadding:
                                       EdgeInsets.symmetric(horizontal: 25),
-                                  // leading: Icon(_combinedAddressInfoList[index]
-                                  //         ['isCompany']
-                                  //     ? Icons.business
-                                  //     : Icons.home),
                                   title: Text(
                                       getReadableAddressFromFormattedAddress(
                                           _combinedAddressInfoList[index]

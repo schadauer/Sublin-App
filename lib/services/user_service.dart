@@ -31,6 +31,17 @@ class UserService {
     }
   }
 
+  Future<void> updateIsTestPeriodRegistrationCompleted(
+      {String uid, bool isTestPeriodRegistrationCompleted}) async {
+    try {
+      await _database.collection('users').doc(uid).set({
+        'isTestPeriodRegistrationCompleted': isTestPeriodRegistrationCompleted,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('updateHomeAddress: $e');
+    }
+  }
+
   Future<User> getUser(String uid) async {
     try {
       return await _database.collection('users').doc(uid).get().then((value) {

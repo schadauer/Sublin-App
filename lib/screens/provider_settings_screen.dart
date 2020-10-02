@@ -246,6 +246,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
 
   Future<void> _citySelectionCallback({
     String userUid,
+    User user,
     String input,
     String id,
     bool isCompany,

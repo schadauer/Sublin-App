@@ -12,6 +12,7 @@ class User {
   List<String> communes;
   List<String> addresses;
   bool isRegistrationCompleted;
+  bool isTestPeriodRegistrationCompleted;
 
   User({
     this.uid = '',
@@ -21,10 +22,11 @@ class User {
     this.secondName = '',
     this.homeAddress = '',
     this.userType = UserType.user,
-    this.communes = const [],
-    this.targetGroup = const [],
-    this.addresses = const [],
+    this.communes = const <String>[],
+    this.targetGroup = const <String>[],
+    this.addresses = const <String>[],
     this.isRegistrationCompleted = false,
+    this.isTestPeriodRegistrationCompleted = false,
   });
 
   factory User.initialData() {
@@ -47,15 +49,18 @@ class User {
           (e) => e.toString() == 'UserType.' + (data['userType'] ?? '')),
       isRegistrationCompleted: data['isRegistrationCompleted'] ??
           defaultValues.isRegistrationCompleted,
+      isTestPeriodRegistrationCompleted:
+          data['isTestPeriodRegistrationCompleted'] ??
+              defaultValues.isTestPeriodRegistrationCompleted,
       communes: (data['communes'] == null)
-          ? defaultValues.addresses
+          ? defaultValues.communes
           : data['communes'].map<String>((commune) {
               return commune.toString();
             }).toList(),
       addresses: (data['addresses'] == null)
           ? defaultValues.addresses
-          : data['addresses'].map<String>((postcode) {
-              return postcode.toString();
+          : data['addresses'].map<String>((address) {
+              return address.toString();
             }).toList(),
       targetGroup: (data['targetGroup'] == null)
           ? defaultValues.targetGroup
@@ -84,6 +89,10 @@ class User {
       if (data.isRegistrationCompleted != null)
         'isRegistrationCompleted': data.isRegistrationCompleted ??
             defaultValues.isRegistrationCompleted,
+      if (data.isTestPeriodRegistrationCompleted != null)
+        'isTestPeriodRegistrationCompleted':
+            data.isTestPeriodRegistrationCompleted ??
+                defaultValues.isTestPeriodRegistrationCompleted,
       if (data.communes != null)
         'communes': data.communes ?? defaultValues.communes,
       if (data.targetGroup != null)

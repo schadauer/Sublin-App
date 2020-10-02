@@ -1,4 +1,3 @@
-// --------------- TODO -----------------
 // This needs to repace the boolean values at some point
 enum RoutingStatus {
   initial,

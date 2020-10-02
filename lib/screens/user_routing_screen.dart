@@ -1,10 +1,6 @@
-import 'package:Sublin/models/routing_step_type_enum.dart';
 import 'package:Sublin/screens/user_show_routing_screen.dart';
 import 'package:Sublin/screens/waiting_screen.dart';
 import 'package:Sublin/utils/is_route_confirmed.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/services.dart';
-import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
@@ -15,11 +11,9 @@ import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
-import 'package:Sublin/widgets/user_routing_start_end_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/routing_class.dart';
-import 'package:Sublin/widgets/step_widget.dart';
 
 class UserRoutingScreen extends StatefulWidget {
   const UserRoutingScreen({Key key, this.setNavigationIndex}) : super(key: key);
@@ -49,7 +43,11 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
               routingService.isPubliclyAccessibleEndAddress == false ||
           routingService.endAddressAvailable == false &&
               routingService.isPubliclyAccessibleEndAddress == true;
-      return startAddressIsAvailable == true && endAddressIsAvailable == true;
+      bool bothAddressesareNotSublin = !routingService.endAddressAvailable &&
+          !routingService.startAddressAvailable;
+      return startAddressIsAvailable == true &&
+          endAddressIsAvailable == true &&
+          !bothAddressesareNotSublin;
     }
 
     bool _isRouteExpired() {
@@ -69,7 +67,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
         ]),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (isRouteConfirmed(routingService)) {
+            if (isRouteConfirmed(routingService) && _isRouteAvailable()) {
               return UserShowRoutingScreen(
                   user: user,
                   routingService: routingService,
@@ -95,7 +93,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                               height: 20,
                             ),
                             Text(
-                              'Für diese Adresse gibt es leider noch kein Sublin-Service.',
+                              'Für Start- und Endaddresse gibt es derzeit leider noch kein Sublin-Service.',
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(

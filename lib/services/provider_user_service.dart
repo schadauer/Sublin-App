@@ -56,10 +56,11 @@ class ProviderUserService {
 
   Future<List<ProviderUser>> getProvidersForAnAddressAndForAUser(
       {String formattedAddress, User user}) async {
-    List<ProviderUser> providersFromCommunes = await getProvidersFromCommunes(
-        communes: [getFormattedCityFromFormattedAddress(formattedAddress)]);
+    List<ProviderUser> providersFromCommunes =
+        await getProvidersFromCommunesWithProviderPlanAll(
+            communes: [getFormattedCityFromFormattedAddress(formattedAddress)]);
     List<ProviderUser> providersEmailAddress =
-        await getProvidersEmailOnly(email: user.email);
+        await getProvidersWithProviderPlanEmailOnly(email: user.email);
     return [
       ...providersFromCommunes,
       ...providersEmailAddress,
@@ -67,7 +68,7 @@ class ProviderUserService {
     ];
   }
 
-  Future<List<ProviderUser>> getProvidersFromCommunes({
+  Future<List<ProviderUser>> getProvidersFromCommunesWithProviderPlanAll({
     List<String> communes,
   }) async {
     try {
@@ -93,7 +94,7 @@ class ProviderUserService {
     }
   }
 
-  Future<List<ProviderUser>> getProvidersEmailOnly({
+  Future<List<ProviderUser>> getProvidersWithProviderPlanEmailOnly({
     String email,
   }) async {
     try {

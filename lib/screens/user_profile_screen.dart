@@ -63,28 +63,45 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 )),
             if (user.isRegistrationCompleted != true)
               Card(
-                  child: Padding(
-                padding: ThemeConstants.mediumPadding,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AutoSizeText(
-                      'Registrierung noch nicht abgeschlossen',
-                      style: Theme.of(context).textTheme.headline1,
-                      maxLines: 2,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                child: Padding(
+                    padding: ThemeConstants.largePadding,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        RaisedButton(
-                            child: AutoSizeText('Jetzt abschließen'),
-                            onPressed: () => Navigator.pushNamed(
-                                context, ProviderRegistrationScreen.routeName)),
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: ThemeConstants.mediumPadding,
+                            child: Text(
+                              'Status',
+                              textAlign: TextAlign.end,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: ThemeConstants.mediumPadding,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Noch nicht abgeschlossen'),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                RaisedButton(
+                                    child: AutoSizeText('Jetzt abschließen'),
+                                    onPressed: () => Navigator.pushNamed(
+                                        context,
+                                        ProviderRegistrationScreen.routeName)),
+                              ],
+                            ),
+                          ),
+                        )
                       ],
-                    )
-                  ],
-                ),
-              )),
+                    )),
+              ),
             Column(
               children: [
                 UserPersonalDataCard(user: user, cardType: CardType.email),

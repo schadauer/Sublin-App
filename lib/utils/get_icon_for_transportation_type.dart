@@ -22,6 +22,12 @@ Icon getIconForTransportationType(TransportationType transportationType) {
           color: Colors.white,
         );
         break;
+      case TransportationType.privat:
+        return Icon(
+          Icons.directions_car,
+          color: Colors.white,
+        );
+        break;
     }
   } else
     return null;

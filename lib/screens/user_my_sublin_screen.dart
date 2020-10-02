@@ -61,9 +61,6 @@ class UserMySublinScreen extends StatefulWidget {
 
 class _UserMySublinScreenState extends State<UserMySublinScreen>
     with WidgetsBindingObserver {
-  int _lengthProviderUsersOfAvailables;
-  int _lengthProviderUsersWithUnavailables;
-  GeolocationStatus _geolocationStatus;
   Request _localRequest = Request();
   List<ProviderUser> _providerUsersList;
   List<AddressInfo> _addressInfoList;
@@ -99,7 +96,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
 
     final double itemHeight =
         (size.height > 700 ? 700 : size.height - kToolbarHeight - 24) /
-            (size.height > 700 ? 2.8 : 2.4);
+            (size.height > 700 ? 2.5 : 2.2);
     final double itemWidth = size.width / 2;
     return Scaffold(
       bottomNavigationBar: NavigationBarWidget(
@@ -112,8 +109,10 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
               // future: ProviderService().getProviders(communes: user.communes),
               future: Future.wait([
                 ProviderUserService()
-                    .getProvidersFromCommunes(communes: user.communes),
-                ProviderUserService().getProvidersEmailOnly(email: user.email),
+                    .getProvidersFromCommunesWithProviderPlanAll(
+                        communes: user.communes),
+                ProviderUserService()
+                    .getProvidersWithProviderPlanEmailOnly(email: user.email),
               ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done &&
@@ -122,7 +121,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                     ...snapshot.data[0],
                     ...snapshot.data[1]
                   ];
-                  print(snapshot.data[0]);
+
                   // We need to filter out taxis
                   _providerUsersList = _applyFilterFromList(
                       providerUsers: _providerUsersList,
@@ -139,8 +138,9 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                   //* We need it for the address search as suggestions
                   _addressInfoList =
                       getListOfAddressInfoFromListOfProviderUsersAndUser(
-                          providerUserList: _providerUsersList, user: user);
-
+                    providerUserList: _providerUsersList,
+                    user: user,
+                  );
                   //* This is for the end address selection which should only show addresses
                   //* that are not within the bounds of the start address
                   _addressInfoListWithCurrentPositionFilter =
@@ -240,7 +240,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                               index];
                                       MyCardFormat _myCardFormat =
                                           MyCardFormat.available;
-
                                       return UserMySublinEndWidget(
                                         addressInputCallback:
                                             addressInputCallback,
@@ -330,7 +329,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     if (_addressInfoResult.formattedAddress == null) {
       //* We try to find communes of the addresses from the user input
       List<ProviderUser> _providerUsersForStartAddress =
-          await ProviderUserService().getProvidersFromCommunes(
+          await ProviderUserService()
+              .getProvidersFromCommunesWithProviderPlanAll(
         communes: [
           getFormattedCityFromFormattedAddress(addressInfo.formattedAddress)
         ],
@@ -338,7 +338,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
 
       if (_providerUsersForStartAddress.length > 0) {
         _addressInfoResult.formattedAddress = addressInfo.formattedAddress;
-        await _addToRequestedUserAddressesAndCommunes(_addressInfoResult);
+        await _addToRequestedUserAddressesAndCommunes(
+            formattedAddress: _addressInfoResult, user: user);
       }
     }
     // * We lookup the addresses collection to find the nearest train station for the user or
@@ -361,7 +362,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
         else {
           _addressInfoResult.formattedAddress = addressInfo.formattedAddress;
         }
-        await _addToRequestedUserAddressesAndCommunes(_addressInfoResult);
+        await _addToRequestedUserAddressesAndCommunes(
+            formattedAddress: _addressInfoResult, user: user);
       }
     }
 
@@ -378,7 +380,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                     getFormattedCityFromFormattedStation(
                         addressInfo.formattedAddress)) +
                 addressInfo.formattedAddress);
-        await _addToRequestedUserAddressesAndCommunes(_addressInfoResult);
+        await _addToRequestedUserAddressesAndCommunes(
+            formattedAddress: _addressInfoResult, user: user);
       }
     }
 
@@ -413,7 +416,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   }
 
   Future<void> _removeRequestedAddressCallback(
-      {AddressInfo addressInfo, String uid}) async {
+      {AddressInfo addressInfo, User user}) async {
     List<String> addresses = user.addresses;
     List<String> updatedRequestAddresses;
     updatedRequestAddresses = addresses.where((address) {
@@ -422,17 +425,17 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
       else
         return true;
     }).toList();
-    // print(updatedRequestAddresses);
-    // await UserService()
-    //     .updateUserAddressesAndCommu(addresses: updatedRequestAddresses, uid: uid);
+    await UserService().updateUserAddressesAndCommunes(
+        addresses: updatedRequestAddresses, uid: user.uid);
   }
 
-  Future<void> _addToRequestedUserAddressesAndCommunes(
-    AddressInfo addressInfoResult,
-  ) async {
+  Future<void> _addToRequestedUserAddressesAndCommunes({
+    AddressInfo formattedAddress,
+    User user,
+  }) async {
     //* Add addresses to the addresses of the user
     User _user = addCityToUserCommunesAndAddresses(
-        formattedAddress: addressInfoResult.formattedAddress, user: user);
+        formattedAddress: formattedAddress.formattedAddress, user: user);
     UserService().updateUserAddressesAndCommunes(
         uid: user.uid, addresses: _user.addresses, communes: _user.communes);
   }
