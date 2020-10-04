@@ -18,7 +18,7 @@ class StepIconWidget extends StatelessWidget {
     this.isEndAddress = false,
     this.isStartAddress = false,
     this.icon,
-    this.iconSize = 40,
+    this.iconSize = 35,
     this.isBooked = false,
     this.isConfirmed = false,
     this.transportationType,
@@ -62,12 +62,12 @@ class StepIconWidget extends StatelessWidget {
                             ? Icon(
                                 Icons.done,
                                 color: Colors.white,
-                                size: iconSize / 1.5,
+                                size: iconSize / 1.7,
                               )
                             : Icon(
                                 icon,
                                 color: Colors.white,
-                                size: iconSize / 1.5,
+                                size: iconSize / 1.7,
                               )),
           ],
         ),

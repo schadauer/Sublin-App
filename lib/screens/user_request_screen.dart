@@ -132,18 +132,13 @@ class _UserRequestScreenState extends State<UserRequestScreen>
                                           uid: auth.uid,
                                           startAddress:
                                               _localRequest.startAddress,
-                                          startId: _localRequest.startId,
                                           endAddress: _localRequest.endAddress,
-                                          endId: _localRequest.endId,
                                           timestamp: DateTime.now(),
                                         );
                                         await Navigator.pushReplacementNamed(
                                           context,
                                           UserRoutingScreen.routeName,
-                                          arguments: Routing(
-                                            startId: _localRequest.startId,
-                                            endId: _localRequest.endId,
-                                          ),
+                                          arguments: Routing(),
                                         );
                                       } catch (e) {
                                         print(e);
@@ -174,9 +169,7 @@ class _UserRequestScreenState extends State<UserRequestScreen>
       bool isEndAddress}) {
     setState(() {
       if (isStartAddress) _localRequest.startAddress = input;
-      if (isStartAddress) _localRequest.startId = id;
       if (isEndAddress) _localRequest.endAddress = input;
-      if (isEndAddress) _localRequest.endId = id;
     });
   }
 

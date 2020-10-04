@@ -97,7 +97,7 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                         Card(
                           color: Theme.of(context).primaryColor,
                           child: SizedBox(
-                            height: 80,
+                            height: 90,
                             child: Padding(
                               padding: ThemeConstants.mediumPadding,
                               child: Row(

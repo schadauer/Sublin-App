@@ -93,7 +93,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     final Routing routingService = Provider.of<Routing>(context);
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
-
     final double itemHeight =
         (size.height > 700 ? 700 : size.height - kToolbarHeight - 24) /
             (size.height > 700 ? 2.5 : 2.2);
@@ -415,6 +414,16 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     }
   }
 
+  AddressInfo _getAddressInfoFromFormattedAddress(
+      List<AddressInfo> addressInfoList, String formattedAddress) {
+    AddressInfo _addressInfo;
+    addressInfoList.forEach((addressInfo) {
+      if (addressInfo.formattedAddress.contains(formattedAddress))
+        _addressInfo = addressInfo;
+    });
+    return _addressInfo;
+  }
+
   Future<void> _removeRequestedAddressCallback(
       {AddressInfo addressInfo, User user}) async {
     List<String> addresses = user.addresses;
@@ -461,6 +470,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
               _localRequest.startAddress);
         }
       }
+      // addStringToSF(Preferences.stringLocalRequestStartAddress, '');
+      // _localRequest.startAddress = '';
     } catch (e) {
       print(e);
     }

@@ -27,11 +27,10 @@ class GeolocationService {
         _currentLocationAutocompleteResults = await GoogleMapService()
             .getGoogleAddressAutocomplete(input: address);
         _localRequest = Request(
-            startAddress: _currentLocationAutocompleteResults[0]['name'],
-            startId: _currentLocationAutocompleteResults[0]['id']);
+            startAddress: _currentLocationAutocompleteResults[0]['name']);
         _localRequest.startAddress =
             _currentLocationAutocompleteResults[0]['name'];
-        _localRequest.startId = _currentLocationAutocompleteResults[0]['id'];
+
         return _localRequest;
       } catch (e) {
         print('getCurrentCoordinates: $e');

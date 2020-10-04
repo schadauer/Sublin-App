@@ -5,7 +5,7 @@ class AddressInfo {
   String sponsor;
   String formattedAddress;
   bool byProvider;
-  TransportationType transportationType;
+  TransportationType transportationType = TransportationType.privat;
   AddressInfo({
     this.title,
     this.sponsor,

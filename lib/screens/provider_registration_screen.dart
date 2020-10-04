@@ -77,9 +77,7 @@ class _ProviderRegistrationScreenState
     // Dummy address to calculate route
     _request.startAddress =
         'Wien Hauptbahnhof, Wien Südbahnhof, Am Hauptbahnhof, Vienna, Austria';
-    _request.startId = 'ChIJUU071tupbUcRyFdx20Nwgqg';
     _request.endAddress = '';
-    _request.endId = '';
   }
 
   @override
@@ -172,9 +170,7 @@ class _ProviderRegistrationScreenState
                                           await RoutingService().requestRoute(
                                             uid: auth.uid,
                                             startAddress: _request.startAddress,
-                                            startId: _request.startId,
                                             endAddress: _request.endAddress,
-                                            endId: _request.endId,
                                             checkAddress:
                                                 true, // checking only address to see if a service is available
                                             timestamp: DateTime.now()
@@ -870,7 +866,6 @@ class _ProviderRegistrationScreenState
     setState(() {
       _addressFound = true;
       _request.endAddress = input;
-      _request.endId = id;
     });
   }
 

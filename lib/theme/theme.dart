@@ -54,7 +54,7 @@ ThemeData themeData(context) {
     canvasColor: Colors.white,
     errorColor: Colors.red[400],
     cardTheme: CardTheme(
-        elevation: 3.0,
+        elevation: 0.8,
         color: ThemeConstants.backgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),

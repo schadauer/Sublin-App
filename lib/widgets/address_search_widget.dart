@@ -1,4 +1,6 @@
+import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/provider_user.dart';
+import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:Sublin/screens/address_input_screen.dart';
 
 class AddressSearchWidget extends StatefulWidget {
   final String userUid;
+  final User user;
   final bool isStartAddress;
   final bool isEndAddress;
   final bool showGeolocationOption;
@@ -22,9 +25,11 @@ class AddressSearchWidget extends StatefulWidget {
   final bool isStation;
   final ProviderUser providerUser;
   final String station;
+  final List<AddressInfo> addressInfoList;
 
   AddressSearchWidget({
     this.userUid,
+    this.user,
     this.isStartAddress = false,
     this.isEndAddress = false,
     this.showGeolocationOption = false,
@@ -32,7 +37,7 @@ class AddressSearchWidget extends StatefulWidget {
     this.startHintText = 'Deinen Standort finden',
     this.endAddress,
     this.endHintText = 'Deine Zieladresse finden',
-    this.address,
+    this.address = '',
     this.startTime,
     this.addressInputFunction,
     this.isCheckOnly = false,
@@ -41,6 +46,7 @@ class AddressSearchWidget extends StatefulWidget {
     this.isStation = false,
     this.providerUser,
     this.station,
+    this.addressInfoList,
   });
 
   @override
@@ -221,6 +227,7 @@ class _AddressSearchWidgetState extends State<AddressSearchWidget> {
         MaterialPageRoute(
             builder: (context) => AddressInputScreen(
                   userUid: widget.userUid,
+                  user: widget.user,
                   addressInputCallback: widget.addressInputFunction,
                   isEndAddress: widget.isEndAddress,
                   isStartAddress: widget.isStartAddress,

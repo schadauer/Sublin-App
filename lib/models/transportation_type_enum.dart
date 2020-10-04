@@ -3,4 +3,5 @@ enum TransportationType {
   privat,
   public,
   sublin,
+  notAvailable,
 }

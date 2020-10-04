@@ -76,7 +76,7 @@ class UserMySublinEndWidget extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                                 child: getIconForTransportationType(
-                                    addressInfo.transportationType)),
+                                    addressInfo?.transportationType)),
                             if (addressInfo.byProvider == false)
                               IconButton(
                                 icon: Icon(Icons.delete),
@@ -100,7 +100,7 @@ class UserMySublinEndWidget extends StatelessWidget {
                           TransportationType.privat)
                         Expanded(
                           child: AutoSizeText(
-                            'Von deiner Adresse zum Bahnhof gibt es derzeit leider keinen Sublin Service.',
+                            'Vom Bahnhof zu deiner Addresse gibt es derzeit noch kein Sublin Service.',
                             style: Theme.of(context).textTheme.caption,
                           ),
                         ),
