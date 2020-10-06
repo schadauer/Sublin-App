@@ -1,3 +1,4 @@
+import 'package:Sublin/models/sublin_error_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
@@ -32,7 +33,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   TextEditingController _emailTextController = TextEditingController();
   TextEditingController _passwortTextController = TextEditingController();
   TextEditingController _firstNameTextController = TextEditingController();
-  bool _emailAlreadyInUse = false;
+  SublinError _emailError = SublinError.none;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -53,68 +54,68 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-      child: PageView(
-        controller: _pageViewController,
-        children: [
-          if (_pageStep >= 0)
-            GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  FocusScope.of(context).unfocus();
-                  setState(() {
-                    textFocus = false;
-                  });
-                },
-                child: Stack(
-                  children: <Widget>[
-                    ProgressIndicatorWidget(
-                      index: 1,
-                      elements: 2,
-                      showProgressIndicator: false,
-                    ),
-                    SizedBox(
-                      height: 40,
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(top: 50, left: 15, right: 15),
-                      width: MediaQuery.of(context).size.width,
-                      height: 300,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'Hallo $firstName ',
-                                style: Theme.of(context).textTheme.headline1,
-                                textAlign: TextAlign.left,
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          AutoSizeText(
-                            'Diese App soll dir in der Zukunft ermöglichen, bequem ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase mit einer ausgewählten Testgruppe. Du kannst dich jedoch jetzt schon anmelden. Wir informieren dich dann, sobald das Service für dich verfügbar ist',
-                            style: Theme.of(context).textTheme.bodyText1,
-                            maxLines: 8,
-                          ),
-                        ],
+      child: Form(
+        key: _formKey,
+        child: PageView(
+          controller: _pageViewController,
+          children: [
+            if (_pageStep >= 0)
+              GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    setState(() {
+                      textFocus = false;
+                    });
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      ProgressIndicatorWidget(
+                        index: 1,
+                        elements: 2,
+                        showProgressIndicator: false,
                       ),
-                    ),
-                    AnimatedContainer(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
+                      SizedBox(
+                        height: 40,
                       ),
-                      margin: EdgeInsets.only(top: (textFocus) ? 90 : 260),
-                      duration: Duration(milliseconds: 100),
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Form(
-                            key: _formKey,
+                      Container(
+                        padding: EdgeInsets.only(top: 50, left: 15, right: 15),
+                        width: MediaQuery.of(context).size.width,
+                        height: 300,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  'Hallo $firstName ',
+                                  style: Theme.of(context).textTheme.headline1,
+                                  textAlign: TextAlign.left,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            AutoSizeText(
+                              'Diese App soll dir in der Zukunft ermöglichen, bequem ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase mit einer ausgewählten Testgruppe. Du kannst dich jedoch jetzt schon anmelden. Wir informieren dich dann, sobald das Service für dich verfügbar ist.',
+                              style: Theme.of(context).textTheme.bodyText1,
+                              maxLines: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                      AnimatedContainer(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                        ),
+                        margin: EdgeInsets.only(top: (textFocus) ? 90 : 260),
+                        duration: Duration(milliseconds: 100),
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,7 +151,8 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                                     validator: (val) => val.length < 2 ||
                                             !isEmailFormat(val)
                                         ? 'Bitte gib eine gültige E-Mailadresse an'
-                                        : _emailAlreadyInUse
+                                        : _emailError ==
+                                                SublinError.emailAlreadyInUse
                                             ? 'Email existiert bereits'
                                             : null,
                                     onTap: () {
@@ -162,6 +164,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                                     onChanged: (val) {
                                       setState(() {
                                         _pageStep = 0;
+                                        _emailError = SublinError.none;
                                         email = val;
                                         if (isEmailFormat(val)) {
                                           emailProvided = true;
@@ -274,96 +277,111 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )),
-          // Second Page ------------------------------- 2 ----------------------------------
-          if (_pageStep >= 1)
-            SingleChildScrollView(
-                child: Column(
-              children: [
-                ProgressIndicatorWidget(
-                  index: 2,
-                  elements: 2,
-                  showProgressIndicator: false,
-                ),
-                Padding(
-                  padding: ThemeConstants.mediumPadding,
+                    ],
+                  )),
+            // Second Page ------------------------------- 2 ----------------------------------
+            if (_pageStep >= 1)
+              SingleChildScrollView(
                   child: Column(
-                    children: [
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ProgressIndicatorWidget(
+                    index: 2,
+                    elements: 2,
+                    showProgressIndicator: false,
+                  ),
+                  Padding(
+                    padding: ThemeConstants.mediumPadding,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                '$firstName, du meldest dich an als: ',
+                                style: Theme.of(context).textTheme.headline1,
+                                textAlign: TextAlign.left,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        ProviderTypeSelectionWidget(
+                          title: 'Fahrgast',
+                          text:
+                              'Du möchtest bequem ohne eigenes Auto überall hin mit öffentlichen Verkehr und Sublin für die "letzte Meile".',
+                          selectionCallback: typeSelectionFunction,
+                          userType: UserType.user,
+                          active: userType == UserType.user,
+                        ),
+                        ProviderTypeSelectionWidget(
+                          title: 'Anbieter',
+                          text:
+                              'Du bietest Transferdienste an, entweder zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets.',
+                          selectionCallback: typeSelectionFunction,
+                          userType: UserType.provider,
+                          active: userType == UserType.provider,
+                        ),
+                        ProviderTypeSelectionWidget(
+                          title: 'Sponsor',
+                          text:
+                              'Du führst selbst keine Personentransfers durch und beauftragst einen Fahrtendienst.',
+                          selectionCallback: typeSelectionFunction,
+                          userType: UserType.sponsor,
+                          active: userType == UserType.sponsor,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            Text(
-                              '$firstName, du meldest dich an als: ',
-                              style: Theme.of(context).textTheme.headline1,
-                              textAlign: TextAlign.left,
+                            RaisedButton(
+                              onPressed: () async {
+                                try {
+                                  SublinError sublinError =
+                                      await _auth.register(
+                                    email: email,
+                                    password: password,
+                                    firstName: firstName,
+                                    userType: userType,
+                                  );
+                                  if (sublinError ==
+                                      SublinError.emailAlreadyInUse) {
+                                    setState(() {
+                                      _emailError =
+                                          SublinError.emailAlreadyInUse;
+                                    });
+                                    _pageViewController
+                                        .previousPage(
+                                            duration:
+                                                Duration(milliseconds: 300),
+                                            curve: Curves.easeOut)
+                                        .then((value) =>
+                                            _formKey.currentState.validate());
+                                  }
+                                } catch (e) {
+                                  print(e);
+                                }
+                              },
+                              child: Text('Jetzt registrieren'),
                             ),
                           ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      ProviderTypeSelectionWidget(
-                        title: 'Fahrgast',
-                        text:
-                            'Du möchtest bequem ohne eigenes Auto überall hin mit öffentlichen Verkehr und Sublin für die "letzte Meile".',
-                        selectionCallback: typeSelectionFunction,
-                        userType: UserType.user,
-                        active: userType == UserType.user,
-                      ),
-                      ProviderTypeSelectionWidget(
-                        title: 'Anbieter',
-                        text:
-                            'Du bietest Transferdienste an, entweder zu einer bestimmten Adresse oder innerhalb eines bestimmten Gebiets.',
-                        selectionCallback: typeSelectionFunction,
-                        userType: UserType.provider,
-                        active: userType == UserType.provider,
-                      ),
-                      ProviderTypeSelectionWidget(
-                        title: 'Sponsor',
-                        text:
-                            'Du führst selbst keine Personentransfers durch und beauftragst einen Fahrtendienst.',
-                        selectionCallback: typeSelectionFunction,
-                        userType: UserType.sponsor,
-                        active: userType == UserType.sponsor,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          RaisedButton(
-                            onPressed: () async {
-                              try {
-                                await _auth.register(
-                                  email: email,
-                                  password: password,
-                                  firstName: firstName,
-                                  userType: userType,
-                                );
-                              } catch (e) {
-                                print(e);
-                              }
-                            },
-                            child: Text('Jetzt registrieren'),
-                          ),
-                        ],
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ))
-        ],
+                ],
+              ))
+          ],
+        ),
       ),
     ));
   }

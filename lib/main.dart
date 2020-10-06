@@ -31,10 +31,14 @@ class MyApp extends StatelessWidget {
   MyApp({this.packageInfo});
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(providers: [
-      StreamProvider<Auth>.value(value: AuthService().userStream),
-      StreamProvider<Versioning>.value(
-          initialData: null, value: VersioningService().streamVersioning()),
-    ], child: StreamProviders());
+    return MultiProvider(
+        providers: [
+          StreamProvider<Auth>.value(value: AuthService().userStream),
+          StreamProvider<Versioning>.value(
+              initialData: null, value: VersioningService().streamVersioning()),
+        ],
+        child: StreamProviders(
+          packageInfo: packageInfo,
+        ));
   }
 }

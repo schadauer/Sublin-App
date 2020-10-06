@@ -1,6 +1,7 @@
 import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/routing_step_type_enum.dart';
+import 'package:Sublin/models/travel_mode_class.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/user_my_sublin_screen.dart';
@@ -23,6 +24,14 @@ class UserShowRoutingScreen extends StatelessWidget {
   final User user;
   final Routing routingService;
   final double heightBookingBottomSheet;
+
+  bool _isBothDirections() {
+    if (routingService.startAddressAvailable &&
+        routingService.endAddressAvailable)
+      return true;
+    else
+      return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +105,7 @@ class UserShowRoutingScreen extends StatelessWidget {
                         itemCount: routingService.publicSteps.length,
                         itemBuilder: (context, index) {
                           if (routingService.publicSteps[index].travelMode ==
-                              'TRANSIT') {
+                              TravelMode.transit) {
                             return StepWidget(
                               startAddress: routingService
                                   .publicSteps[index].startAddress,
@@ -162,7 +171,9 @@ class UserShowRoutingScreen extends StatelessWidget {
                                         RoutingService()
                                             .bookRoute(uid: user.uid);
                                       },
-                                child: Text('Service bestellen'))
+                                child: (Text(_isBothDirections()
+                                    ? 'Bahnhoftransfers buchen'
+                                    : 'Bahnhoftransfer buchen')))
                           ],
                         ),
                       ),

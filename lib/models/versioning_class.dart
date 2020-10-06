@@ -1,8 +1,6 @@
 class Versioning {
-  final String latestVersion;
   final String minVersion;
   Versioning({
-    this.latestVersion,
     this.minVersion,
   });
 
@@ -12,7 +10,6 @@ class Versioning {
     final Versioning defaultValues = Versioning();
     data = data ?? {};
     return Versioning(
-      latestVersion: data['latestVersion'] ?? defaultValues.latestVersion,
       minVersion: data['minVersion'] ?? defaultValues.minVersion,
     );
   }

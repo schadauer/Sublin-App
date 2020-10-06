@@ -3,6 +3,7 @@ import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/theme/theme.dart';
+import 'package:Sublin/utils/get_icon_for_transportation_type.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -142,13 +143,10 @@ class UserMySublinStartWidget extends StatelessWidget {
                       ],
                     )),
               ),
-              StepIconWidget(
-                transportationType: _addressInfo.transportationType,
-                isStartAddress: true,
-                isEndAddress: true,
-                icon: Icons.train,
-                iconSize: 35.0,
-              ),
+              Padding(
+                  padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                  child: getIconForTransportationType(
+                      _addressInfo.transportationType))
             ]),
           )
         : SizedBox(

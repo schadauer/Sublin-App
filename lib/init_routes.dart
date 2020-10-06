@@ -33,9 +33,6 @@ class _InitRoutesState extends State<InitRoutes> {
     final User user = Provider.of<User>(context);
     final Routing routingService = Provider.of<Routing>(context);
     final ProviderUser providerUser = Provider.of<ProviderUser>(context);
-    final Versioning versioning = Provider.of<Versioning>(context);
-
-    print(versioning.latestVersion);
 
     if (user.streamingOn == false && providerUser.streamingOn == false)
       return MaterialApp(

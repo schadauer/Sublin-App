@@ -107,6 +107,7 @@ flutter:
 
   assets:     
     - assets/images/Sublin.png
+    - assets/images/logo_white_background.png
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

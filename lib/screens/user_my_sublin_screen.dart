@@ -225,8 +225,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
-                                    crossAxisSpacing: 2.0,
-                                    mainAxisSpacing: 2.0,
+                                    crossAxisSpacing: 1.0,
+                                    mainAxisSpacing: 1.0,
                                     childAspectRatio: (itemWidth / itemHeight),
                                   ),
                                   itemBuilder:
@@ -472,6 +472,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
       }
       // addStringToSF(Preferences.stringLocalRequestStartAddress, '');
       // _localRequest.startAddress = '';
+      // addStringToSF(Preferences.stringLocalRequestEndAddress, '');
+      // _localRequest.endAddress = '';
     } catch (e) {
       print(e);
     }

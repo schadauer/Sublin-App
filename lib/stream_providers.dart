@@ -1,8 +1,14 @@
+import 'package:Sublin/screens/update_required_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:launch_review/launch_review.dart';
+import 'package:provider/provider.dart';
+import 'package:package_info/package_info.dart';
+
 import 'package:Sublin/models/booking_completed_class.dart';
 import 'package:Sublin/models/booking_confirmed_class.dart';
 import 'package:Sublin/models/booking_open_class.dart';
 import 'package:Sublin/models/provider_user.dart';
-import 'package:launch_review/launch_review.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/init_routes.dart';
 import 'package:Sublin/models/versioning_class.dart';
@@ -10,17 +16,14 @@ import 'package:Sublin/screens/user_register_screen.dart';
 import 'package:Sublin/services/booking_service.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/user_service.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/auth_class.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/theme/theme.dart';
 
-import 'models/auth_class.dart';
-
 class StreamProviders extends StatelessWidget {
+  final PackageInfo packageInfo;
+  StreamProviders({this.packageInfo});
   static const routeName = '/wrapper';
 
   @override
@@ -29,6 +32,29 @@ class StreamProviders extends StatelessWidget {
     final versioning = Provider.of<Versioning>(context);
 
     bool _appNeedsToBeUpdated() {
+      String _minVersion = versioning.minVersion;
+      String _thisVersion = packageInfo.version;
+      for (var i = 0; i < 3; i++) {
+        int _thisNumber;
+        int _minNumber;
+        if (i < 2) {
+          _thisNumber = _thisVersion.indexOf('.');
+          _minNumber = _minVersion.indexOf('.');
+        } else {
+          _thisNumber = _thisVersion.length;
+          _minNumber = _minVersion.length;
+        }
+        if (int.parse(_thisVersion.substring(0, _thisNumber)) <
+            int.parse(_minVersion.substring(0, _minNumber))) {
+          return true;
+        }
+        if (i < 2) {
+          _thisVersion =
+              _thisVersion.substring(_thisNumber + 1, _thisVersion.length);
+          _minVersion =
+              _minVersion.substring(_minNumber + 1, _minVersion.length);
+        }
+      }
       return false;
     }
 
@@ -41,32 +67,7 @@ class StreamProviders extends StatelessWidget {
     } else if (_appNeedsToBeUpdated()) {
       return MaterialApp(
         theme: themeData(context),
-        home: Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Image.asset('assets/images/Sublin.png'),
-                Icon(
-                  Icons.system_update,
-                  size: 50,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                AutoSizeText(
-                  'App Update',
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-                RaisedButton(
-                    onPressed: () {
-                      LaunchReview.launch();
-                    },
-                    child: Text('Zum AppStore'))
-              ],
-            ),
-          ),
-        ),
+        home: UpdateRequiredScreen(),
       );
     } else {
       return MultiProvider(providers: [

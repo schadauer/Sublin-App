@@ -68,15 +68,8 @@ class UserMySublinEndWidget extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                                height: 30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: getIconForTransportationType(
-                                    addressInfo?.transportationType)),
+                            getIconForTransportationType(
+                                addressInfo?.transportationType),
                             if (addressInfo.byProvider == false)
                               IconButton(
                                 icon: Icon(Icons.delete),
@@ -142,6 +135,10 @@ class UserMySublinEndWidget extends StatelessWidget {
                             Expanded(
                               flex: 2,
                               child: RaisedButton(
+                                color: transportationType ==
+                                        TransportationType.sublin
+                                    ? ThemeConstants.sublinMainColor
+                                    : Colors.black,
                                 onPressed: (isRouteBooked)
                                     ? null
                                     : () async {

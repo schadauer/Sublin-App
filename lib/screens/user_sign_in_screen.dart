@@ -1,6 +1,8 @@
+import 'package:Sublin/models/sublin_error_enum.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/is_email_format.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:Sublin/widgets/loading_widget.dart';
 import 'package:Sublin/services/auth_service.dart';
@@ -15,8 +17,10 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
   bool isLoading = false;
   bool textFocus = false;
   final AuthService _auth = AuthService();
-  String email = '';
-  String password = '';
+  String _email = '';
+  String _password = '';
+  SublinError _sublinError;
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -66,13 +70,16 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
                         TextFormField(
-                            validator: (val) =>
-                                val.length < 2 || !isEmailFormat(val)
-                                    ? 'Bitte gib eine gültige E-Mailadresse an'
+                            validator: (val) => val.length < 2 ||
+                                    !isEmailFormat(val)
+                                ? 'Bitte gib eine gültige E-Mailadresse an'
+                                : _sublinError == SublinError.emailNotFound
+                                    ? 'Wir konnten diese Emailadresse nicht finden'
                                     : null,
                             onChanged: (val) {
                               setState(() {
-                                email = val;
+                                _email = val;
+                                _sublinError = SublinError.none;
                               });
                             },
                             decoration: InputDecoration(
@@ -83,41 +90,60 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                           height: 20,
                         ),
                         TextFormField(
+                            validator: (val) => val.length == 0
+                                ? 'Bitte gib dein Passwort ein'
+                                : _sublinError == SublinError.wrongPassword
+                                    ? 'Dein Passwort ist nicht korrekt für deine angegebene Emailadresse'
+                                    : null,
                             onChanged: (val) {
                               setState(() {
-                                password = val;
+                                _password = val;
+                                _sublinError = SublinError.none;
                               });
                             },
                             obscureText: true,
                             decoration: InputDecoration(
                                 hintText: 'Passwort',
                                 prefixIcon: Icon(Icons.lock))),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: ForgetPassword(email: _email)),
+                            Expanded(
+                              child: FlatButton(
+                                textColor:
+                                    Theme.of(context).secondaryHeaderColor,
+                                onPressed: () => Navigator.pop(context),
+                                child: AutoSizeText(
+                                  'Noch nicht registriert?',
+                                  maxLines: 1,
+                                  style: ThemeConstants.mainButton,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         SizedBox(
                           height: 15,
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            FlatButton(
-                              textColor: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Noch nicht registriert?',
-                                style: ThemeConstants.mainButton,
-                              ),
-                            ),
-                            RaisedButton(
-                              onPressed: () async {
-                                try {
-                                  if (_formKey.currentState.validate()) {
-                                    await _auth.signIn(
-                                        email: email, password: password);
+                            SizedBox(
+                              child: RaisedButton(
+                                onPressed: () async {
+                                  try {
+                                    SublinError error = await _auth.signIn(
+                                        email: _email, password: _password);
+                                    setState(() {
+                                      _sublinError = error;
+                                    });
+                                  } catch (e) {
+                                    print(e);
                                   }
-                                } catch (e) {
-                                  print(e);
-                                }
-                              },
-                              child: Text('Einloggen'),
+                                },
+                                child: Text('Einloggen'),
+                              ),
                             ),
                           ],
                         )
@@ -131,5 +157,72 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
         ),
       ));
     }
+  }
+}
+
+class ForgetPassword extends StatelessWidget {
+  final String email;
+  ForgetPassword({this.email});
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      textColor: Theme.of(context).secondaryHeaderColor,
+      onPressed: () {
+        if (isEmailFormat(email)) AuthService().resetPassword(email);
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+                height: 250,
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: ThemeConstants.veryLargePadding,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Icon(Icons.close),
+                        ],
+                      ),
+                      if (!isEmailFormat(email))
+                        AutoSizeText(
+                          'Ups',
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                      if (isEmailFormat(email))
+                        AutoSizeText(
+                          'Eine E-Mail ist unterwegs',
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      if (!isEmailFormat(email))
+                        AutoSizeText(
+                          'Bitte gib eine gültige E-Mailaddresse an.',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                      if (isEmailFormat(email))
+                        AutoSizeText(
+                          'Wir haben dir eine E-Mail an $email geschickt, damit du ein neues Passwort vergeben kannst',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        )
+                    ],
+                  ),
+                )),
+          ),
+        );
+      },
+      child: AutoSizeText(
+        'Passwort vergessen?',
+        maxLines: 1,
+        textAlign: TextAlign.start,
+        style: ThemeConstants.mainButton,
+      ),
+    );
   }
 }

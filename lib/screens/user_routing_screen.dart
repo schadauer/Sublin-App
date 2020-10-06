@@ -208,11 +208,10 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                     routingService: routingService,
                     heightBookingBottomSheet: heightBookingBottomSheet);
               }
-            } else {
+            } else
               return WaitingScreen(user: user, title: 'Wir suchen deine Fahrt');
-            }
           } else
-            return WaitingScreen(user: user, title: 'Wir suchen deine Fahrt');
+            return WaitingScreen(user: user, title: 'Wir suchen deine Fahrtt');
         });
   }
 }

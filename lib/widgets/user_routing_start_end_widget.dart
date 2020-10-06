@@ -2,6 +2,7 @@ import 'package:Sublin/models/booking_status_enum.dart';
 import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/step_class.dart' as sublin;
+import 'package:Sublin/models/travel_mode_class.dart';
 import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
@@ -209,7 +210,10 @@ class UserRoutingStartEndWidget extends StatelessWidget {
 
                                             if (direction == Direction.start &&
                                                 routingService
-                                                    .isPubliclyAccessibleStartAddress)
+                                                    .isPubliclyAccessibleStartAddress &&
+                                                routingService.publicSteps[0]
+                                                        .travelMode ==
+                                                    TravelMode.walking)
                                               Expanded(
                                                 child: Column(
                                                   mainAxisAlignment:
@@ -246,6 +250,37 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                           ),
                                                         ),
                                                       ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            if (direction == Direction.start &&
+                                                routingService
+                                                    .isPubliclyAccessibleStartAddress &&
+                                                routingService.publicSteps[0]
+                                                        .travelMode ==
+                                                    TravelMode.transit)
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    AutoSizeText(
+                                                      '${routingService.publicSteps[0].startAddress}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .headline2,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    AutoSizeText(
+                                                      'Derzeit noch kein Sublin-Service verfügbar.',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .caption,
                                                     ),
                                                   ],
                                                 ),
@@ -330,7 +365,15 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                               ),
                                             if (direction == Direction.end &&
                                                 routingService
-                                                    .isPubliclyAccessibleEndAddress)
+                                                    .isPubliclyAccessibleEndAddress &&
+                                                routingService
+                                                        .publicSteps[
+                                                            routingService
+                                                                    .publicSteps
+                                                                    .length -
+                                                                1]
+                                                        .travelMode ==
+                                                    TravelMode.walking)
                                               Expanded(
                                                 child: Column(
                                                   mainAxisAlignment:
@@ -355,13 +398,22 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                                 .textTheme
                                                                 .headline2,
                                                           ),
-                                                          AutoSizeText(
-                                                            'Fußweg',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyText1,
-                                                          ),
+                                                          if (routingService
+                                                                  .publicSteps[
+                                                                      routingService
+                                                                              .publicSteps
+                                                                              .length -
+                                                                          1]
+                                                                  .travelMode ==
+                                                              TravelMode
+                                                                  .transit)
+                                                            AutoSizeText(
+                                                              'Fußweg',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyText1,
+                                                            ),
                                                         ],
                                                       ),
                                                     ),
@@ -373,6 +425,33 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                     ),
                                                   ],
                                                 ),
+                                              ),
+                                            if (direction == Direction.end &&
+                                                routingService
+                                                    .isPubliclyAccessibleEndAddress &&
+                                                routingService
+                                                        .publicSteps[
+                                                            routingService
+                                                                    .publicSteps
+                                                                    .length -
+                                                                1]
+                                                        .travelMode ==
+                                                    TravelMode.transit)
+                                              Column(
+                                                children: [
+                                                  AutoSizeText(
+                                                    '${routingService.publicSteps[routingService.publicSteps.length - 1].endAddress}',
+                                                    minFontSize: 20,
+                                                    style: ThemeConstants
+                                                        .veryLargeHeader,
+                                                  ),
+                                                  AutoSizeText(
+                                                    'Derzeit noch kein Sublin-Service verfügbar.',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText1,
+                                                  ),
+                                                ],
                                               ),
                                           ],
                                         ),
@@ -403,7 +482,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                     .startAddressAvailable)
                                               Expanded(
                                                 child: AutoSizeText(
-                                                  '${getTimeFormat(routingService.sublinStartStep.startTime - 1000 - routingService.sublinStartStep.duration)}',
+                                                  '${getTimeFormat(routingService.sublinStartStep.startTime)}',
                                                   style: ThemeConstants
                                                       .veryLargeHeader,
                                                   maxLines: 1,
@@ -415,7 +494,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                     .startAddressAvailable)
                                               Expanded(
                                                 child: AutoSizeText(
-                                                  '${getTimeFormat(routingService.publicSteps[0].startTime - 1200)}',
+                                                  '${getTimeFormat(routingService.sublinStartStep.endTime)}',
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .caption,
@@ -452,7 +531,15 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                               ),
                                             if (direction == Direction.end &&
                                                 routingService
-                                                    .isPubliclyAccessibleEndAddress)
+                                                    .isPubliclyAccessibleEndAddress &&
+                                                routingService
+                                                        .publicSteps[
+                                                            routingService
+                                                                    .publicSteps
+                                                                    .length -
+                                                                1]
+                                                        .travelMode ==
+                                                    'WALKING')
                                               Expanded(
                                                 child: AutoSizeText(
                                                   '${getTimeFormat(routingService.publicSteps[routingService.publicSteps.length - 1]?.startTime)}',

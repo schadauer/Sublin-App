@@ -7,6 +7,7 @@ class ThemeConstants {
   static EdgeInsetsGeometry smallPadding = const EdgeInsets.all(4.0);
   static EdgeInsetsGeometry mediumPadding = EdgeInsets.all(8.0);
   static EdgeInsetsGeometry largePadding = const EdgeInsets.all(16.0);
+  static EdgeInsetsGeometry veryLargePadding = const EdgeInsets.all(24.0);
   static TextStyle veryLargeHeader = TextStyle(
     fontSize: 20,
     fontFamily: 'Lato',
@@ -30,6 +31,9 @@ ThemeData themeData(context) {
     primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
     // primaryColor: Color.fromRGBO(54, 73, 88, 1),
     primaryColor: Color.fromRGBO(216, 214, 204, 1),
+    colorScheme: ColorScheme.light(
+      primary: Theme.of(context).primaryColor,
+    ),
     secondaryHeaderColor: Color.fromRGBO(0, 174, 99, 0.6),
     brightness: Brightness.light,
     accentColor: ThemeConstants.backgroundColor,
@@ -55,7 +59,6 @@ ThemeData themeData(context) {
     errorColor: Colors.red[400],
     cardTheme: CardTheme(
         elevation: 0.8,
-        color: ThemeConstants.backgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         )),
