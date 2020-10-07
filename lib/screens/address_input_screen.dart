@@ -136,7 +136,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                                     cityOnly: widget.cityOnly,
                                     isStation: widget.isStation,
                                     addressTypes: widget.addressTypes);
-
                             List<AddressInfo> toAddressList;
                             if (result != null || result?.length == 0)
                               toAddressList = result.map((item) {
@@ -156,8 +155,6 @@ class _AddressInputScreenState extends State<AddressInputScreen> {
                               fillColor: Colors.black12,
                               filled: true,
                               border: InputBorder.none,
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.0)),
                               prefixIcon: Icon(Icons.home),
                               suffixIcon: IconButton(
                                   icon: Icon(Icons.highlight_off),

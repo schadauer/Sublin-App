@@ -29,7 +29,6 @@ ThemeData themeData(context) {
   return ThemeData(
     primarySwatch: Colors.grey,
     primaryTextTheme: TextTheme(headline6: TextStyle(color: Colors.white)),
-    // primaryColor: Color.fromRGBO(54, 73, 88, 1),
     primaryColor: Color.fromRGBO(216, 214, 204, 1),
     colorScheme: ColorScheme.light(
       primary: Theme.of(context).primaryColor,
@@ -44,6 +43,9 @@ ThemeData themeData(context) {
       textTheme: ButtonTextTheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     ),
+    // iconTheme: IconThemeData(
+    //   color: ThemeConstants.sublinMainBackgroundColor,
+    // ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: Color.fromRGBO(0, 133, 74, 1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
@@ -66,10 +68,13 @@ ThemeData themeData(context) {
       fillColor: ThemeConstants.backgroundColor,
       filled: true,
       contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      border: OutlineInputBorder(),
-      focusColor: Color.fromRGBO(230, 230, 230, 1),
-      focusedBorder:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      focusColor: ThemeConstants.backgroundColor,
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
     ),
     backgroundColor: Color.fromRGBO(201, 228, 202, 1),
     visualDensity: VisualDensity.adaptivePlatformDensity,

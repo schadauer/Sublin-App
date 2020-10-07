@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Sublin/screens/test_period_screen.dart';
+import 'package:Sublin/theme/theme.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -84,8 +85,6 @@ class _ProviderRegistrationScreenState
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
-
-    print(ProviderUser().toJson(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -629,6 +628,8 @@ class _ProviderRegistrationScreenState
                                             children: <Widget>[
                                               Container(
                                                 child: FlatButton(
+                                                    textColor: ThemeConstants
+                                                        .sublinMainColor,
                                                     onPressed: () {
                                                       Navigator.push(
                                                           context,
@@ -882,7 +883,6 @@ class _ProviderRegistrationScreenState
     String station,
   }) {
     _station = input;
-    print(_station);
     _setStationFromProviderAddressFunction(
       station: _station,
       delimiter: Delimiter.city,
@@ -907,27 +907,6 @@ class _ProviderRegistrationScreenState
           stationFormattedAddress: station,
           providerUser: providerUser);
     });
-    // _addCityToStations(input);
-  }
-
-  void _addCityToStations(String formattedAddress) {
-    bool cityExists = false;
-    _providerUser.stations.map((station) {
-      String cityFromFormattedAddress =
-          getFormattedCityFromFormattedAddress(formattedAddress);
-      String cityFromStation = getFormattedCityFromFormattedAddress(station);
-
-      if (cityFromFormattedAddress == cityFromStation) {
-        cityExists = true;
-      }
-    }).toList();
-    if (cityExists == false) {
-      setState(() {
-        _providerUser.stations.add(formattedAddress + _station);
-        _providerUser.communes =
-            addStringToList(_providerUser.communes, formattedAddress);
-      });
-    }
   }
 
   Future<void> _checkAddressStatus(String uid) async {
@@ -955,7 +934,6 @@ class _ProviderRegistrationScreenState
   void _setStationFromProviderAddressFunction({
     String delimiter = Delimiter.city,
     String station = '',
-    bool remove = false,
   }) {
     String userAddress = _providerUser.addresses[0];
     // If Taxi the scope is the postcode
@@ -970,9 +948,9 @@ class _ProviderRegistrationScreenState
       _providerUser.communes = addStringToList(_providerUser.communes,
           getFormattedCityFromFormattedAddress(userAddress));
       //* If it's a taxi add the city address to the providerUser addresses
-      if (_providerUser.providerType == ProviderType.taxi) ;
-      _providerUser.addresses = addStringToList(_providerUser.addresses,
-          getFormattedCityFromFormattedAddress(userAddress));
+      if (_providerUser.providerType == ProviderType.taxi)
+        _providerUser.addresses = addStringToList(_providerUser.addresses,
+            getFormattedCityFromFormattedAddress(userAddress));
     });
   }
 

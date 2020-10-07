@@ -1,11 +1,10 @@
 import 'dart:core';
-import 'package:Sublin/models/user_type_enum.dart';
-import 'package:Sublin/models/user_class.dart';
-import 'package:Sublin/widgets/appbar_widget.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:launch_review/launch_review.dart';
-import 'package:provider/provider.dart';
+
+import 'package:Sublin/widgets/appbar_widget.dart';
 
 class UpdateRequiredScreen extends StatefulWidget {
   static const routeName = './testPeriodScreen';

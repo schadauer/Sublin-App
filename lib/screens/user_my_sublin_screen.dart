@@ -1,4 +1,7 @@
-/* Copyright (C) 2020 Andreas Schadauer, andreas@sublin.app - All Rights Reserved */
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 import 'package:Sublin/models/address_class.dart';
 import 'package:Sublin/models/address_info_class.dart';
@@ -11,11 +14,6 @@ import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_comm
 import 'package:Sublin/utils/get_list_of_address_info_from_list_of_provider_users_and_user.dart';
 import 'package:Sublin/widgets/user_my_sublin_start_widget.dart';
 import 'package:Sublin/widgets/waiting_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
-
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/my_card_format_enum.dart';
@@ -414,16 +412,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     }
   }
 
-  AddressInfo _getAddressInfoFromFormattedAddress(
-      List<AddressInfo> addressInfoList, String formattedAddress) {
-    AddressInfo _addressInfo;
-    addressInfoList.forEach((addressInfo) {
-      if (addressInfo.formattedAddress.contains(formattedAddress))
-        _addressInfo = addressInfo;
-    });
-    return _addressInfo;
-  }
-
   Future<void> _removeRequestedAddressCallback(
       {AddressInfo addressInfo, User user}) async {
     List<String> addresses = user.addresses;
@@ -470,10 +458,6 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
               _localRequest.startAddress);
         }
       }
-      // addStringToSF(Preferences.stringLocalRequestStartAddress, '');
-      // _localRequest.startAddress = '';
-      // addStringToSF(Preferences.stringLocalRequestEndAddress, '');
-      // _localRequest.endAddress = '';
     } catch (e) {
       print(e);
     }

@@ -1,7 +1,5 @@
 import 'package:Sublin/screens/update_required_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:launch_review/launch_review.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 

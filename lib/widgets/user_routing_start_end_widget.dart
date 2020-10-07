@@ -1,4 +1,6 @@
-import 'package:Sublin/models/booking_status_enum.dart';
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
 import 'package:Sublin/models/direction_enum.dart';
 import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/step_class.dart' as sublin;
@@ -8,8 +10,6 @@ import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/utils/get_time_format.dart';
 import 'package:Sublin/utils/launch_caller.dart';
 import 'package:Sublin/widgets/step_icon_widget.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
 
 class UserRoutingStartEndWidget extends StatelessWidget {
   const UserRoutingStartEndWidget({
@@ -32,8 +32,8 @@ class UserRoutingStartEndWidget extends StatelessWidget {
         : routingService.sublinEndStep;
     // Is it a Sublin service or public service?
     bool _isSublinService = false;
-    BookingStatus bookingStatusStart;
-    BookingStatus bookingStatusEnd;
+    // BookingStatus bookingStatusStart;
+    // BookingStatus bookingStatusEnd;
     bool _isStartBooked = false;
     bool _isEndBooked = false;
     bool _isStartConfirmed = false;
@@ -56,18 +56,18 @@ class UserRoutingStartEndWidget extends StatelessWidget {
     if (routingService.endAddressAvailable)
       _isEndConfirmed = routingService.sublinEndStep.confirmed;
 
-    if (routingService.booked == true &&
-        direction == Direction.start &&
-        routingService.startAddressAvailable)
-      bookingStatusStart = BookingStatus?.booked;
-    if (routingService.booked == true &&
-        direction == Direction.end &&
-        routingService.endAddressAvailable)
-      bookingStatusEnd = BookingStatus?.booked;
-    if (routingService.sublinStartStep?.confirmed == true)
-      bookingStatusStart = BookingStatus.confirmed;
-    if (routingService.sublinEndStep?.confirmed == true)
-      bookingStatusEnd = BookingStatus.confirmed;
+    // if (routingService.booked == true &&
+    //     direction == Direction.start &&
+    //     routingService.startAddressAvailable)
+    //   bookingStatusStart = BookingStatus?.booked;
+    // if (routingService.booked == true &&
+    //     direction == Direction.end &&
+    //     routingService.endAddressAvailable)
+    //   bookingStatusEnd = BookingStatus?.booked;
+    // if (routingService.sublinStartStep?.confirmed == true)
+    //   bookingStatusStart = BookingStatus.confirmed;
+    // if (routingService.sublinEndStep?.confirmed == true)
+    //   bookingStatusEnd = BookingStatus.confirmed;
 
     return Column(
       mainAxisAlignment: direction == Direction.start

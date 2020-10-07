@@ -17,7 +17,6 @@ class _TestPeriodScreenState extends State<TestPeriodScreen> {
   @override
   Widget build(BuildContext context) {
     final User user = Provider.of<User>(context);
-    print(user.userType);
     return Scaffold(
         appBar: AppbarWidget(title: 'Bitte um Geduld'),
         body: SafeArea(

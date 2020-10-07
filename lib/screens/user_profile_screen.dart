@@ -108,6 +108,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 UserPersonalDataCard(
                     user: user, cardType: CardType.providerType),
                 FlatButton(
+                  textColor: ThemeConstants.sublinMainColor,
                   onPressed: () => AuthService().signOut(),
                   child: Text('Ausloggen'),
                 )

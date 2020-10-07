@@ -14,8 +14,6 @@ Future<void> sublinLogging(Preferences type) async {
 Future<void> removeSublinLogging(Preferences type) async {
   try {
     await removeFromSF(type);
-    int value = await getIntValuesSF(type);
-    print(type.toString() + ' ' + (value).toString());
   } catch (e) {
     print('Remove logging failed' + e);
   }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +29,6 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
   //     TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   int _loadingIndex;
   int _now;
-  Timer _timer;
 
   @override
   void initState() {

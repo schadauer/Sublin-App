@@ -1,9 +1,9 @@
-import 'package:Sublin/models/versioning_class.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:Sublin/screens/test_period_screen.dart';
 import 'package:Sublin/screens/waiting_screen.dart';
 import 'package:Sublin/services/provider_user_service.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:Sublin/screens/provider_settings_screen.dart';
 import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
@@ -96,6 +96,4 @@ class _InitRoutesState extends State<InitRoutes> {
           return Text('Appbar');
         });
   }
-
-  bool _isValidVersion() {}
 }

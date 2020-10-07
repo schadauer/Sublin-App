@@ -13,9 +13,6 @@ import 'package:Sublin/utils/remove_city_from_stations_And_Communes.dart';
 import 'package:Sublin/widgets/provider_operation_time_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart'; // For Image Picker
-// import 'package:firebase_storage/firebase_storage.dart'; // For File Upload To Firestore
-// import 'package:path/path.dart' as Path;
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
@@ -31,7 +28,6 @@ class ProviderSettingsScreen extends StatefulWidget {
 
 class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
   // File _image;
-  final picker = ImagePicker();
   ProviderUser _providerUser;
   String _selectedStation;
   bool _editProviderName = false;
@@ -205,6 +201,8 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                                   children: <Widget>[
                                     Container(
                                       child: FlatButton(
+                                          textColor:
+                                              ThemeConstants.sublinMainColor,
                                           onPressed: () {
                                             setState(() {
                                               _selectedStation = _station;

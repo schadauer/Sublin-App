@@ -6,7 +6,6 @@ import 'package:Sublin/screens/provider_booking_screen.dart';
 import 'package:Sublin/screens/provider_partner_screen.dart';
 import 'package:Sublin/screens/provider_settings_screen.dart';
 import 'package:Sublin/screens/provider_target_group_screen.dart';
-import 'package:Sublin/screens/user_profile_screen.dart';
 import 'package:Sublin/screens/user_my_sublin_screen.dart';
 import 'package:Sublin/screens/user_routing_screen.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
@@ -46,6 +45,12 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
   Widget build(BuildContext context) {
     return (widget.isProvider == true)
         ? BottomNavigationBar(
+            selectedIconTheme: IconThemeData(
+              color: ThemeConstants.sublinMainColor,
+            ),
+            selectedLabelStyle: TextStyle(
+              color: ThemeConstants.sublinMainColor,
+            ),
             type: BottomNavigationBarType.fixed,
             // ----------------- This is the bottom navigation for providers ------------------
             onTap: (index) async {
@@ -82,26 +87,26 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.departure_board),
-                title: Text('Aufträge'),
+                label: 'Aufträge',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.check_circle),
-                title: Text('Einstellungen'),
+                label: 'Einstellungen',
               ),
               if (widget.providerUser?.providerType != ProviderType.taxi)
                 BottomNavigationBarItem(
                   icon: Icon(Icons.group),
-                  title: Text('Zielgruppe'),
+                  label: 'Zielgruppe',
                 ),
               if (widget.providerUser == null ||
                   _providerUser?.providerType != ProviderType.shuttle)
                 BottomNavigationBarItem(
                   icon: Icon(Icons.verified_user),
-                  title: Text('Partner'),
+                  label: 'Partner',
                 ),
             ],
             currentIndex: _currentIndex,
-            selectedItemColor: Colors.amber[800],
+            selectedItemColor: ThemeConstants.sublinMainColor,
           )
         : BottomNavigationBar(
             // This is the navigation for user -------------------------------------
@@ -119,10 +124,6 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
                     await Navigator.of(context)
                         .push(_createRoute(UserRoutingScreen()));
                 }
-                // if (index == 2 && _currentIndex != 2) {
-                //   await Navigator.of(context)
-                //       .push(_createRoute(UserProfileScreen()));
-                // }
               } catch (e) {
                 print(e);
               }
@@ -130,11 +131,11 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.turned_in_not),
-                title: Text('Meine Shuttles'),
+                label: 'Meine Shuttles',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                title: Text('Meine Fahrt'),
+                icon: Icon(Icons.local_taxi),
+                label: 'Meine Fahrt',
               ),
               // BottomNavigationBarItem(
             ],

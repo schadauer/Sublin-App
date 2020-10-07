@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
 import 'package:Sublin/models/address_info_class.dart';
 import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/models/user_class.dart';
@@ -6,9 +9,6 @@ import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/get_icon_for_transportation_type.dart';
 import 'package:Sublin/utils/get_readable_address_from_formatted_address.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:Sublin/widgets/step_icon_widget.dart';
 
 class UserMySublinStartWidget extends StatelessWidget {
   final String startAddress;

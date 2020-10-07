@@ -1,9 +1,7 @@
 // * Both strings have to be formatted addresses
-import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/utils/add_string_to_list.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_commune.dart';
-import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
 
 ProviderUser addCityToStationsAndCommunes({
   String cityFormattedAddress,

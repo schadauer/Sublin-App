@@ -11,11 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CitySelectorWidget extends StatefulWidget {
-  bool providerAddress = false;
-  String station = '';
+  final bool providerAddress;
+  final String station;
   CitySelectorWidget({
-    this.providerAddress,
-    this.station,
+    this.providerAddress = false,
+    this.station = '',
   });
   @override
   _CitySelectorWidgetState createState() => _CitySelectorWidgetState();

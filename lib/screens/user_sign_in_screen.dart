@@ -93,7 +93,7 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                             validator: (val) => val.length == 0
                                 ? 'Bitte gib dein Passwort ein'
                                 : _sublinError == SublinError.wrongPassword
-                                    ? 'Dein Passwort ist nicht korrekt für deine angegebene Emailadresse'
+                                    ? 'Dein Passwort ist nicht korrekt.'
                                     : null,
                             onChanged: (val) {
                               setState(() {
@@ -133,11 +133,14 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                               child: RaisedButton(
                                 onPressed: () async {
                                   try {
-                                    SublinError error = await _auth.signIn(
-                                        email: _email, password: _password);
-                                    setState(() {
-                                      _sublinError = error;
-                                    });
+                                    if (_formKey.currentState.validate()) {
+                                      SublinError error = await _auth.signIn(
+                                          email: _email, password: _password);
+                                      setState(() {
+                                        _sublinError = error;
+                                      });
+                                      _formKey.currentState.validate();
+                                    }
                                   } catch (e) {
                                     print(e);
                                   }

@@ -75,7 +75,6 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                     children: [
                       if (_providerUser.providerPlan == ProviderPlan.emailOnly)
                         Container(
-                          color: Theme.of(context).primaryColor,
                           height: _seachBarHeight,
                           child: Padding(
                             padding: ThemeConstants.largePadding,

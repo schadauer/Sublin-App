@@ -6,6 +6,7 @@ import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/user_my_sublin_screen.dart';
 import 'package:Sublin/services/routing_service.dart';
+import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:Sublin/widgets/step_widget.dart';
@@ -157,6 +158,7 @@ class UserShowRoutingScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             FlatButton(
+                                textColor: ThemeConstants.sublinMainColor,
                                 onPressed: () async {
                                   // await RoutingService().removeProviderFromRoute(user.uid);
                                   Navigator.pushNamed(

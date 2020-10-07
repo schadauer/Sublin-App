@@ -1,9 +1,8 @@
-import 'package:Sublin/screens/waiting_screen.dart';
-import 'package:Sublin/widgets/waiting_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:provider/provider.dart';
 
+import 'package:Sublin/widgets/waiting_widget.dart';
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
@@ -42,7 +41,7 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
     final double itemWidth = size.width / 2;
     final _screenWidth = MediaQuery.of(context).size.width;
     final _screenHeight = MediaQuery.of(context).size.height;
-    final double _navigationHeight = 182.0;
+    final double _navigationHeight = 186.0;
     final _bodyHeight = _screenHeight - _navigationHeight;
 
     return Scaffold(
@@ -61,8 +60,6 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List<ProviderUser> _providerUserList = snapshot.data;
-
-                  // if (snapshot.data.targetGroup.length != 0) {
                   // Show this if "providerPlan" is set to "emailOnly" and emails are in the target group
                   return Column(
                     children: [
@@ -89,64 +86,75 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     if (partnerStatus == PartnerStatus.active)
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Icon(
-                                            Icons.verified_user,
-                                            size: 40.0,
-                                            color:
-                                                ThemeConstants.sublinMainColor,
-                                          ),
-                                          Text(
-                                            'Bestätigt',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption,
-                                          ),
-                                        ],
+                                      SizedBox(
+                                        height: 60,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Icon(
+                                              Icons.verified_user,
+                                              size: 40.0,
+                                              color: ThemeConstants
+                                                  .sublinMainColor,
+                                            ),
+                                            Text(
+                                              'Bestätigt',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .caption,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     if (partnerStatus ==
                                         PartnerStatus.needsPartnerApproval)
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Icon(
-                                            Icons.update,
-                                            size: 40.0,
-                                            color: Theme.of(context).errorColor,
-                                          ),
-                                          Text(
-                                            'Nicht bestätigt',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption,
-                                          ),
-                                        ],
+                                      SizedBox(
+                                        height: 60,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Icon(
+                                              Icons.update,
+                                              size: 40.0,
+                                              color:
+                                                  Theme.of(context).errorColor,
+                                            ),
+                                            Text(
+                                              'Nicht bestätigt',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .caption,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     if (partnerStatus ==
                                         PartnerStatus.needsOwnApproval)
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Icon(
-                                            Icons.error,
-                                            size: 40.0,
-                                            color: Theme.of(context).errorColor,
-                                          ),
-                                          Text(
-                                            'Nicht bestätigt',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption,
-                                          ),
-                                        ],
+                                      SizedBox(
+                                        height: 60,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Icon(
+                                              Icons.error,
+                                              size: 40.0,
+                                              color:
+                                                  Theme.of(context).errorColor,
+                                            ),
+                                            Text(
+                                              'Nicht bestätigt',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .caption,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    SizedBox(height: 20),
                                     Expanded(
+                                      flex: 1,
                                       child: AutoSizeText(
                                         _providerUserList[index].providerName,
                                         style: Theme.of(context)
@@ -155,10 +163,38 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                       ),
                                     ),
                                     if (providerUser.providerType !=
-                                        ProviderType.taxi)
+                                            ProviderType.taxi &&
+                                        partnerStatus ==
+                                            PartnerStatus.needsPartnerApproval)
                                       Expanded(
+                                        flex: 2,
+                                        child: AutoSizeText(
+                                          '${_providerUserList[index].providerName} hat die Partnerschaft noch nicht bestätigt.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                        ),
+                                      ),
+                                    if (providerUser.providerType !=
+                                            ProviderType.taxi &&
+                                        partnerStatus == PartnerStatus.active)
+                                      Expanded(
+                                        flex: 2,
                                         child: AutoSizeText(
                                           '${_providerUserList[index].providerName} führt für dich derzeit Transferservices durch.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                        ),
+                                      ),
+                                    if (providerUser.providerType !=
+                                            ProviderType.taxi &&
+                                        partnerStatus ==
+                                            PartnerStatus.needsOwnApproval)
+                                      Expanded(
+                                        flex: 2,
+                                        child: AutoSizeText(
+                                          'Damit ${_providerUserList[index].providerName} führt für dich Transferservices durchführen kann, musst du die Partnerschaft bestätigen.',
                                           style: Theme.of(context)
                                               .textTheme
                                               .caption,
@@ -167,6 +203,7 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                     if (providerUser.providerType ==
                                         ProviderType.taxi)
                                       Expanded(
+                                        flex: 2,
                                         child: AutoSizeText(
                                           'Du führst Transferservices für ${_providerUserList[index].providerName} durch.',
                                           style: Theme.of(context)
@@ -175,48 +212,62 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                         ),
                                       ),
                                     if (partnerStatus ==
+                                        PartnerStatus.needsPartnerApproval)
+                                      SizedBox(
+                                        height: 60,
+                                      ),
+                                    if (partnerStatus ==
                                         PartnerStatus.needsOwnApproval)
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          RaisedButton(
-                                              onPressed: () async {
-                                                List<String> _partners = [
-                                                  ...providerUser.partners
-                                                ];
-                                                _partners.add(
-                                                    _providerUserList[index]
-                                                        .uid);
-                                                await ProviderUserService()
-                                                    .updatePartnersProviderUser(
-                                                        uid: providerUser.uid,
-                                                        partners: _partners);
-                                              },
-                                              child:
-                                                  AutoSizeText('Akzeptieren')),
-                                        ],
+                                      SizedBox(
+                                        height: 60,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            RaisedButton(
+                                                onPressed: () async {
+                                                  List<String> _partners = [
+                                                    ...providerUser.partners
+                                                  ];
+                                                  _partners.add(
+                                                      _providerUserList[index]
+                                                          .uid);
+                                                  await ProviderUserService()
+                                                      .updatePartnersProviderUser(
+                                                          uid: providerUser.uid,
+                                                          partners: _partners);
+                                                },
+                                                child: AutoSizeText(
+                                                    'Akzeptieren')),
+                                          ],
+                                        ),
                                       ),
                                     if (partnerStatus == PartnerStatus.active)
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          FlatButton(
-                                              onPressed: () async {
-                                                List<String> _partners = [
-                                                  ...providerUser.partners
-                                                ];
-                                                _partners.remove(
-                                                    _providerUserList[index]
-                                                        .uid);
-                                                await ProviderUserService()
-                                                    .updatePartnersProviderUser(
-                                                        uid: providerUser.uid,
-                                                        partners: _partners);
-                                              },
-                                              child: AutoSizeText('Aussetzen')),
-                                        ],
+                                      SizedBox(
+                                        height: 60,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            FlatButton(
+                                                textColor: ThemeConstants
+                                                    .sublinMainColor,
+                                                onPressed: () async {
+                                                  List<String> _partners = [
+                                                    ...providerUser.partners
+                                                  ];
+                                                  _partners.remove(
+                                                      _providerUserList[index]
+                                                          .uid);
+                                                  await ProviderUserService()
+                                                      .updatePartnersProviderUser(
+                                                          uid: providerUser.uid,
+                                                          partners: _partners);
+                                                },
+                                                child:
+                                                    AutoSizeText('Aussetzen')),
+                                          ],
+                                        ),
                                       )
                                   ],
                                 ),
