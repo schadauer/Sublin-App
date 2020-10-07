@@ -38,12 +38,13 @@ class _StepWidgetState extends State<StepWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
+      height: 90,
       child: Container(
         child: Stack(children: <Widget>[
           SizedBox(
             height: double.infinity,
             child: Card(
+              elevation: 0.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(0),
               ),
@@ -75,7 +76,7 @@ class _StepWidgetState extends State<StepWidget> {
                                     '${widget.lineName} - ${widget.startAddress}',
                                     maxLines: 2,
                                     style:
-                                        Theme.of(context).textTheme.headline2,
+                                        Theme.of(context).textTheme.headline3,
                                   ),
                                 ),
                                 SizedBox(
@@ -86,7 +87,7 @@ class _StepWidgetState extends State<StepWidget> {
                                   child: Text(
                                     '${getTimeFormat(widget.startTime)}',
                                     style:
-                                        Theme.of(context).textTheme.headline2,
+                                        Theme.of(context).textTheme.headline3,
                                     textAlign: TextAlign.end,
                                   ),
                                 ),

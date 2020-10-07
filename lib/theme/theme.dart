@@ -115,7 +115,7 @@ ThemeData themeData(context) {
       headline3: TextStyle(
         fontSize: 16,
         color: Colors.black,
-        fontWeight: FontWeight.normal,
+        fontWeight: FontWeight.bold,
         fontFamily: 'Lato',
       ),
       headline4: TextStyle(

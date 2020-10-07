@@ -29,136 +29,139 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
       return Loading();
     } else {
       return Scaffold(
+          resizeToAvoidBottomInset: false,
           body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            ProgressIndicatorWidget(
-              index: 1,
-              elements: 1,
-              showProgressIndicator: false,
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Container(
-              padding: EdgeInsets.all(15),
-              width: MediaQuery.of(context).size.width,
-              height: 60,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    'Willkommen zurück',
-                    style: Theme.of(context).textTheme.headline1,
-                    textAlign: TextAlign.left,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                ProgressIndicatorWidget(
+                  index: 1,
+                  elements: 1,
+                  showProgressIndicator: false,
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Container(
+                  padding: EdgeInsets.all(15),
+                  width: MediaQuery.of(context).size.width,
+                  height: 60,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text(
+                        'Willkommen zurück',
+                        style: Theme.of(context).textTheme.headline1,
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        TextFormField(
-                            validator: (val) => val.length < 2 ||
-                                    !isEmailFormat(val)
-                                ? 'Bitte gib eine gültige E-Mailadresse an'
-                                : _sublinError == SublinError.emailNotFound
-                                    ? 'Wir konnten diese Emailadresse nicht finden'
-                                    : null,
-                            onChanged: (val) {
-                              setState(() {
-                                _email = val;
-                                _sublinError = SublinError.none;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Deine E-Mail',
-                              prefixIcon: Icon(Icons.email),
-                            )),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextFormField(
-                            validator: (val) => val.length == 0
-                                ? 'Bitte gib dein Passwort ein'
-                                : _sublinError == SublinError.wrongPassword
-                                    ? 'Dein Passwort ist nicht korrekt.'
-                                    : null,
-                            onChanged: (val) {
-                              setState(() {
-                                _password = val;
-                                _sublinError = SublinError.none;
-                              });
-                            },
-                            obscureText: true,
-                            decoration: InputDecoration(
-                                hintText: 'Passwort',
-                                prefixIcon: Icon(Icons.lock))),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(child: ForgetPassword(email: _email)),
-                            Expanded(
-                              child: FlatButton(
-                                textColor:
-                                    Theme.of(context).secondaryHeaderColor,
-                                onPressed: () => Navigator.pop(context),
-                                child: AutoSizeText(
-                                  'Noch nicht registriert?',
-                                  maxLines: 1,
-                                  style: ThemeConstants.mainButton,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => FocusScope.of(context).unfocus(),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
-                            SizedBox(
-                              child: RaisedButton(
-                                onPressed: () async {
-                                  try {
-                                    if (_formKey.currentState.validate()) {
-                                      SublinError error = await _auth.signIn(
-                                          email: _email, password: _password);
-                                      setState(() {
-                                        _sublinError = error;
-                                      });
-                                      _formKey.currentState.validate();
-                                    }
-                                  } catch (e) {
-                                    print(e);
-                                  }
+                            TextFormField(
+                                validator: (val) => val.length < 2 ||
+                                        !isEmailFormat(val)
+                                    ? 'Bitte gib eine gültige E-Mailadresse an'
+                                    : _sublinError == SublinError.emailNotFound
+                                        ? 'Wir konnten diese Emailadresse nicht finden'
+                                        : null,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _email = val;
+                                    _sublinError = SublinError.none;
+                                  });
                                 },
-                                child: Text('Einloggen'),
-                              ),
+                                decoration: InputDecoration(
+                                  hintText: 'Deine E-Mail',
+                                  prefixIcon: Icon(Icons.email),
+                                )),
+                            SizedBox(
+                              height: 20,
                             ),
+                            TextFormField(
+                                validator: (val) => val.length == 0
+                                    ? 'Bitte gib dein Passwort ein'
+                                    : _sublinError == SublinError.wrongPassword
+                                        ? 'Dein Passwort ist nicht korrekt.'
+                                        : null,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _password = val;
+                                    _sublinError = SublinError.none;
+                                  });
+                                },
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    hintText: 'Passwort',
+                                    prefixIcon: Icon(Icons.lock))),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(child: ForgetPassword(email: _email)),
+                                Expanded(
+                                  child: FlatButton(
+                                    textColor:
+                                        Theme.of(context).secondaryHeaderColor,
+                                    onPressed: () => Navigator.pop(context),
+                                    child: AutoSizeText(
+                                      'Noch nicht registriert?',
+                                      maxLines: 1,
+                                      style: ThemeConstants.mainButton,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                SizedBox(
+                                  child: RaisedButton(
+                                    onPressed: () async {
+                                      try {
+                                        if (_formKey.currentState.validate()) {
+                                          SublinError error =
+                                              await _auth.signIn(
+                                                  email: _email,
+                                                  password: _password);
+                                          setState(() {
+                                            _sublinError = error;
+                                          });
+                                          _formKey.currentState.validate();
+                                        }
+                                      } catch (e) {
+                                        print(e);
+                                      }
+                                    },
+                                    child: Text('Einloggen'),
+                                  ),
+                                ),
+                              ],
+                            )
                           ],
-                        )
-                      ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ));
+          ));
     }
   }
 }

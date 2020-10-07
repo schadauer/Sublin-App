@@ -36,36 +36,43 @@ class UserShowRoutingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double safePaddingTop = MediaQuery.of(context).padding.top;
+    double safePaddingBottom = MediaQuery.of(context).padding.bottom;
+    double screenSize = MediaQuery.of(context).size.height;
+    double appBarSize = 50.0;
+    double availableHeight = screenSize -
+        kBottomNavigationBarHeight -
+        safePaddingTop -
+        safePaddingBottom -
+        heightBookingBottomSheet -
+        appBarSize;
+    double heightOfStepCard = 90.0;
+
+    double _getPublicStepsheight() {
+      double numberOfPublicSteps = 0.0;
+      routingService.publicSteps.forEach((element) {
+        if (element.travelMode == TravelMode.transit)
+          numberOfPublicSteps += 1.0;
+      });
+      return numberOfPublicSteps * heightOfStepCard;
+    }
+
     double _getRoutingStepHeight(StepType steptype, Routing routingService) {
       // We need to calculate the screen height minus the bottom navigation and the appbar
-      double safePaddingTop = MediaQuery.of(context).padding.top;
-      double safePaddingBottom = MediaQuery.of(context).padding.bottom;
-      double screenSize = MediaQuery.of(context).size.height < 700.0
-          ? 700
-          : MediaQuery.of(context).size.height;
-      double availableHight = screenSize -
-          kBottomNavigationBarHeight -
-          140 -
-          safePaddingTop -
-          safePaddingBottom;
-      double heightOfStepCard = 100.0;
+
       double numberOfStartOrEndSteps = 0;
       if (routingService.isPubliclyAccessibleEndAddress == true)
         numberOfStartOrEndSteps += 1;
       if (routingService.isPubliclyAccessibleStartAddress == true)
         numberOfStartOrEndSteps += 1;
-      double numberOfPublicSteps =
-          routingService.publicSteps.length.toDouble() -
-              numberOfStartOrEndSteps;
-      if (numberOfPublicSteps > 2) numberOfPublicSteps = 2.5;
+
       switch (steptype) {
         case StepType.start:
         case StepType.end:
-          return (availableHight - (heightOfStepCard * numberOfPublicSteps)) /
-              2;
+          return (availableHeight - _getPublicStepsheight()) / 2;
           break;
         case StepType.public:
-          return heightOfStepCard * numberOfPublicSteps;
+          return _getPublicStepsheight();
           break;
       }
       return 0.0;
@@ -95,56 +102,60 @@ class UserShowRoutingScreen extends StatelessWidget {
                             ),
                           ]),
                     ])),
-                // -------------------------These are the public steps -----------------------------
                 Container(
-                    padding: EdgeInsets.only(
-                      top:
-                          _getRoutingStepHeight(StepType.start, routingService),
-                    ),
-                    height: MediaQuery.of(context).size.height,
-                    child: ListView.builder(
-                        itemCount: routingService.publicSteps.length,
-                        itemBuilder: (context, index) {
-                          if (routingService.publicSteps[index].travelMode ==
-                              TravelMode.transit) {
-                            return StepWidget(
-                              startAddress: routingService
-                                  .publicSteps[index].startAddress,
-                              startTime:
-                                  routingService.publicSteps[index].startTime,
-                              endAddress:
-                                  routingService.publicSteps[index].endAddress,
-                              endTime:
-                                  routingService.publicSteps[index].endTime,
-                              distance:
-                                  routingService.publicSteps[index].distance,
-                              duration:
-                                  routingService.publicSteps[index].duration,
-                              providerName: routingService
-                                  .publicSteps[index].providerName,
-                              lineName:
-                                  routingService.publicSteps[index].lineName,
-                            );
-                          } else
-                            return Container(width: 0.0, height: 0.0);
-                        })),
-                // -------------------------These is the start step steps -----------------------------
-                // if (routingService.startAddressAvailable ||
-                //     routingService.isPubliclyAccessibleStartAddress)
-                UserRoutingStartEndWidget(
-                  direction: Direction.start,
-                  routingService: routingService,
-                  stepHeight:
-                      _getRoutingStepHeight(StepType.start, routingService),
+                  height: availableHeight,
+                  child: Column(
+                    children: [
+                      // -------------------------These is the start step steps -----------------------------
+                      UserRoutingStartEndWidget(
+                        direction: Direction.start,
+                        routingService: routingService,
+                        stepHeight: _getRoutingStepHeight(
+                            StepType.start, routingService),
+                      ),
+                      // -------------------------These are the public steps -----------------------------
+                      Expanded(
+                          flex: 1,
+                          child: ListView.builder(
+                              itemCount: routingService.publicSteps.length,
+                              itemBuilder: (context, index) {
+                                if (routingService
+                                        .publicSteps[index].travelMode ==
+                                    TravelMode.transit) {
+                                  return StepWidget(
+                                    startAddress: routingService
+                                        .publicSteps[index].startAddress,
+                                    startTime: routingService
+                                        .publicSteps[index].startTime,
+                                    endAddress: routingService
+                                        .publicSteps[index].endAddress,
+                                    endTime: routingService
+                                        .publicSteps[index].endTime,
+                                    distance: routingService
+                                        .publicSteps[index].distance,
+                                    duration: routingService
+                                        .publicSteps[index].duration,
+                                    providerName: routingService
+                                        .publicSteps[index].providerName,
+                                    lineName: routingService
+                                        .publicSteps[index].lineName,
+                                  );
+                                } else
+                                  return Container(width: 0.0, height: 0.0);
+                              })),
+
+                      // ------------------------------These is the end steps -----------------------------
+                      UserRoutingStartEndWidget(
+                        direction: Direction.end,
+                        routingService: routingService,
+                        stepHeight: _getRoutingStepHeight(
+                            StepType.start, routingService),
+                        heightBookingSheet: heightBookingBottomSheet,
+                      ),
+                    ],
+                  ),
                 ),
-                // ------------------------------These is the end steps -----------------------------
-                UserRoutingStartEndWidget(
-                  direction: Direction.end,
-                  routingService: routingService,
-                  stepHeight:
-                      _getRoutingStepHeight(StepType.start, routingService),
-                  heightBookingSheet: heightBookingBottomSheet,
-                ),
+
                 // ------------------------ This is the bottom sheet for ordering -------------------------
 
                 if (routingService.booked == false)
@@ -153,6 +164,7 @@ class UserShowRoutingScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
+                        color: Colors.white,
                         height: heightBookingBottomSheet,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -174,8 +186,8 @@ class UserShowRoutingScreen extends StatelessWidget {
                                             .bookRoute(uid: user.uid);
                                       },
                                 child: (Text(_isBothDirections()
-                                    ? 'Bahnhoftransfers buchen'
-                                    : 'Bahnhoftransfer buchen')))
+                                    ? 'Bahnhofshuttles buchen'
+                                    : 'Bahnhofshuttle buchen')))
                           ],
                         ),
                       ),

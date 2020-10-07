@@ -25,13 +25,15 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>To take a photo for the profile image</string>
+	<string>Sublin benötigt deine Kamera für dein Profilfoto</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Mit deinen Standortdaten werden automatisch erkannt.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Mit deinen Standortdaten werden automatisch erkannt.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Mit deinen Standortdaten werden automatisch erkannt.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>To set a profile image</string>
+	<string>Sublin benötigt Zugang zu deinen Fotos um Profilfotos zu setzen.</string>
 	<key>NSFileProviderDomainUsageDescription</key>
 	<string></string>
 	<key>UIBackgroundModes</key>

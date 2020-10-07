@@ -56,71 +56,42 @@ class UserRoutingStartEndWidget extends StatelessWidget {
     if (routingService.endAddressAvailable)
       _isEndConfirmed = routingService.sublinEndStep.confirmed;
 
-    // if (routingService.booked == true &&
-    //     direction == Direction.start &&
-    //     routingService.startAddressAvailable)
-    //   bookingStatusStart = BookingStatus?.booked;
-    // if (routingService.booked == true &&
-    //     direction == Direction.end &&
-    //     routingService.endAddressAvailable)
-    //   bookingStatusEnd = BookingStatus?.booked;
-    // if (routingService.sublinStartStep?.confirmed == true)
-    //   bookingStatusStart = BookingStatus.confirmed;
-    // if (routingService.sublinEndStep?.confirmed == true)
-    //   bookingStatusEnd = BookingStatus.confirmed;
-
-    return Column(
-      mainAxisAlignment: direction == Direction.start
-          ? MainAxisAlignment.start
-          : MainAxisAlignment.end,
-      children: <Widget>[
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: stepHeight + heightBookingSheet,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 5,
-                offset: Offset(4.0, 1.0), // changes position of shadow
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                color: _isSublinService
-                    ? Theme.of(context).primaryColor
-                    : Colors.white,
-                width: MediaQuery.of(context).size.width,
-                height: stepHeight,
-                child: Stack(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          width: 60,
-                          height: stepHeight,
+    return Expanded(
+      flex: 1,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              color: ThemeConstants.backgroundColor,
+              width: MediaQuery.of(context).size.width,
+              height: stepHeight,
+              child: Stack(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        width: 60,
+                        height: stepHeight,
+                      ),
+                      Container(
+                        height: stepHeight,
+                        width: MediaQuery.of(context).size.width - 60,
+                        padding: EdgeInsets.only(
+                          top: 20,
+                          bottom: 10,
+                          left: 10,
+                          right: 15,
                         ),
-                        Container(
-                          height: stepHeight,
-                          width: MediaQuery.of(context).size.width - 60,
-                          padding: EdgeInsets.only(
-                            top: 20,
-                            bottom: 10,
-                            left: 10,
-                            right: 15,
-                          ),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 8),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
@@ -222,34 +193,51 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    AutoSizeText(
-                                                      '${routingService.publicSteps[0].startAddress}',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headline2,
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        '${routingService.publicSteps[0].startAddress}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headline2,
+                                                      ),
                                                     ),
-                                                    AutoSizeText(
-                                                      'Fußweg',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption,
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        'Fußweg',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .caption,
+                                                      ),
                                                     ),
-                                                    Row(
-                                                      children: [
-                                                        Icon(
-                                                            Icons.keyboard_tab),
-                                                        SizedBox(width: 5),
-                                                        Expanded(
-                                                          child: AutoSizeText(
-                                                            '${routingService.publicSteps[0].endAddress}',
-                                                            maxLines: 2,
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .caption,
+                                                    Expanded(
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 30,
+                                                            child: Icon(Icons
+                                                                .keyboard_tab),
                                                           ),
-                                                        ),
-                                                      ],
+                                                          SizedBox(width: 5),
+                                                          Expanded(
+                                                            child: Align(
+                                                              alignment: Alignment
+                                                                  .bottomLeft,
+                                                              child:
+                                                                  AutoSizeText(
+                                                                '${routingService.publicSteps[0].endAddress}',
+                                                                maxLines: 2,
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .caption,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -267,20 +255,30 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    AutoSizeText(
-                                                      '${routingService.publicSteps[0].startAddress}',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .headline2,
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        '${routingService.publicSteps[0].startAddress}',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headline2,
+                                                      ),
                                                     ),
                                                     SizedBox(
                                                       height: 10,
                                                     ),
-                                                    AutoSizeText(
-                                                      'Derzeit noch kein Sublin-Service verfügbar.',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption,
+                                                    Expanded(
+                                                      child: Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: AutoSizeText(
+                                                          'Derzeit noch kein Sublin-Service verfügbar.',
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .caption,
+                                                          maxLines: 2,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -355,7 +353,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                       child: AutoSizeText(
                                                         '${getReadableAddressFromFormattedAddress(step.endAddress)}',
                                                         maxLines: 2,
-                                                        minFontSize: 16,
+                                                        minFontSize: 15,
                                                         style: ThemeConstants
                                                             .veryLargeHeader,
                                                       ),
@@ -437,21 +435,27 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                                 1]
                                                         .travelMode ==
                                                     TravelMode.transit)
-                                              Column(
-                                                children: [
-                                                  AutoSizeText(
-                                                    '${routingService.publicSteps[routingService.publicSteps.length - 1].endAddress}',
-                                                    minFontSize: 20,
-                                                    style: ThemeConstants
-                                                        .veryLargeHeader,
-                                                  ),
-                                                  AutoSizeText(
-                                                    'Derzeit noch kein Sublin-Service verfügbar.',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText1,
-                                                  ),
-                                                ],
+                                              Expanded(
+                                                child: Column(
+                                                  children: [
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        '${routingService.publicSteps[routingService.publicSteps.length - 1].endAddress}',
+                                                        minFontSize: 20,
+                                                        style: ThemeConstants
+                                                            .veryLargeHeader,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: AutoSizeText(
+                                                        'Derzeit noch kein Sublin-Service verfügbar.',
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText1,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                           ],
                                         ),
@@ -493,13 +497,17 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                 routingService
                                                     .startAddressAvailable)
                                               Expanded(
-                                                child: AutoSizeText(
-                                                  '${getTimeFormat(routingService.sublinStartStep.endTime)}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .caption,
-                                                  maxLines: 1,
-                                                  textAlign: TextAlign.right,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: AutoSizeText(
+                                                    '${getTimeFormat(routingService.sublinStartStep.endTime)}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .caption,
+                                                    maxLines: 1,
+                                                    textAlign: TextAlign.right,
+                                                  ),
                                                 ),
                                               ),
                                             if (direction == Direction.end &&
@@ -520,13 +528,16 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                 routingService
                                                     .endAddressAvailable)
                                               Expanded(
-                                                child: AutoSizeText(
-                                                  '${getTimeFormat(routingService.sublinEndStep.endTime)}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headline1,
-                                                  maxLines: 2,
-                                                  textAlign: TextAlign.right,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: AutoSizeText(
+                                                    '${getTimeFormat(routingService.sublinEndStep.endTime)}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .headline1,
+                                                    maxLines: 2,
+                                                  ),
                                                 ),
                                               ),
                                             if (direction == Direction.end &&
@@ -568,31 +579,30 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                              ]),
-                        ),
-                      ],
-                    ),
-                    StepIconWidget(
-                      isSublinService: _isSublinService,
-                      isStartAddress: direction == Direction.start,
-                      isEndAddress: direction == Direction.end,
-                      isBooked:
-                          direction == Direction.start && _isStartBooked ||
-                              direction == Direction.end && _isEndBooked,
-                      isConfirmed:
-                          direction == Direction.start && _isStartConfirmed ||
-                              direction == Direction.end && _isEndConfirmed,
-                      icon: _isSublinService
-                          ? Icons.directions_car
-                          : Icons.directions_walk,
-                    )
-                  ],
-                ),
+                              ),
+                            ]),
+                      ),
+                    ],
+                  ),
+                  StepIconWidget(
+                    isSublinService: _isSublinService,
+                    isStartAddress: direction == Direction.start,
+                    isEndAddress: direction == Direction.end,
+                    isBooked: direction == Direction.start && _isStartBooked ||
+                        direction == Direction.end && _isEndBooked,
+                    isConfirmed:
+                        direction == Direction.start && _isStartConfirmed ||
+                            direction == Direction.end && _isEndConfirmed,
+                    icon: _isSublinService
+                        ? Icons.directions_car
+                        : Icons.directions_walk,
+                  )
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
