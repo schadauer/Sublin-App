@@ -11,6 +11,7 @@ import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:Sublin/models/routing_class.dart';
@@ -118,51 +119,53 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                 return Scaffold(
                     // appBar: AppbarWidget(title: 'Abgelaufene Fahrt'),
                     body: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    width: MediaQuery.of(context).size.width,
-                    height: 200,
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Deine Route ist nicht mehr aktuell.',
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 300),
+                        child: AutoSizeText(
+                          'Deine Route ist abgelaufen. Der Zug ist abgefahren :-)',
+                          textAlign: TextAlign.center,
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        RaisedButton(
-                          onPressed: () async {
-                            try {
-                              await RoutingService().requestRoute(
-                                uid: user.uid,
-                                startAddress: routingService.startAddress,
-                                endAddress: routingService.endAddress,
-                                timestamp: DateTime.now(),
-                              );
-                              await Navigator.pushReplacementNamed(
-                                  context, UserRoutingScreen.routeName);
-                            } catch (e) {
-                              print(e);
-                            }
-                          },
-                          child: Text('Route aktualisieren'),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        FlatButton(
-                          onPressed: () async {
-                            try {
-                              await Navigator.pushReplacementNamed(
-                                  context, UserMySublinScreen.routeName);
-                            } catch (e) {
-                              print(e);
-                            }
-                          },
-                          child: Text('Andere Route suchen'),
-                        )
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      RaisedButton(
+                        onPressed: () async {
+                          try {
+                            await RoutingService().deleteRoute(user.uid);
+                            await RoutingService().requestRoute(
+                              uid: user.uid,
+                              startAddress: routingService.startAddress,
+                              endAddress: routingService.endAddress,
+                              timestamp: DateTime.now(),
+                            );
+
+                            await Navigator.pushReplacementNamed(
+                                context, UserRoutingScreen.routeName);
+                          } catch (e) {
+                            print(e);
+                          }
+                        },
+                        child: Text('Route aktualisieren'),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      FlatButton(
+                        onPressed: () async {
+                          try {
+                            await Navigator.pushReplacementNamed(
+                                context, UserMySublinScreen.routeName);
+                          } catch (e) {
+                            print(e);
+                          }
+                        },
+                        child: Text('Andere Route suchen'),
+                      )
+                    ],
                   ),
                 ));
               } else if (isRouteCompleted(routingService)) {

@@ -109,12 +109,17 @@ class RoutingService {
     }
   }
 
+  Future<void> deleteRoute(uid) async {
+    try {
+      _database.collection('routings').doc(uid).delete();
+    } catch (e) {
+      print('deleteCheck catch' + e);
+    }
+  }
+
   Future<void> deleteCheck(uid) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingRoutings);
-      // }
-      // _database.collection('check').doc(uid).delete();
+      _database.collection('check').doc(uid).delete();
     } catch (e) {
       print('deleteCheck catch' + e);
     }

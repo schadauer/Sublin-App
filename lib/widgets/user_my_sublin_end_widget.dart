@@ -54,7 +54,7 @@ class UserMySublinEndWidget extends StatelessWidget {
             height: itemHeight,
             width: itemWidth,
             child: Card(
-                color: ThemeConstants.backgroundColor,
+                color: Colors.white,
                 semanticContainer: true,
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: Padding(
@@ -207,7 +207,7 @@ class UserMySublinEndWidget extends StatelessWidget {
                             )));
               },
               child: Card(
-                  color: ThemeConstants.backgroundColor,
+                  color: Colors.white,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
