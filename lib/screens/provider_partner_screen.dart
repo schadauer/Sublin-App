@@ -275,9 +275,7 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                             },
                           ),
                         )
-                      else if (providerUser.providerPlan ==
-                              ProviderPlan.emailOnly &&
-                          _providerUserList.length == 0)
+                      else
                         SizedBox(
                           height: _bodyHeight,
                           width: _screenWidth / 1.5,
@@ -300,60 +298,9 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                 height: 20,
                               ),
                               Text(
-                                'Derzeit kann keiner deinen Service in Anspruch nehmen. Bitte füge E-Mailadressen hinzu oder gib deinen Dienst für alle frei.',
+                                'Sobald dich ein Partnerunternehmen hinzufügst, kannst du hier die Partnerschaft bestätigen.',
                                 style: Theme.of(context).textTheme.bodyText1,
                                 textAlign: TextAlign.center,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              RaisedButton(
-                                  onPressed: null,
-                                  child: Text('Für alle freigeben')),
-                            ],
-                          ),
-                        )
-                      else
-                        SizedBox(
-                          height: _bodyHeight,
-                          width: _screenWidth / 1.5,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: _screenWidth / 1.5,
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.group,
-                                      size: 60.0,
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Keine Einschränkung',
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Derzeit können alle deinen Shuttledienst vom Bahnhof zu deiner Addresse in Anspruch nehmen.',
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    RaisedButton(
-                                        onPressed: null,
-                                        child: Text('Zielgruppe einschränken')),
-                                  ],
-                                ),
                               ),
                             ],
                           ),
@@ -369,34 +316,38 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
 
   Future<List<ProviderUser>> _getProvidersAsPartners(
       {ProviderUser providerUser}) async {
-    List<ProviderUser> providerUserList = await ProviderUserService()
-        .getProvidersAsPartners(uid: providerUser.uid);
-    List<String> _unapprovedProviderUserListByUid = [...providerUser.partners];
-    // Sponsors may have an unapproved partner which we need to show here as well
-    if (providerUser.providerType == ProviderType.sponsor ||
-        providerUser.providerType == ProviderType.sponsorShuttle ||
-        providerUser.providerType == ProviderType.taxi) {
-      //Let's check if all partners in the current partners list are in the _providerUserList
-      if (providerUserList.length != 0) {
-        providerUser.partners.forEach((partnerUidFromPartnerList) {
-          providerUserList.forEach((partner) {
-            if (partner.uid == partnerUidFromPartnerList)
-              // If we find the partner remove it from the list
-              _unapprovedProviderUserListByUid
-                  .remove(partnerUidFromPartnerList);
+    if (providerUser.uid != null) {
+      List<ProviderUser> providerUserList = await ProviderUserService()
+          .getProvidersAsPartners(uid: providerUser.uid);
+      List<String> _unapprovedProviderUserListByUid = [
+        ...providerUser.partners
+      ];
+      // Sponsors may have an unapproved partner which we need to show here as well
+      if (providerUser.providerType == ProviderType.sponsor ||
+          providerUser.providerType == ProviderType.sponsorShuttle ||
+          providerUser.providerType == ProviderType.taxi) {
+        //Let's check if all partners in the current partners list are in the _providerUserList
+        if (providerUserList.length != 0) {
+          providerUser.partners.forEach((partnerUidFromPartnerList) {
+            providerUserList.forEach((partner) {
+              if (partner.uid == partnerUidFromPartnerList)
+                // If we find the partner remove it from the list
+                _unapprovedProviderUserListByUid
+                    .remove(partnerUidFromPartnerList);
+            });
           });
-        });
+        }
+        // If we find unapproved partners we need to loop through them and get data from them
+        // List<ProviderUser> _providerUserListAdded = [];
+        return await _addUnapprovedProviderUsersToApprovedList(
+            approvedProviderUserList: providerUserList,
+            unapprovedProviderUserList: _unapprovedProviderUserListByUid);
+        // return providerUserList;
+      } else {
+        return providerUserList;
       }
-      // If we find unapproved partners we need to loop through them and get data from them
-      // List<ProviderUser> _providerUserListAdded = [];
-      return await _addUnapprovedProviderUsersToApprovedList(
-          approvedProviderUserList: providerUserList,
-          unapprovedProviderUserList: _unapprovedProviderUserListByUid);
-
-      // return providerUserList;
-    } else {
-      return providerUserList;
-    }
+    } else
+      return <ProviderUser>[];
   }
 
   Future<List<ProviderUser>> _addUnapprovedProviderUsersToApprovedList(

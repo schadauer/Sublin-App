@@ -89,10 +89,13 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                Text(
-                                  'Hallo $firstName ',
-                                  style: Theme.of(context).textTheme.headline1,
-                                  textAlign: TextAlign.left,
+                                Expanded(
+                                  child: AutoSizeText(
+                                    'Hallo $firstName ',
+                                    style:
+                                        Theme.of(context).textTheme.headline1,
+                                    textAlign: TextAlign.left,
+                                  ),
                                 ),
                               ],
                             ),

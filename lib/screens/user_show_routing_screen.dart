@@ -158,11 +158,11 @@ class UserShowRoutingScreen extends StatelessWidget {
 
                 // ------------------------ This is the bottom sheet for ordering -------------------------
 
-                if (routingService.booked == false)
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (routingService.booked == false)
                       Container(
                         color: Colors.white,
                         height: heightBookingBottomSheet,
@@ -191,8 +191,13 @@ class UserShowRoutingScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    if (routingService.booked == true)
+                      Container(
+                        height: heightBookingBottomSheet,
+                        color: Colors.white,
+                      )
+                  ],
+                ),
               ],
             ),
           ),

@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:Sublin/screens/test_period_screen.dart';
 import 'package:Sublin/theme/theme.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_commune.dart';
+import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
+import 'package:Sublin/utils/remove_from_list.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -82,9 +86,25 @@ class _ProviderRegistrationScreenState
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _pageViewController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
+
+    // _providerUser.communes = <String>[];
+    // _providerUser.stations = <String>[];
+    // _providerUser.addresses = <String>[];
+    print(ProviderUser().toJson(_providerUser));
 
     return Scaffold(
       appBar: PreferredSize(
@@ -164,6 +184,7 @@ class _ProviderRegistrationScreenState
                                             _providerUser.addresses = [
                                               _request.endAddress
                                             ];
+                                            _providerUser.uid = user.uid;
                                           });
                                           // Create a route to check if there is service at the end address
                                           await RoutingService().requestRoute(
@@ -309,65 +330,65 @@ class _ProviderRegistrationScreenState
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
-                                  if (!_checkRoutingData.endAddressAvailable &&
-                                      user.userType == UserType.sponsor)
-                                    RaisedButton(
-                                        onPressed: () async {
-                                          //* This is for the test period to redirect users to the TestPeriodScreen
-                                          UserService()
-                                              .updateIsTestPeriodRegistrationCompleted(
-                                                  uid: user.uid,
-                                                  isTestPeriodRegistrationCompleted:
-                                                      true);
-                                          Navigator.pushReplacementNamed(
-                                              context,
-                                              TestPeriodScreen.routeName);
-                                        },
-                                        child:
-                                            Text('Vorübergehend abschließen')),
-                                  if (!_checkRoutingData.endAddressAvailable &&
-                                      user.userType != UserType.sponsor)
-                                    RaisedButton(
-                                      onPressed: _providerUser.providerType !=
-                                              null
-                                          ? () {
-                                              // Add the taxi partner
-                                              _providerUser
-                                                  .partners = _providerUser
-                                                              .providerType ==
-                                                          ProviderType
-                                                              .sponsor ||
-                                                      _providerUser
-                                                              .providerType ==
-                                                          ProviderType
-                                                              .sponsorShuttle
-                                                  ? [
-                                                      _checkRoutingData
-                                                          .sublinEndStep
-                                                          .provider
-                                                          .id
-                                                    ]
-                                                  : [];
-                                              if (_providerUser.providerType ==
-                                                  ProviderType.sponsor)
-                                                setState(() {
-                                                  _providerUser =
-                                                      addCityToProviderUserCommunesAndAddresses(
-                                                          providerUser:
-                                                              _providerUser,
-                                                          cityFormattedAddress:
-                                                              getFormattedCityFromFormattedAddress(
-                                                                  _checkRoutingData
-                                                                      .endAddress));
-                                                });
-                                              _pageViewController.nextPage(
-                                                  duration: Duration(
-                                                      milliseconds: 300),
-                                                  curve: Curves.easeOut);
-                                            }
-                                          : null,
-                                      child: Text('Weiter'),
-                                    )
+                                  // TODO - uncomment after presentation
+                                  // if (_checkRoutingData.endAddressAvailable &&
+                                  //     user.userType == UserType.sponsor)
+                                  //   RaisedButton(
+                                  //       onPressed: () async {
+                                  //         //* This is for the test period to redirect users to the TestPeriodScreen
+                                  //         UserService()
+                                  //             .updateIsTestPeriodRegistrationCompleted(
+                                  //                 uid: user.uid,
+                                  //                 isTestPeriodRegistrationCompleted:
+                                  //                     true);
+                                  //         Navigator.pushReplacementNamed(
+                                  //             context,
+                                  //             TestPeriodScreen.routeName);
+                                  //       },
+                                  //       child:
+                                  //           Text('Vorübergehend abschließen')),
+                                  // if (!_checkRoutingData.endAddressAvailable &&
+                                  //     user.userType != UserType.sponsor)
+                                  RaisedButton(
+                                    onPressed: _providerUser.providerType !=
+                                            null
+                                        ? () {
+                                            // Add the taxi partner
+                                            _providerUser.partners =
+                                                _providerUser.providerType ==
+                                                            ProviderType
+                                                                .sponsor ||
+                                                        _providerUser
+                                                                .providerType ==
+                                                            ProviderType
+                                                                .sponsorShuttle
+                                                    ? [
+                                                        _checkRoutingData
+                                                            .sublinEndStep
+                                                            .provider
+                                                            .id
+                                                      ]
+                                                    : [];
+                                            if (_providerUser.providerType ==
+                                                ProviderType.sponsor)
+                                              setState(() {
+                                                _providerUser =
+                                                    addCityToProviderUserCommunesAndAddresses(
+                                                        providerUser:
+                                                            _providerUser,
+                                                        cityFormattedAddress:
+                                                            getFormattedCityFromFormattedAddress(
+                                                                _checkRoutingData
+                                                                    .endAddress));
+                                              });
+                                            _pageViewController.nextPage(
+                                                duration:
+                                                    Duration(milliseconds: 300),
+                                                curve: Curves.easeOut);
+                                          }
+                                        : null,
+                                    child: Text('Weiter'),
+                                  )
                                 ],
                               )
                             ],
@@ -599,9 +620,8 @@ class _ProviderRegistrationScreenState
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    if (_providerUser.stations.length > 0 &&
-                                        _providerUser.providerType ==
-                                            ProviderType.taxi)
+                                    if (_providerUser.providerType ==
+                                        ProviderType.taxi)
                                       Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -664,12 +684,47 @@ class _ProviderRegistrationScreenState
                                     ),
                                     if (_providerUser.providerType ==
                                         ProviderType.taxi)
-                                      RegisterNowWidget(
-                                        user: user,
-                                        providerUser: _providerUser,
-                                        auth: auth,
-                                        isActive:
-                                            _providerUser.stations.length > 0,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          RaisedButton(
+                                            onPressed:
+                                                _providerUser.stations.length >
+                                                        0
+                                                    ? () async {
+                                                        _providerUser
+                                                                .operationRequested =
+                                                            true;
+                                                        User _user = user;
+                                                        _user.isRegistrationCompleted =
+                                                            true;
+                                                        await ProviderUserService()
+                                                            .updateProviderUserData(
+                                                                uid: auth.uid,
+                                                                data:
+                                                                    _providerUser);
+                                                        await UserService()
+                                                            .updateUserDataIsRegistrationCompleted(
+                                                                uid: user.uid);
+                                                        WidgetsBinding.instance
+                                                            .addPostFrameCallback(
+                                                                (_) async {
+                                                          Future.delayed(
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      500), () {
+                                                            Navigator.pushNamed(
+                                                                context,
+                                                                ProviderBookingScreen
+                                                                    .routeName);
+                                                          });
+                                                        });
+                                                      }
+                                                    : null,
+                                            child: Text('Jetzt registrieren'),
+                                          ),
+                                        ],
                                       ),
                                     if (_providerUser.providerType ==
                                         ProviderType.shuttle)
@@ -787,23 +842,30 @@ class _ProviderRegistrationScreenState
                                             _providerUser.providerPlan ==
                                                 ProviderPlan.all
                                         ? () async {
-                                            _pageViewController.dispose();
                                             _providerUser.operationRequested =
+                                                true;
+                                            User _user = user;
+                                            _user.isRegistrationCompleted =
                                                 true;
                                             await ProviderUserService()
                                                 .updateProviderUserData(
                                                     uid: auth.uid,
                                                     data: _providerUser);
-                                            User _user = user;
-                                            _user.isRegistrationCompleted =
-                                                true;
                                             await UserService()
                                                 .updateUserDataIsRegistrationCompleted(
                                                     uid: user.uid);
-                                            await Navigator.pushNamed(
-                                                context,
-                                                ProviderBookingScreen
-                                                    .routeName);
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback(
+                                                    (_) async {
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 500), () {
+                                                Navigator.pushNamed(
+                                                    context,
+                                                    ProviderBookingScreen
+                                                        .routeName);
+                                              });
+                                            });
                                           }
                                         : null,
                                     child: Text('Jetzt registrieren'),
@@ -938,7 +1000,8 @@ class _ProviderRegistrationScreenState
     String userAddress = _providerUser.addresses[0];
     // If Taxi the scope is the postcode
     // If not Taxi the scope is the full address
-    if (_providerUser.providerType == ProviderType.taxi)
+    if (_providerUser.providerType == ProviderType.taxi ||
+        _providerUser.providerType == ProviderType.shuttle)
       userAddress =
           getFormattedCityFromFormattedAddress(_providerUser.addresses[0]);
     setState(() {
@@ -954,17 +1017,28 @@ class _ProviderRegistrationScreenState
     });
   }
 
-  void _removeCityFromStation(String city) {
+  void _removeCityFromStation(
+      String selectedFormattedStationAddressWithCommune) {
     setState(() {
       int removeIndex;
       for (var i = 0; i < _providerUser.stations.length; i++) {
-        String cityFromAddress = getReadableAddressPartOfFormattedAddress(
-            _providerUser.stations[i], Delimiter.city);
-        if (city == cityFromAddress) {
+        String formattedStationAddressWithCommune = _providerUser.stations[i];
+        // print(_providerUser.stations[i]);
+        // print(cityFromAddress);
+        // print('formattedAddress');
+        // print(formattedAddress);
+        // print('end');
+
+        if (selectedFormattedStationAddressWithCommune ==
+            formattedStationAddressWithCommune) {
           removeIndex = i;
         }
       }
       _providerUser.stations.removeAt(removeIndex);
+      _providerUser.communes = removeFromList(
+          _providerUser.communes,
+          getFormattedCityFromFormattedStationWithCommune(
+              selectedFormattedStationAddressWithCommune));
     });
   }
 
@@ -991,22 +1065,19 @@ class _ProviderRegistrationScreenState
     return timeDate;
   }
 
-  Widget _getCitiesFromStationsWidget(List<String> communes) {
-    if (communes != null && communes.length > 0) {
+  Widget _getCitiesFromStationsWidget(List<String> stations) {
+    if (stations != null && stations.length > 0) {
       return Wrap(
           direction: Axis.horizontal,
           alignment: WrapAlignment.spaceBetween,
           spacing: 8.0,
-          children: communes.map((address) {
-            String city = getReadableAddressPartOfFormattedAddress(
-                address, Delimiter.city);
+          children: stations.map((selectedFormattedStationAddressWithCommune) {
+            String readableCity = getReadableAddressPartOfFormattedAddress(
+                selectedFormattedStationAddressWithCommune, Delimiter.city);
             return Chip(
-              label: Text(city),
-              onDeleted: city ==
-                      getReadableAddressPartOfFormattedAddress(
-                          _providerUser.communes[0], Delimiter.city)
-                  ? null
-                  : () => _removeCityFromStation(city),
+              label: Text(readableCity),
+              onDeleted: () => _removeCityFromStation(
+                  selectedFormattedStationAddressWithCommune),
             );
           }).toList());
     } else {
@@ -1015,43 +1086,43 @@ class _ProviderRegistrationScreenState
   }
 }
 
-class RegisterNowWidget extends StatelessWidget {
-  const RegisterNowWidget(
-      {Key key,
-      @required ProviderUser providerUser,
-      @required this.user,
-      @required this.auth,
-      @required this.isActive})
-      : _providerUser = providerUser,
-        super(key: key);
+// class RegisterNowWidget extends StatelessWidget {
+//   const RegisterNowWidget(
+//       {Key key,
+//       @required ProviderUser providerUser,
+//       @required this.user,
+//       @required this.auth,
+//       @required this.isActive})
+//       : _providerUser = providerUser,
+//         super(key: key);
 
-  final ProviderUser _providerUser;
-  final Auth auth;
-  final bool isActive;
-  final User user;
+//   final ProviderUser _providerUser;
+//   final Auth auth;
+//   final bool isActive;
+//   final User user;
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        RaisedButton(
-          onPressed: isActive
-              ? () async {
-                  _providerUser.operationRequested = true;
-                  await ProviderUserService().updateProviderUserData(
-                      uid: auth.uid, data: _providerUser);
-                  User _user = user;
-                  _user.isRegistrationCompleted = true;
-                  await UserService()
-                      .updateUserDataIsRegistrationCompleted(uid: user.uid);
-                  await Navigator.pushNamed(
-                      context, ProviderBookingScreen.routeName);
-                }
-              : null,
-          child: Text('Jetzt registrieren'),
-        )
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.end,
+//       children: <Widget>[
+//         RaisedButton(
+//           onPressed: isActive
+//               ? () async {
+//                   _providerUser.operationRequested = true;
+//                   await ProviderUserService().updateProviderUserData(
+//                       uid: auth.uid, data: _providerUser);
+//                   User _user = user;
+//                   _user.isRegistrationCompleted = true;
+//                   await UserService()
+//                       .updateUserDataIsRegistrationCompleted(uid: user.uid);
+//                   await Navigator.pushNamed(
+//                       context, ProviderBookingScreen.routeName);
+//                 }
+//               : null,
+//           child: Text('Jetzt registrieren'),
+//         )
+//       ],
+//     );
+//   }
+// }

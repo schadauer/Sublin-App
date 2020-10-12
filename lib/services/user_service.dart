@@ -73,6 +73,17 @@ class UserService {
     }
   }
 
+  Future<void> updateUserAddresses(
+      {String uid, List<String> addresses, List<String> communes}) async {
+    try {
+      await _database.collection('users').doc(uid).set({
+        'addresses': addresses,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('updateUserAddresses $e');
+    }
+  }
+
   Future<void> updateUserAddressesAndCommunes(
       {String uid, List<String> addresses, List<String> communes}) async {
     try {

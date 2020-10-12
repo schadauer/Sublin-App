@@ -102,7 +102,7 @@ class ProviderUser {
     return {
       'providerType': providerType.substring(providerType.indexOf('.') + 1),
       'providerPlan': providerPlan.substring(providerPlan.indexOf('.') + 1),
-      if (data.uid != null) 'uid': data.uid,
+      'uid': data.uid,
       if (data.operationRequested != null)
         'operationRequested': data.operationRequested,
       if (data.inOperation != null) 'inOperation': data.inOperation,

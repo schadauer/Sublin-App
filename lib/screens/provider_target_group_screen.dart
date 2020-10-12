@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -71,112 +72,47 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                 if (snapshot.hasData) {
                   // if (snapshot.data.targetGroup.length != 0) {
                   // Show this if "providerPlan" is set to "emailOnly" and emails are in the target group
-                  return Column(
-                    children: [
-                      if (_providerUser.providerPlan == ProviderPlan.emailOnly)
-                        Container(
-                          height: _seachBarHeight,
-                          child: Padding(
-                            padding: ThemeConstants.largePadding,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  flex: 6,
-                                  child: Form(
-                                    key: _formKey,
-                                    child: TextFormField(
-                                        decoration: InputDecoration(
-                                            hintText:
-                                                'E-Mailadresse hinzufügen'),
-                                        // focusNode: _emailFocus,
-                                        controller: _emailTextController,
-                                        validator: (e) {
-                                          String _message;
-                                          if (!isEmailFormat(e))
-                                            _message =
-                                                'Bitte gib eine gültige E-Mailadresse an';
-                                          return _message;
-                                        },
-                                        onChanged: null),
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    try {
-                                      if (_formKey.currentState.validate()) {
-                                        _targetGroupUser = addStringToList(
-                                            _user.targetGroup.cast<String>(),
-                                            _emailTextController.text);
-
-                                        await UserService()
-                                            .updateTargetGroupUserData(
-                                                uid: _user.uid,
-                                                targetGroupList:
-                                                    _targetGroupUser);
-                                        ProviderUser _providerUser =
-                                            await ProviderUserService()
-                                                .getProviderUser(_user.uid);
-                                        _targetGroupProviderUser =
-                                            addStringToList(
-                                                _providerUser.targetGroup
-                                                    .cast<String>(),
-                                                sha256
-                                                    .convert(
-                                                        utf8.encode(
-                                                            _emailTextController
-                                                                .text))
-                                                    .toString());
-
-                                        await ProviderUserService()
-                                            .updateTargetGroupProviderUser(
-                                                uid: _user.uid,
-                                                targetGroupList:
-                                                    _targetGroupProviderUser);
-                                        _emailTextController.clear();
-                                        // _emailFocus.requestFocus();
-                                      }
-                                    } catch (e) {
-                                      print(e);
-                                    }
-                                  },
-                                  child: SizedBox(
-                                    width: 60,
-                                    child: Icon(
-                                      Icons.add,
-                                      size: 40.0,
-                                      textDirection: TextDirection.rtl,
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        if (_providerUser.providerPlan ==
+                            ProviderPlan.emailOnly)
+                          Container(
+                            height: _seachBarHeight,
+                            child: Padding(
+                              padding: ThemeConstants.largePadding,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 6,
+                                    child: Form(
+                                      key: _formKey,
+                                      child: TextFormField(
+                                          decoration: InputDecoration(
+                                              hintText:
+                                                  'E-Mailadresse hinzufügen'),
+                                          // focusNode: _emailFocus,
+                                          controller: _emailTextController,
+                                          validator: (e) {
+                                            String _message;
+                                            if (!isEmailFormat(e))
+                                              _message =
+                                                  'Bitte gib eine gültige E-Mailadresse an';
+                                            return _message;
+                                          },
+                                          onChanged: null),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      if (_user.targetGroup.length != 0)
-                        SizedBox(
-                          height: _bodyHeight,
-                          child: ListView.builder(
-                              itemCount: _user.targetGroup.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Card(
-                                    child: Padding(
-                                  padding: ThemeConstants.largePadding,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        flex: 6,
-                                        child: Text(_user.targetGroup[index]),
-                                      ),
-                                      InkWell(
-                                        onTap: () async {
-                                          String emailToRemove =
-                                              _user.targetGroup[index];
-                                          _targetGroupUser = removeFromList(
-                                              _user.targetGroup,
-                                              _user.targetGroup[index]);
+                                  InkWell(
+                                    onTap: () async {
+                                      try {
+                                        if (_formKey.currentState.validate()) {
+                                          _targetGroupUser = addStringToList(
+                                              _user.targetGroup.cast<String>(),
+                                              _emailTextController.text);
+
                                           await UserService()
                                               .updateTargetGroupUserData(
                                                   uid: _user.uid,
@@ -186,127 +122,209 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                               await ProviderUserService()
                                                   .getProviderUser(_user.uid);
                                           _targetGroupProviderUser =
-                                              removeFromList(
-                                                  _providerUser.targetGroup,
+                                              addStringToList(
+                                                  _providerUser.targetGroup
+                                                      .cast<String>(),
                                                   sha256
                                                       .convert(utf8.encode(
-                                                          emailToRemove))
+                                                          _emailTextController
+                                                              .text))
                                                       .toString());
+
                                           await ProviderUserService()
                                               .updateTargetGroupProviderUser(
                                                   uid: _user.uid,
                                                   targetGroupList:
                                                       _targetGroupProviderUser);
-                                        },
-                                        child: SizedBox(
-                                          width: 50.0,
-                                          child: Icon(
-                                            Icons.delete,
-                                            size: 30.0,
-                                          ),
+                                          _emailTextController.clear();
+                                          // _emailFocus.requestFocus();
+                                        }
+                                      } catch (e) {
+                                        print(e);
+                                      }
+                                    },
+                                    child: SizedBox(
+                                      width: 60,
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 40.0,
+                                        textDirection: TextDirection.rtl,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (_user.targetGroup.length != 0)
+                          SizedBox(
+                            height: _bodyHeight,
+                            child: ListView.builder(
+                                itemCount: _user.targetGroup.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Card(
+                                      child: Padding(
+                                    padding: ThemeConstants.largePadding,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          flex: 6,
+                                          child: Text(_user.targetGroup[index]),
                                         ),
-                                      )
+                                        InkWell(
+                                          onTap: () async {
+                                            String emailToRemove =
+                                                _user.targetGroup[index];
+                                            _targetGroupUser = removeFromList(
+                                                _user.targetGroup,
+                                                _user.targetGroup[index]);
+                                            await UserService()
+                                                .updateTargetGroupUserData(
+                                                    uid: _user.uid,
+                                                    targetGroupList:
+                                                        _targetGroupUser);
+                                            ProviderUser _providerUser =
+                                                await ProviderUserService()
+                                                    .getProviderUser(_user.uid);
+                                            _targetGroupProviderUser =
+                                                removeFromList(
+                                                    _providerUser.targetGroup,
+                                                    sha256
+                                                        .convert(utf8.encode(
+                                                            emailToRemove))
+                                                        .toString());
+                                            await ProviderUserService()
+                                                .updateTargetGroupProviderUser(
+                                                    uid: _user.uid,
+                                                    targetGroupList:
+                                                        _targetGroupProviderUser);
+                                          },
+                                          child: SizedBox(
+                                            width: 50.0,
+                                            child: Icon(
+                                              Icons.delete,
+                                              size: 30.0,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ));
+                                }),
+                          )
+                        else if (_providerUser.providerPlan ==
+                                ProviderPlan.emailOnly &&
+                            _user.targetGroup.length == 0)
+                          SizedBox(
+                            height: _bodyHeight,
+                            width: _screenWidth / 1.5,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error,
+                                  size: 60.0,
+                                  color: Theme.of(context).errorColor,
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  'Keine Zielgruppe definiert',
+                                  style: Theme.of(context).textTheme.headline1,
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  'Derzeit kann keiner deinen Service in Anspruch nehmen. Bitte füge E-Mailadressen hinzu oder gib deinen Dienst für alle frei.',
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                RaisedButton(
+                                    onPressed: () async {
+                                      await ProviderUserService()
+                                          .updateProviderPlanProviderUserData(
+                                              uid: _user.uid,
+                                              providerPlan: ProviderPlan.all);
+                                    },
+                                    child: Text('Für alle freigeben')),
+                              ],
+                            ),
+                          )
+                        else
+                          SizedBox(
+                            height: _bodyHeight,
+                            width: _screenWidth / 1.5,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: _screenWidth / 1.5,
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.group,
+                                        size: 60.0,
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      Text(
+                                        'Keine Einschränkung',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      if (_providerUser.providerType ==
+                                          ProviderType.shuttle)
+                                        Text(
+                                          'Derzeit können alle deinen Shuttledienst vom Bahnhof zu deiner Addresse in Anspruch nehmen.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      if (_providerUser.providerType ==
+                                          ProviderType.sponsor)
+                                        Text(
+                                          'Derzeit können alle den Shuttledienst vom Bahnhof zu den Addresses des Gemeindegebiets in Anspruch nehmen.',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      RaisedButton(
+                                          onPressed: () async {
+                                            await ProviderUserService()
+                                                .updateProviderPlanProviderUserData(
+                                                    uid: _user.uid,
+                                                    providerPlan:
+                                                        ProviderPlan.emailOnly);
+                                          },
+                                          child:
+                                              Text('Zielgruppe einschränken')),
                                     ],
                                   ),
-                                ));
-                              }),
-                        )
-                      else if (_providerUser.providerPlan ==
-                              ProviderPlan.emailOnly &&
-                          _user.targetGroup.length == 0)
-                        SizedBox(
-                          height: _bodyHeight,
-                          width: _screenWidth / 1.5,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.error,
-                                size: 60.0,
-                                color: Theme.of(context).errorColor,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Keine Zielgruppe definiert',
-                                style: Theme.of(context).textTheme.headline1,
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Derzeit kann keiner deinen Service in Anspruch nehmen. Bitte füge E-Mailadressen hinzu oder gib deinen Dienst für alle frei.',
-                                style: Theme.of(context).textTheme.bodyText1,
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              RaisedButton(
-                                  onPressed: () async {
-                                    await ProviderUserService()
-                                        .updateProviderPlanProviderUserData(
-                                            uid: _user.uid,
-                                            providerPlan: ProviderPlan.all);
-                                  },
-                                  child: Text('Für alle freigeben')),
-                            ],
-                          ),
-                        )
-                      else
-                        SizedBox(
-                          height: _bodyHeight,
-                          width: _screenWidth / 1.5,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: _screenWidth / 1.5,
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Icons.group,
-                                      size: 60.0,
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Keine Einschränkung',
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      'Derzeit können alle deinen Shuttledienst vom Bahnhof zu deiner Addresse in Anspruch nehmen.',
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    RaisedButton(
-                                        onPressed: () async {
-                                          await ProviderUserService()
-                                              .updateProviderPlanProviderUserData(
-                                                  uid: _user.uid,
-                                                  providerPlan:
-                                                      ProviderPlan.emailOnly);
-                                        },
-                                        child: Text('Zielgruppe einschränken')),
-                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                    ],
+                              ],
+                            ),
+                          )
+                      ],
+                    ),
                   );
                 } else {
                   return CircularProgressIndicator();

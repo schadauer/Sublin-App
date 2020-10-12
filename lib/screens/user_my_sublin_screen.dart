@@ -241,7 +241,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                         addressInputCallback:
                                             addressInputCallback,
                                         removeRequestedAddressCallback:
-                                            _removeRequestedAddressCallback,
+                                            _removeUserAddressCallback,
                                         transportationType:
                                             TransportationType.sublin,
                                         localRequest: _localRequest,
@@ -260,7 +260,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
                                         addressInputCallback:
                                             addressInputCallback,
                                         removeRequestedAddressCallback:
-                                            _removeRequestedAddressCallback,
+                                            _removeUserAddressCallback,
                                         transportationType:
                                             TransportationType.public,
                                         localRequest: _localRequest,
@@ -324,18 +324,18 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     }
     //* Now we check if it is any other Sublin address
     if (_addressInfoResult.formattedAddress == null) {
-      //* We try to find communes of the addresses from the user input
+      //* We try to find addresses of the addresses array from the user input
       List<ProviderUser> _providerUsersForStartAddress =
           await ProviderUserService()
-              .getProvidersFromCommunesWithProviderPlanAll(
-        communes: [
+              .getProvidersFromAddressesWithProviderPlanAll(
+        addresses: [
           getFormattedCityFromFormattedAddress(addressInfo.formattedAddress)
         ],
       );
 
       if (_providerUsersForStartAddress.length > 0) {
         _addressInfoResult.formattedAddress = addressInfo.formattedAddress;
-        await _addToRequestedUserAddressesAndCommunes(
+        await _addToUserAddressesAndCommunes(
             formattedAddress: _addressInfoResult, user: user);
       }
     }
@@ -359,7 +359,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
         else {
           _addressInfoResult.formattedAddress = addressInfo.formattedAddress;
         }
-        await _addToRequestedUserAddressesAndCommunes(
+        await _addToUserAddressesAndCommunes(
             formattedAddress: _addressInfoResult, user: user);
       }
     }
@@ -369,16 +369,19 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     //* add it to the addresses collection
     if (_addressInfoResult.formattedAddress == null) {
       if (addressInfo.formattedAddress.contains(Delimiter.station)) {
-        AddressService().updateStationToAddresses(
-            city: getFormattedCityFromFormattedAddress(
-                getFormattedCityFromFormattedStation(
-                    addressInfo.formattedAddress)),
-            formattedStation: getFormattedCityFromFormattedAddress(
-                    getFormattedCityFromFormattedStation(
-                        addressInfo.formattedAddress)) +
-                addressInfo.formattedAddress);
-        await _addToRequestedUserAddressesAndCommunes(
-            formattedAddress: _addressInfoResult, user: user);
+        // TODO: Find a way to store user information in the addresses collection
+        // AddressService().updateStationToAddresses(
+        //     city: getFormattedCityFromFormattedAddress(
+        //         getFormattedCityFromFormattedStation(
+        //             addressInfo.formattedAddress)),
+        //     formattedStation: getFormattedCityFromFormattedAddress(
+        //             getFormattedCityFromFormattedStation(
+        //                 addressInfo.formattedAddress)) +
+        //         addressInfo.formattedAddress);
+        // await _addToUserAddressesAndCommunes(
+        //     formattedAddress: _addressInfoResult, user: user);
+        _addressInfoResult.formattedAddress = addressInfo.formattedAddress;
+        await _addToUserAddresses(formattedAddress: addressInfo, user: user);
       }
     }
 
@@ -412,21 +415,23 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
     }
   }
 
-  Future<void> _removeRequestedAddressCallback(
+  Future<void> _removeUserAddressCallback(
       {AddressInfo addressInfo, User user}) async {
     List<String> addresses = user.addresses;
-    List<String> updatedRequestAddresses;
-    updatedRequestAddresses = addresses.where((address) {
+    List<String> updatedUserAddresses;
+    updatedUserAddresses = addresses.where((address) {
       if (address == addressInfo.formattedAddress)
         return false;
       else
         return true;
     }).toList();
-    await UserService().updateUserAddressesAndCommunes(
-        addresses: updatedRequestAddresses, uid: user.uid);
+    await UserService().updateUserAddresses(
+      addresses: updatedUserAddresses,
+      uid: user.uid,
+    );
   }
 
-  Future<void> _addToRequestedUserAddressesAndCommunes({
+  Future<void> _addToUserAddressesAndCommunes({
     AddressInfo formattedAddress,
     User user,
   }) async {
@@ -435,6 +440,17 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
         formattedAddress: formattedAddress.formattedAddress, user: user);
     UserService().updateUserAddressesAndCommunes(
         uid: user.uid, addresses: _user.addresses, communes: _user.communes);
+  }
+
+  Future<void> _addToUserAddresses({
+    AddressInfo formattedAddress,
+    User user,
+  }) async {
+    //* Add addresses to the addresses of the user
+    User _user = addCityToUserCommunesAndAddresses(
+        formattedAddress: formattedAddress.formattedAddress, user: user);
+    UserService()
+        .updateUserAddresses(uid: user.uid, addresses: _user.addresses);
   }
 
   Future<void> _getStartAddressFromGeolocastion() async {

@@ -36,10 +36,12 @@ class _InitRoutesState extends State<InitRoutes> {
 
     if (user.streamingOn == false && providerUser.streamingOn == false)
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: themeData(context),
         home: Loading(),
       );
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         routes: {
           ProviderBookingScreen.routeName: (context) => ProviderBookingScreen(),
           ProviderPartnerScreen.routeName: (context) => ProviderPartnerScreen(),

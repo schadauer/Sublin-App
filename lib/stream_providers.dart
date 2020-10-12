@@ -59,11 +59,13 @@ class StreamProviders extends StatelessWidget {
     if (auth == null || versioning == null) {
       // If auth is not logged in show Authentication screen
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: themeData(context),
         home: UserRegisterScreen(),
       );
     } else if (_appNeedsToBeUpdated()) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: themeData(context),
         home: UpdateRequiredScreen(),
       );

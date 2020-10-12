@@ -13,9 +13,6 @@ class ProviderUserService {
 
   Stream<ProviderUser> streamProviderUser(String uid) {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   sublinLogging(Preferences.intLoggingUsers);
-      // }
       return _database.collection('providers').doc(uid).snapshots().map((snap) {
         return ProviderUser.fromJson(snap.data());
       });
@@ -28,9 +25,6 @@ class ProviderUserService {
   Future<void> setProviderUserData(
       {ProviderUser providerUser, String uid}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database
           .collection('providers')
           .doc(uid)
@@ -42,9 +36,6 @@ class ProviderUserService {
 
   Future<void> updateProviderUserData({String uid, ProviderUser data}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('providers').doc(uid).set(
             ProviderUser().toJson(data),
             SetOptions(merge: true),
@@ -64,7 +55,6 @@ class ProviderUserService {
     return [
       ...providersFromCommunes,
       ...providersEmailAddress,
-      // ...providersFromFormattedAddress
     ];
   }
 
@@ -72,9 +62,6 @@ class ProviderUserService {
     List<String> communes,
   }) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingProviderUser);
-      // }
       return _database
           .collection('providers')
           .where('communes',
@@ -89,7 +76,30 @@ class ProviderUserService {
         }).toList();
       });
     } catch (e) {
-      print('getProviders: $e');
+      print('getProvidersFromCommunesWithProviderPlanAll: $e');
+      return null;
+    }
+  }
+
+  Future<List<ProviderUser>> getProvidersFromAddressesWithProviderPlanAll({
+    List<String> addresses,
+  }) async {
+    try {
+      return _database
+          .collection('providers')
+          .where('addresses',
+              arrayContainsAny: addresses.length == 0 ? [''] : addresses)
+          .where('providerPlan', isEqualTo: 'all')
+          // .where('providerType',
+          //     isEqualTo: ['sponsor', 'sponsorshuttle', 'shuttle'])
+          .get()
+          .then((value) {
+        return value.docs.map((e) {
+          return ProviderUser.fromJson(e.data());
+        }).toList();
+      });
+    } catch (e) {
+      print('getProvidersFromAddressesWithProviderPlanAll: $e');
       return null;
     }
   }
@@ -98,9 +108,6 @@ class ProviderUserService {
     String email,
   }) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingProviderUser);
-      // }
       return _database
           .collection('providers')
           .where('providerPlan', isEqualTo: 'emailOnly')
@@ -122,9 +129,6 @@ class ProviderUserService {
     String formattedAddress,
   }) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingProviderUser);
-      // }
       return _database
           .collection('providers')
           .where('addresses', arrayContains: formattedAddress)
@@ -146,9 +150,6 @@ class ProviderUserService {
     String uid,
   }) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingProviderUser);
-      // }
       return _database
           .collection('providers')
           .where('partners', arrayContains: uid)
@@ -166,9 +167,6 @@ class ProviderUserService {
 
   Future<ProviderUser> getProviderUser(String uid) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       return await _database
           .collection('providers')
           .doc(uid)
@@ -186,9 +184,6 @@ class ProviderUserService {
       {String uid, ProviderPlan providerPlan}) async {
     try {
       String _providerPlanString = providerPlan.toString();
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('providers').doc(uid).set(
         {
           'providerPlan': _providerPlanString.substring(
@@ -204,9 +199,6 @@ class ProviderUserService {
   Future<void> updatePartnersProviderUser(
       {String uid, List<String> partners}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('providers').doc(uid).set({
         'partners': partners,
       }, SetOptions(merge: true));
@@ -218,9 +210,6 @@ class ProviderUserService {
   Future<void> updateTargetGroupProviderUser(
       {String uid, List<String> targetGroupList}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('providers').doc(uid).set({
         'targetGroup': targetGroupList,
       }, SetOptions(merge: true));
@@ -232,9 +221,6 @@ class ProviderUserService {
   Future<void> updateProviderNameProviderUser(
       {String uid, String providerName}) async {
     try {
-      // if (!Foundation.kReleaseMode) {
-      //   await sublinLogging(Preferences.intLoggingUsers);
-      // }
       await _database.collection('providers').doc(uid).set({
         'providerName': providerName,
       }, SetOptions(merge: true));

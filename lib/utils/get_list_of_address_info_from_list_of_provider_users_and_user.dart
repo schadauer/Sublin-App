@@ -14,11 +14,13 @@ List<AddressInfo> getListOfAddressInfoFromListOfProviderUsersAndUser({
   List<AddressInfo> _addressInfoList = <AddressInfo>[];
   List<AddressInfo> _addressInfoListFilter = <AddressInfo>[];
   //* Get all addresses from addresses in the user instance
+
   if (user.addresses.length != 0) {
     user.addresses.forEach((address) {
       if (!_addressInfoList.contains(address) &&
           getFormattedCityFromFormattedAddress(localRequest?.startAddress) !=
               getFormattedCityFromFormattedAddress(address)) {
+        print(address);
         _addressInfoList.add(AddressInfo(
           formattedAddress: address,
           sponsor: _getSponsor(
@@ -80,8 +82,10 @@ String _getSponsor(
 TransportationType _getTransportationType(
     {List<ProviderUser> providerUserList, String formattedAddress}) {
   TransportationType _transportationType = TransportationType.public;
+
   providerUserList.forEach((providerUser) {
     providerUser.addresses.forEach((address) {
+      // print(formattedAddress);
       if (address == getFormattedCityFromFormattedAddress(formattedAddress) ||
           address == formattedAddress)
         _transportationType = TransportationType.sublin;

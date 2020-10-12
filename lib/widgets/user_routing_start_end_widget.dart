@@ -129,6 +129,7 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                       Expanded(
                                                         child: AutoSizeText(
                                                           'Transfer zum Bahnhof durch ${step.provider.providerName}',
+                                                          maxLines: 2,
                                                         ),
                                                       ),
                                                     if (_isStartBooked)
@@ -159,8 +160,11 @@ class UserRoutingStartEndWidget extends StatelessWidget {
                                                     Expanded(
                                                       child: Row(
                                                         children: [
-                                                          Icon(Icons
-                                                              .keyboard_tab),
+                                                          SizedBox(
+                                                            width: 30,
+                                                            child: Icon(Icons
+                                                                .keyboard_tab),
+                                                          ),
                                                           SizedBox(width: 5),
                                                           Expanded(
                                                             child: AutoSizeText(
