@@ -330,65 +330,66 @@ class _ProviderRegistrationScreenState
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
-                                  // TODO - uncomment after presentation
-                                  // if (_checkRoutingData.endAddressAvailable &&
-                                  //     user.userType == UserType.sponsor)
-                                  //   RaisedButton(
-                                  //       onPressed: () async {
-                                  //         //* This is for the test period to redirect users to the TestPeriodScreen
-                                  //         UserService()
-                                  //             .updateIsTestPeriodRegistrationCompleted(
-                                  //                 uid: user.uid,
-                                  //                 isTestPeriodRegistrationCompleted:
-                                  //                     true);
-                                  //         Navigator.pushReplacementNamed(
-                                  //             context,
-                                  //             TestPeriodScreen.routeName);
-                                  //       },
-                                  //       child:
-                                  //           Text('Vorübergehend abschließen')),
-                                  // if (!_checkRoutingData.endAddressAvailable &&
-                                  //     user.userType != UserType.sponsor)
-                                  RaisedButton(
-                                    onPressed: _providerUser.providerType !=
-                                            null
-                                        ? () {
-                                            // Add the taxi partner
-                                            _providerUser.partners =
-                                                _providerUser.providerType ==
-                                                            ProviderType
-                                                                .sponsor ||
-                                                        _providerUser
-                                                                .providerType ==
-                                                            ProviderType
-                                                                .sponsorShuttle
-                                                    ? [
-                                                        _checkRoutingData
-                                                            .sublinEndStep
-                                                            .provider
-                                                            .id
-                                                      ]
-                                                    : [];
-                                            if (_providerUser.providerType ==
-                                                ProviderType.sponsor)
-                                              setState(() {
-                                                _providerUser =
-                                                    addCityToProviderUserCommunesAndAddresses(
-                                                        providerUser:
-                                                            _providerUser,
-                                                        cityFormattedAddress:
-                                                            getFormattedCityFromFormattedAddress(
-                                                                _checkRoutingData
-                                                                    .endAddress));
-                                              });
-                                            _pageViewController.nextPage(
-                                                duration:
-                                                    Duration(milliseconds: 300),
-                                                curve: Curves.easeOut);
-                                          }
-                                        : null,
-                                    child: Text('Weiter'),
-                                  )
+                                  // TODO - Once sponsors can register remove this
+                                  if (_checkRoutingData.endAddressAvailable &&
+                                      user.userType == UserType.sponsor)
+                                    RaisedButton(
+                                        onPressed: () async {
+                                          //* This is for the test period to redirect users to the TestPeriodScreen
+                                          UserService()
+                                              .updateIsTestPeriodRegistrationCompleted(
+                                                  uid: user.uid,
+                                                  isTestPeriodRegistrationCompleted:
+                                                      true);
+                                          Navigator.pushReplacementNamed(
+                                              context,
+                                              TestPeriodScreen.routeName);
+                                        },
+                                        child:
+                                            Text('Vorübergehend abschließen')),
+                                  if (!_checkRoutingData.endAddressAvailable &&
+                                      user.userType != UserType.sponsor)
+                                    RaisedButton(
+                                      onPressed: _providerUser.providerType !=
+                                              null
+                                          ? () {
+                                              // Add the taxi partner
+                                              _providerUser
+                                                  .partners = _providerUser
+                                                              .providerType ==
+                                                          ProviderType
+                                                              .sponsor ||
+                                                      _providerUser
+                                                              .providerType ==
+                                                          ProviderType
+                                                              .sponsorShuttle
+                                                  ? [
+                                                      _checkRoutingData
+                                                          .sublinEndStep
+                                                          .provider
+                                                          .id
+                                                    ]
+                                                  : [];
+                                              if (_providerUser.providerType ==
+                                                  ProviderType.sponsor)
+                                                setState(() {
+                                                  _providerUser =
+                                                      addCityToProviderUserCommunesAndAddresses(
+                                                          providerUser:
+                                                              _providerUser,
+                                                          cityFormattedAddress:
+                                                              getFormattedCityFromFormattedAddress(
+                                                                  _checkRoutingData
+                                                                      .endAddress));
+                                                });
+                                              _pageViewController.nextPage(
+                                                  duration: Duration(
+                                                      milliseconds: 300),
+                                                  curve: Curves.easeOut);
+                                            }
+                                          : null,
+                                      child: Text('Weiter'),
+                                    )
                                 ],
                               )
                             ],
@@ -1023,12 +1024,6 @@ class _ProviderRegistrationScreenState
       int removeIndex;
       for (var i = 0; i < _providerUser.stations.length; i++) {
         String formattedStationAddressWithCommune = _providerUser.stations[i];
-        // print(_providerUser.stations[i]);
-        // print(cityFromAddress);
-        // print('formattedAddress');
-        // print(formattedAddress);
-        // print('end');
-
         if (selectedFormattedStationAddressWithCommune ==
             formattedStationAddressWithCommune) {
           removeIndex = i;

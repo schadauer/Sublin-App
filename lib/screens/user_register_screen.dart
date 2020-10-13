@@ -305,10 +305,13 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                '$firstName, du meldest dich an als: ',
-                                style: Theme.of(context).textTheme.headline1,
-                                textAlign: TextAlign.left,
+                              Expanded(
+                                child: AutoSizeText(
+                                  '$firstName, du meldest dich an als: ',
+                                  style: Theme.of(context).textTheme.headline1,
+                                  textAlign: TextAlign.left,
+                                  maxLines: 2,
+                                ),
                               ),
                             ],
                           ),
