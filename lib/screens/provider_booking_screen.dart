@@ -50,7 +50,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
       _selectedIndex = 2;
 
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         appBar: AppbarWidget(title: 'Aufträge'),
         body: Container(
           width: MediaQuery.of(context).size.width,
