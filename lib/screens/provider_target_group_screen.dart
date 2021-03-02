@@ -55,7 +55,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
     final _bodyHeight = _screenHeight - _seachBarHeight - _navigationHeight;
 
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
         bottomNavigationBar: NavigationBarWidget(
           isProvider: true,
           setNavigationIndex: 2,
