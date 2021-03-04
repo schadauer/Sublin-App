@@ -101,11 +101,6 @@ class _ProviderRegistrationScreenState
     final Auth auth = Provider.of<Auth>(context);
     final User user = Provider.of<User>(context);
 
-    // _providerUser.communes = <String>[];
-    // _providerUser.stations = <String>[];
-    // _providerUser.addresses = <String>[];
-    print(ProviderUser().toJson(_providerUser));
-
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(60.0),
@@ -152,7 +147,7 @@ class _ProviderRegistrationScreenState
                           AutoSizeText(
                             user.userType == UserType.provider
                                 ? 'Super, du hast dich als Anbieter registriert. Wir benötigen noch ein paar Informationen von dir, damit wir deine Registrierung bearbeiten können.'
-                                : 'Super, du hast dich als Sponsor angemeldet. Du kannst kannst jetzt deine Art der Unterstützung nach deinen Wünschen anpassen, wie z.B. örtliche oder zielgruppenspezifischen Einschränkungen.',
+                                : 'Super, du hast dich als Sponsor angemeldet. Bitte gib deine Adresse bekannt, damit wir nach Anbietern in deinem Ort suchen können.',
                             style: Theme.of(context).textTheme.bodyText1,
                             maxLines: 8,
                           ),
@@ -244,9 +239,9 @@ class _ProviderRegistrationScreenState
                                         'Für ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} hat sich noch kein Taxi- oder Mietwagenunternehmen registriert.'),
                                   if (_checkRoutingData.endAddressAvailable)
                                     AutoSizeText(
-                                        '${_checkRoutingData.sublinEndStep.provider.providerName} hat sich bereits für ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} registriert und führt voraussichtlich Shuttleservice vom und zum Bahnhof durch.'),
+                                        '${_checkRoutingData.sublinEndStep.provider.providerName} führt Shuttledienste für ${getReadableAddressPartOfFormattedAddress(_checkRoutingData.endAddress, Delimiter.city)} vom und zum Bahnhof durch. Bitte wähle aus, für welchen Personentransport du ${_checkRoutingData.sublinEndStep.provider.providerName} beauftragen willst.'),
                                   SizedBox(
-                                    height: 10,
+                                    height: 5,
                                   ),
                                   if (!_checkRoutingData.endAddressAvailable &&
                                       user.userType == UserType.sponsor)
@@ -985,8 +980,8 @@ class _ProviderRegistrationScreenState
                 duration: Duration(milliseconds: 300), curve: Curves.easeOut);
           });
           _previousDataId = data.id;
-          RoutingService().deleteCheck(uid);
-          //_routingStream.cancel();
+          // RoutingService().deleteCheck(uid);
+          // _routingStream.cancel();
         }
       });
     } catch (e) {
