@@ -1,7 +1,7 @@
 import 'package:Sublin/screens/update_required_screen.dart';
+import 'package:Sublin/utils/app_info.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:package_info/package_info.dart';
 
 import 'package:Sublin/models/booking_completed_class.dart';
 import 'package:Sublin/models/booking_confirmed_class.dart';
@@ -20,7 +20,7 @@ import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/theme/theme.dart';
 
 class StreamProviders extends StatelessWidget {
-  final PackageInfo packageInfo;
+  final AppInfo packageInfo;
   StreamProviders({this.packageInfo});
   static const routeName = '/wrapper';
 

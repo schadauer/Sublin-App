@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 import 'package:Sublin/models/address_class.dart';
@@ -9,7 +8,6 @@ import 'package:Sublin/models/transportation_type_enum.dart';
 import 'package:Sublin/services/address_service.dart';
 import 'package:Sublin/services/user_service.dart';
 import 'package:Sublin/utils/add_city_to_user_communes_and_addresses.dart';
-import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
 import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_commune.dart';
 import 'package:Sublin/utils/get_list_of_address_info_from_list_of_provider_users_and_user.dart';
 import 'package:Sublin/widgets/user_my_sublin_start_widget.dart';
@@ -462,9 +460,7 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
           _localRequest.startAddress = _localRequestStartAddressFromSF;
         });
       } else {
-        GeolocationStatus geolocationStatus =
-            await GeolocationService().isGeoLocationPermissionGranted();
-        if (geolocationStatus == GeolocationStatus.granted) {
+        if (await GeolocationService().isGeoLocationPermissionGranted()) {
           Request _geolocation =
               await GeolocationService().getCurrentCoordinates();
           setState(() {
