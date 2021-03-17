@@ -2,24 +2,42 @@ import 'package:Sublin/models/preferences_enum.dart';
 import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/services/google_map_service.dart';
 import 'package:Sublin/utils/logging.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart' as Foundation;
 
 class GeolocationService {
   Request _localRequest;
-  GeolocationStatus _geoLocationPermissionStatus;
+  LocationPermission _geoLocationPermissionStatus;
   Position _currentLocationLatLng;
   List _currentLocationAutocompleteResults;
 
   Future<Request> getCurrentCoordinates() async {
-    _geoLocationPermissionStatus = await isGeoLocationPermissionGranted();
-    if (_geoLocationPermissionStatus == GeolocationStatus.granted) {
+    var serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    var permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.deniedForever) {
+        return Future.error(
+            'Location permissions are permanently denied, we cannot request permissions.');
+      }
+
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
       try {
         if (!Foundation.kReleaseMode) {
           await sublinLogging(Preferences.intLoggingCoordinats);
         }
-        final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-        Position position = await geolocator.getCurrentPosition(
+        Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.bestForNavigation);
         _currentLocationLatLng = position;
         String address = await _getPlacemarkFromCoordinates(
@@ -36,8 +54,6 @@ class GeolocationService {
         print('getCurrentCoordinates: $e');
         return null;
       }
-    } else
-      return null;
   }
 
   Future<String> _getPlacemarkFromCoordinates(double lat, double lng) async {
@@ -46,8 +62,7 @@ class GeolocationService {
         await sublinLogging(Preferences.intLoggingCoordinats);
       }
       String address;
-      List<Placemark> placemark = await Geolocator()
-          .placemarkFromCoordinates(lat, lng, localeIdentifier: 'de_DE');
+      List<Placemark> placemark = await placemarkFromCoordinates(lat, lng, localeIdentifier: 'de_DE');
       placemark.map((e) {
         address = '${e.thoroughfare} ${e.subThoroughfare}, ${e.locality}';
       }).toList();
@@ -58,17 +73,8 @@ class GeolocationService {
     }
   }
 
-  Future<GeolocationStatus> isGeoLocationPermissionGranted() async {
-    try {
-      if (!Foundation.kReleaseMode) {
-        await sublinLogging(Preferences.intLoggingCoordinats);
-      }
-      GeolocationStatus geolocationStatus =
-          await Geolocator().checkGeolocationPermissionStatus();
-      return geolocationStatus;
-    } catch (e) {
-      print(e);
-      return null;
-    }
+  Future<bool> isGeoLocationPermissionGranted() async {
+    var permission = await Geolocator.checkPermission();
+    return ![LocationPermission.denied, LocationPermission.deniedForever].contains(permission);
   }
 }

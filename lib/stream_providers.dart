@@ -1,7 +1,7 @@
 import 'package:Sublin/screens/update_required_screen.dart';
+import 'package:Sublin/utils/app_info.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:package_info/package_info.dart';
 
 import 'package:Sublin/models/booking_completed_class.dart';
 import 'package:Sublin/models/booking_confirmed_class.dart';
@@ -20,7 +20,7 @@ import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/theme/theme.dart';
 
 class StreamProviders extends StatelessWidget {
-  final PackageInfo packageInfo;
+  final AppInfo packageInfo;
   StreamProviders({this.packageInfo});
   static const routeName = '/wrapper';
 
@@ -30,29 +30,29 @@ class StreamProviders extends StatelessWidget {
     final versioning = Provider.of<Versioning>(context);
 
     bool _appNeedsToBeUpdated() {
-      String _minVersion = versioning.minVersion;
-      String _thisVersion = packageInfo.version;
-      for (var i = 0; i < 3; i++) {
-        int _thisNumber;
-        int _minNumber;
-        if (i < 2) {
-          _thisNumber = _thisVersion.indexOf('.');
-          _minNumber = _minVersion.indexOf('.');
-        } else {
-          _thisNumber = _thisVersion.length;
-          _minNumber = _minVersion.length;
-        }
-        if (int.parse(_thisVersion.substring(0, _thisNumber)) <
-            int.parse(_minVersion.substring(0, _minNumber))) {
-          return true;
-        }
-        if (i < 2) {
-          _thisVersion =
-              _thisVersion.substring(_thisNumber + 1, _thisVersion.length);
-          _minVersion =
-              _minVersion.substring(_minNumber + 1, _minVersion.length);
-        }
-      }
+      // String _minVersion = versioning.minVersion;
+      // String _thisVersion = packageInfo.version;
+      // for (var i = 0; i < 3; i++) {
+      //   int _thisNumber;
+      //   int _minNumber;
+      //   if (i < 2) {
+      //     _thisNumber = _thisVersion.indexOf('.');
+      //     _minNumber = _minVersion.indexOf('.');
+      //   } else {
+      //     _thisNumber = _thisVersion.length;
+      //     _minNumber = _minVersion.length;
+      //   }
+      //   if (int.parse(_thisVersion.substring(0, _thisNumber)) <
+      //       int.parse(_minVersion.substring(0, _minNumber))) {
+      //     return true;
+      //   }
+      //   if (i < 2) {
+      //     _thisVersion =
+      //         _thisVersion.substring(_thisNumber + 1, _thisVersion.length);
+      //     _minVersion =
+      //         _minVersion.substring(_minNumber + 1, _minVersion.length);
+      //   }
+      // }
       return false;
     }
 

@@ -29,7 +29,7 @@ class UserRequestScreen extends StatefulWidget {
 class _UserRequestScreenState extends State<UserRequestScreen>
     with WidgetsBindingObserver {
   Request _localRequest = Request();
-  GeolocationStatus _geolocationStatus;
+  LocationPermission _geolocationStatus;
 
   @override
   void initState() {
@@ -65,7 +65,7 @@ class _UserRequestScreenState extends State<UserRequestScreen>
                   height: 440,
                   child: ListView(
                     children: <Widget>[
-                      (_geolocationStatus != GeolocationStatus.granted)
+                      (_geolocationStatus == LocationPermission.denied)
                           ? InkWell(
                               onTap: () {
                                 openAppSettings();
@@ -175,11 +175,12 @@ class _UserRequestScreenState extends State<UserRequestScreen>
 
   Future<void> _getStartAddressFromGeolocastion() async {
     try {
-      GeolocationStatus geolocationStatus =
-          await GeolocationService().isGeoLocationPermissionGranted();
+      if (!await GeolocationService().isGeoLocationPermissionGranted()) {
+        throw StateError(":ocation servive is not enabled");
+      }
       Request _geolocation = await GeolocationService().getCurrentCoordinates();
-      setState(() {
-        _geolocationStatus = geolocationStatus;
+      setState(() async {
+        _geolocationStatus = await Geolocator.checkPermission();
         if (_geolocation != null) {
           _localRequest = _geolocation;
         }

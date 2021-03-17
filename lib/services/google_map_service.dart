@@ -36,8 +36,8 @@ class GoogleMapService {
               ' ' +
               _removeRestrictionString(input: input, restriction: restrictions)
           : input;
-      var response = await client.get(
-          '$autocompleteUrl?key=$key&sessiontoken=$sessionToken&input=$input&types=$addressTypes&location&components=country:at&language=de');
+      var response = await client.get(Uri.parse(
+          '$autocompleteUrl?key=$key&sessiontoken=$sessionToken&input=$input&types=$addressTypes&location&components=country:at&language=de'));
       output = jsonDecode(response.body)['predictions'];
       formattedOutput = output.map((val) {
         Map output = {
