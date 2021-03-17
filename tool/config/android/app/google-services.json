@@ -1,7 +1,7 @@
 {
   "project_info": {
     "project_number": "%sys.env.SUBLIN_FIREBASE_PROJECT_NUMBER%",
-    "firebase_url": "%sys.env.FIREBASE_URL%",
+    "firebase_url": "%sys.env.SUBLIN_FIREBASE_URL%",
     "project_id": "%sys.env.SUBLIN_FIREBASE_PROJECT_ID%",
     "storage_bucket": "%sys.env.SUBLIN_FIREBASE_STORAGE_BUCKET%"
   },

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/preferences_enum.dart';
+import 'package:Sublin/config/google.gen.dart';
 import 'package:Sublin/utils/logging.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
@@ -14,7 +15,6 @@ class GoogleMapService {
       'https://maps.googleapis.com/maps/api/place/autocomplete/json';
   static const placeUrl =
       'https://maps.googleapis.com/maps/api/place/details/json';
-  static const key = 'AIzaSyDIq5WwJZUG-b_UKlOGaLl4532A9XxY8Lw';
   String type;
 
   Future<List> getGoogleAddressAutocomplete({
