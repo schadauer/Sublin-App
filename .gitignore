@@ -51,3 +51,9 @@ app.*.map.json
 .VSCodeCounter
 Apps
 /.vscode/launch.json
+
+# Configs
+lib/config/google.gen.dart
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+web/config/firebase.gen.js

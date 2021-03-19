@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "%sys.env.SUBLIN_FIREBASE_PROJECT_NUMBER%",
+    "firebase_url": "%sys.env.SUBLIN_FIREBASE_URL%",
+    "project_id": "%sys.env.SUBLIN_FIREBASE_PROJECT_ID%",
+    "storage_bucket": "%sys.env.SUBLIN_FIREBASE_STORAGE_BUCKET%"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "SUBLIN_FIREBASE_MOBILE_SDK_APP_ID_ANDROID",
+        "android_client_info": {
+          "package_name": "%sys.env.SUBLIN_FIREBASE_PROJECT_NAME%"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "%sys.env.SUBLIN_FIREBASE_OAUTH_CLIENT_ID_ANDROID%",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "%sys.env.SUBLIN_FIREBASE_API_KEY_ANDROID%"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "%sys.env.SUBLIN_FIREBASE_OAUTH_CLIENT_ID_ANDROID%",
+              "client_type": 3
+            },
+            {
+              "client_id": "%sys.env.SUBLIN_FIREBASE_OAUTH_CLIENT_ID_IOS%",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "%sys.env.SUBLIN_FIREBASE_PROJECT_NAME%"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
