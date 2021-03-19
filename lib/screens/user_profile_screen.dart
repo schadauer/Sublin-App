@@ -90,7 +90,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                RaisedButton(
+                                ElevatedButton(
                                     child: AutoSizeText('Jetzt abschließen'),
                                     onPressed: () => Navigator.pushNamed(
                                         context,
@@ -107,8 +107,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 UserPersonalDataCard(user: user, cardType: CardType.email),
                 UserPersonalDataCard(
                     user: user, cardType: CardType.providerType),
-                FlatButton(
-                  textColor: ThemeConstants.sublinMainColor,
+                TextButton(
                   onPressed: () => AuthService().signOut(),
                   child: Text('Ausloggen'),
                 )

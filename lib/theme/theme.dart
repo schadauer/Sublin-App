@@ -20,9 +20,6 @@ class ThemeConstants {
     color: sublinMainColor,
     fontWeight: FontWeight.normal,
   );
-  static ButtonTheme flatButton = ButtonTheme(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-  );
 }
 
 ThemeData themeData(context) {

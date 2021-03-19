@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          StreamProvider<Auth>.value(value: AuthService().userStream),
+          StreamProvider<Auth>.value(initialData: null, value: AuthService().userStream),
           StreamProvider<Versioning>.value(
               initialData: null, value: VersioningService().streamVersioning()),
         ],

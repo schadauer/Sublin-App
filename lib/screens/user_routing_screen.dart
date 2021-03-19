@@ -100,7 +100,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                             SizedBox(
                               height: 20,
                             ),
-                            RaisedButton(
+                            ElevatedButton(
                               onPressed: () async {
                                 try {
                                   await Navigator.pushReplacementNamed(
@@ -132,7 +132,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                       SizedBox(
                         height: 20,
                       ),
-                      RaisedButton(
+                      ElevatedButton(
                         onPressed: () async {
                           try {
                             await RoutingService().deleteRoute(user.uid);
@@ -154,7 +154,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                       SizedBox(
                         height: 10,
                       ),
-                      FlatButton(
+                      TextButton(
                         onPressed: () async {
                           try {
                             await Navigator.pushReplacementNamed(
@@ -188,7 +188,7 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                             SizedBox(
                               height: 10,
                             ),
-                            RaisedButton(
+                            ElevatedButton(
                               onPressed: () async {
                                 try {
                                   addBoolToSF(

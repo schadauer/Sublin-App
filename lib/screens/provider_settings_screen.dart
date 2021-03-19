@@ -122,7 +122,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                                 ],
                               ),
                               if (_editProviderName == true)
-                                RaisedButton(
+                                ElevatedButton(
                                     onPressed: () async {
                                       await ProviderUserService()
                                           .updateProviderNameProviderUser(
@@ -200,9 +200,7 @@ class _ProviderSettingsScreenState extends State<ProviderSettingsScreen> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Container(
-                                      child: FlatButton(
-                                          textColor:
-                                              ThemeConstants.sublinMainColor,
+                                      child: TextButton(
                                           onPressed: () {
                                             setState(() {
                                               _selectedStation = _station;

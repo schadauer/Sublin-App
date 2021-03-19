@@ -3,7 +3,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:provider/provider.dart';
 
 import 'package:Sublin/widgets/waiting_widget.dart';
-import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
 import 'package:Sublin/services/provider_user_service.dart';
@@ -224,7 +223,7 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
-                                            RaisedButton(
+                                            ElevatedButton(
                                                 onPressed: () async {
                                                   List<String> _partners = [
                                                     ...providerUser.partners
@@ -249,9 +248,7 @@ class _ProviderPartnerScreenState extends State<ProviderPartnerScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
-                                            FlatButton(
-                                                textColor: ThemeConstants
-                                                    .sublinMainColor,
+                                            TextButton(
                                                 onPressed: () async {
                                                   List<String> _partners = [
                                                     ...providerUser.partners

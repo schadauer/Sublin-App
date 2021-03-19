@@ -69,7 +69,7 @@ class _CitySelectorWidgetState extends State<CitySelectorWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        RaisedButton(
+                        ElevatedButton(
                           child: Text('Ort hinzufügen'),
                           onPressed: () {
                             Navigator.push(
