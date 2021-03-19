@@ -25,6 +25,7 @@ class ProviderBookingScreen extends StatefulWidget {
 
 class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
   int _selectedIndex = 0;
+  int _loadingIndex;
   int _now;
 
   @override
@@ -452,6 +453,12 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
               } else
                 return null;
             });
+  }
+
+  void _loadingFunction(int index) {
+    setState(() {
+      _loadingIndex = index;
+    });
   }
 }
 
