@@ -6,7 +6,6 @@ import 'package:Sublin/models/user_class.dart';
 import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/user_my_sublin_screen.dart';
 import 'package:Sublin/services/routing_service.dart';
-import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 import 'package:Sublin/widgets/step_widget.dart';
@@ -59,12 +58,6 @@ class UserShowRoutingScreen extends StatelessWidget {
 
     double _getRoutingStepHeight(StepType steptype, Routing routingService) {
       // We need to calculate the screen height minus the bottom navigation and the appbar
-
-      double numberOfStartOrEndSteps = 0;
-      if (routingService.isPubliclyAccessibleEndAddress == true)
-        numberOfStartOrEndSteps += 1;
-      if (routingService.isPubliclyAccessibleStartAddress == true)
-        numberOfStartOrEndSteps += 1;
 
       switch (steptype) {
         case StepType.start:
@@ -169,15 +162,14 @@ class UserShowRoutingScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            FlatButton(
-                                textColor: ThemeConstants.sublinMainColor,
+                            TextButton(
                                 onPressed: () async {
                                   // await RoutingService().removeProviderFromRoute(user.uid);
                                   Navigator.pushNamed(
                                       context, UserMySublinScreen.routeName);
                                 },
                                 child: Text('Andere Fahrt')),
-                            RaisedButton(
+                            ElevatedButton(
                                 onPressed: routingService.booked
                                     ? null
                                     : () {

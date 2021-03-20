@@ -73,7 +73,7 @@ class ProviderTypeSelectionWidget extends StatelessWidget {
                                   SizedBox(
                                     height: 10,
                                   ),
-                                  RaisedButton(
+                                  ElevatedButton(
                                       onPressed: () {
                                         buttonSelectionCallback(context);
                                       },

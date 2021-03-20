@@ -247,7 +247,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                 SizedBox(
                                   height: 20,
                                 ),
-                                RaisedButton(
+                                ElevatedButton(
                                     onPressed: () async {
                                       await ProviderUserService()
                                           .updateProviderPlanProviderUserData(
@@ -307,7 +307,7 @@ class _ProviderTargetGroupScreenState extends State<ProviderTargetGroupScreen> {
                                       SizedBox(
                                         height: 20,
                                       ),
-                                      RaisedButton(
+                                      ElevatedButton(
                                           onPressed: () async {
                                             await ProviderUserService()
                                                 .updateProviderPlanProviderUserData(

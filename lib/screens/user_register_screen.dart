@@ -239,9 +239,13 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    FlatButton(
-                                        textColor: Theme.of(context)
-                                            .secondaryHeaderColor,
+                                    TextButton(
+                                        style: ButtonStyle(
+                                            textStyle:
+                                                MaterialStateProperty.all(
+                                                    Theme.of(context)
+                                                        .textTheme
+                                                        .subtitle1)),
                                         onPressed: () => Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -253,7 +257,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                                               .textTheme
                                               .button,
                                         )),
-                                    RaisedButton(
+                                    ElevatedButton(
                                       onPressed: () async {
                                         try {
                                           if (_formKey.currentState
@@ -349,7 +353,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            RaisedButton(
+                            ElevatedButton(
                               onPressed: () async {
                                 try {
                                   SublinError sublinError =

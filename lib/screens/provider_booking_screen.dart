@@ -25,8 +25,6 @@ class ProviderBookingScreen extends StatefulWidget {
 
 class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
   int _selectedIndex = 0;
-  // static const TextStyle optionStyle =
-  //     TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   int _loadingIndex;
   int _now;
 
@@ -394,7 +392,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: () async {
                                   // _loadingFunction(index);
                                   int numberOfOpens = bookings.length;
@@ -420,7 +418,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: (_timeRemaining < 0)
                                     ? () {
                                         _loadingFunction(index);
@@ -433,7 +431,7 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
                                     : null,
                                 child: Text('Nicht erschienen'),
                               ),
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: (_timeRemaining < 1000)
                                     ? () {
                                         _loadingFunction(index);
@@ -462,12 +460,6 @@ class _ProviderBookingScreenState extends State<ProviderBookingScreen> {
       _loadingIndex = index;
     });
   }
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
 }
 
 class _BookingFilterOption extends StatelessWidget {

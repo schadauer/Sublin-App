@@ -66,7 +66,7 @@ class _UpdateRequiredScreenState extends State<UpdateRequiredScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        RaisedButton(
+                        ElevatedButton(
                             onPressed: () {
                               LaunchReview.launch();
                             },

@@ -1,29 +1,8 @@
 import 'dart:async';
 
-import 'package:Sublin/screens/test_period_screen.dart';
-import 'package:Sublin/theme/theme.dart';
-import 'package:Sublin/utils/get_formatted_city_from_formatted_station.dart';
-import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_commune.dart';
-import 'package:Sublin/utils/get_formatted_station_from_formatted_address.dart';
-import 'package:Sublin/utils/remove_from_list.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-
-import 'package:Sublin/utils/add_city_to_provider_user_communes_and_addresses.dart';
-import 'package:Sublin/utils/add_city_to_station_and_communes.dart';
 import 'package:Sublin/models/address_info_class.dart';
-import 'package:Sublin/models/delimiter_class.dart';
-import 'package:Sublin/models/user_type_enum.dart';
-import 'package:Sublin/screens/provider_booking_screen.dart';
-import 'package:Sublin/services/user_service.dart';
-import 'package:Sublin/utils/add_string_to_list.dart';
-import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
-import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
-import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/models/auth_class.dart';
+import 'package:Sublin/models/delimiter_class.dart';
 import 'package:Sublin/models/provider_plan_enum.dart';
 import 'package:Sublin/models/provider_type_enum.dart';
 import 'package:Sublin/models/provider_user.dart';
@@ -31,14 +10,31 @@ import 'package:Sublin/models/request_class.dart';
 import 'package:Sublin/models/routing_class.dart';
 import 'package:Sublin/models/timespan_enum.dart';
 import 'package:Sublin/models/user_class.dart';
+import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/address_input_screen.dart';
 import 'package:Sublin/screens/email_list_screen.dart';
+import 'package:Sublin/screens/provider_booking_screen.dart';
+import 'package:Sublin/screens/test_period_screen.dart';
 import 'package:Sublin/services/provider_user_service.dart';
 import 'package:Sublin/services/routing_service.dart';
+import 'package:Sublin/services/user_service.dart';
+import 'package:Sublin/utils/add_city_to_provider_user_communes_and_addresses.dart';
+import 'package:Sublin/utils/add_city_to_station_and_communes.dart';
+import 'package:Sublin/utils/add_string_to_list.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_address.dart';
+import 'package:Sublin/utils/get_formatted_city_from_formatted_station_with_commune.dart';
+import 'package:Sublin/utils/get_readable_address_part_of_formatted_address.dart';
+import 'package:Sublin/utils/remove_from_list.dart';
 import 'package:Sublin/widgets/address_search_widget.dart';
-import 'package:Sublin/widgets/time_field_widget.dart';
+import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/progress_indicator_widget.dart';
 import 'package:Sublin/widgets/provider_selection_widget.dart';
+import 'package:Sublin/widgets/time_field_widget.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 enum SingingCharacter { provider, service }
 
@@ -93,6 +89,7 @@ class _ProviderRegistrationScreenState
   @override
   void dispose() {
     _pageViewController.dispose();
+    _routingStream.cancel();
     super.dispose();
   }
 
@@ -166,7 +163,7 @@ class _ProviderRegistrationScreenState
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
-                              RaisedButton(
+                              ElevatedButton(
                                 onPressed: (_addressFound)
                                     ? () async {
                                         try {
@@ -328,7 +325,7 @@ class _ProviderRegistrationScreenState
                                   // TODO - Once sponsors can register remove this
                                   if (_checkRoutingData.endAddressAvailable &&
                                       user.userType == UserType.sponsor)
-                                    RaisedButton(
+                                    ElevatedButton(
                                         onPressed: () async {
                                           //* This is for the test period to redirect users to the TestPeriodScreen
                                           UserService()
@@ -344,7 +341,7 @@ class _ProviderRegistrationScreenState
                                             Text('Vorübergehend abschließen')),
                                   if (!_checkRoutingData.endAddressAvailable &&
                                       user.userType != UserType.sponsor)
-                                    RaisedButton(
+                                    ElevatedButton(
                                       onPressed: _providerUser.providerType !=
                                               null
                                           ? () {
@@ -522,7 +519,7 @@ class _ProviderRegistrationScreenState
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: <Widget>[
-                                          RaisedButton(
+                                          ElevatedButton(
                                             onPressed:
                                                 (_providerUser.providerName !=
                                                         _defaultProviderUser
@@ -643,9 +640,7 @@ class _ProviderRegistrationScreenState
                                                 MainAxisAlignment.end,
                                             children: <Widget>[
                                               Container(
-                                                child: FlatButton(
-                                                    textColor: ThemeConstants
-                                                        .sublinMainColor,
+                                                child: TextButton(
                                                     onPressed: () {
                                                       Navigator.push(
                                                           context,
@@ -684,7 +679,7 @@ class _ProviderRegistrationScreenState
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: [
-                                          RaisedButton(
+                                          ElevatedButton(
                                             onPressed:
                                                 _providerUser.stations.length >
                                                         0
@@ -728,7 +723,7 @@ class _ProviderRegistrationScreenState
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: [
-                                          RaisedButton(
+                                          ElevatedButton(
                                             onPressed: (_providerUser
                                                         .stations.length !=
                                                     0)
@@ -829,7 +824,7 @@ class _ProviderRegistrationScreenState
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
-                                  RaisedButton(
+                                  ElevatedButton(
                                     onPressed: _providerUser.providerPlan ==
                                                     ProviderPlan.emailOnly &&
                                                 _providerUser
@@ -1096,7 +1091,7 @@ class _ProviderRegistrationScreenState
 //     return Row(
 //       mainAxisAlignment: MainAxisAlignment.end,
 //       children: <Widget>[
-//         RaisedButton(
+//         ElevatedButton(
 //           onPressed: isActive
 //               ? () async {
 //                   _providerUser.operationRequested = true;

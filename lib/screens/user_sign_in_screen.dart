@@ -111,9 +111,7 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                               children: [
                                 Expanded(child: ForgetPassword(email: _email)),
                                 Expanded(
-                                  child: FlatButton(
-                                    textColor:
-                                        Theme.of(context).secondaryHeaderColor,
+                                  child: TextButton(
                                     onPressed: () => Navigator.pop(context),
                                     child: AutoSizeText(
                                       'Noch nicht registriert?',
@@ -131,7 +129,7 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 SizedBox(
-                                  child: RaisedButton(
+                                  child: ElevatedButton(
                                     onPressed: () async {
                                       try {
                                         if (_formKey.currentState.validate()) {
@@ -171,8 +169,7 @@ class ForgetPassword extends StatelessWidget {
   ForgetPassword({this.email});
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      textColor: Theme.of(context).secondaryHeaderColor,
+    return TextButton(
       onPressed: () {
         if (isEmailFormat(email)) AuthService().resetPassword(email);
         showModalBottomSheet(

@@ -134,11 +134,13 @@ class UserMySublinEndWidget extends StatelessWidget {
                           children: [
                             Expanded(
                               flex: 2,
-                              child: RaisedButton(
-                                color: transportationType ==
-                                        TransportationType.sublin
-                                    ? ThemeConstants.sublinMainColor
-                                    : Colors.black,
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        transportationType ==
+                                                TransportationType.sublin
+                                            ? ThemeConstants.sublinMainColor
+                                            : Colors.black)),
                                 onPressed: (isRouteBooked)
                                     ? null
                                     : () async {

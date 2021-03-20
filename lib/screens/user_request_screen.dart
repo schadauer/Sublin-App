@@ -87,7 +87,7 @@ class _UserRequestScreenState extends State<UserRequestScreen>
                                     ),
                                     Expanded(
                                       flex: 1,
-                                      child: FlatButton(
+                                      child: TextButton(
                                           onPressed: () => openAppSettings(),
                                           child: AutoSizeText(
                                             'Einschalten',
@@ -118,7 +118,7 @@ class _UserRequestScreenState extends State<UserRequestScreen>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            RaisedButton(
+                            ElevatedButton(
                               onPressed: (_localRequest.endAddress != '' &&
                                       _localRequest.startAddress != '')
                                   ? () async {
