@@ -1,12 +1,11 @@
-  var firebaseConfig = {
-    apiKey: "%sys.env.SUBLIN_FIREBASE_API_KEY_WEB%",
-    authDomain: "%sys.env.SUBLIN_FIREBASE_AUTH_DOMAIN_WEB%",
-    databaseURL: "%sys.env.SUBLIN_FIREBASE_URL%",
-    projectId: "%sys.env.SUBLIN_FIREBASE_PROJECT_ID%",
-    storageBucket: "%sys.env.SUBLIN_FIREBASE_STORAGE_BUCKET%",
-    messagingSenderId: "%sys.env.SUBLIN_FIREBASE_PROJECT_NUMBER%",
-    appId: "%sys.env.SUBLIN_FIREBASE_MOBILE_SDK_APP_ID_WEB%",
-    measurementId: "%sys.env.SUBLIN_FIREBASE_MEASUREMENT_ID_WEB%"
+ var firebaseConfig = {
+    apiKey: "%sys.env.SUBLIN_WEB_FIREBASE_API_KEY%",
+    authDomain: "%sys.env.SUBLIN_WEB_FIREBASE_AUTH_DOMAIN%",
+    projectId: "%sys.env.SUBLIN_WEB_FIREBASE_PROJECT_ID%",
+    storageBucket: "%sys.env.SUBLIN_WEB_FIREBASE_STORAGE_BUCKET%",
+    messagingSenderId: "%sys.env.SUBLIN_WEB_FIREBASE_MESSAGING_SENDER_ID%",
+    appId: "%sys.env.SUBLIN_WEB_FIREBASE_APP_ID%",
+    measurementId: "%sys.env.SUBLIN_WEB_FIREBASE_MEASUREMENT_ID%"
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
