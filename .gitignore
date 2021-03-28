@@ -58,3 +58,4 @@ android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 web/config/firebase.gen.js
 android/app/src/main/AndroidManifest.xml
+firebase/*
