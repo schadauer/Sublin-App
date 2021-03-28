@@ -1,0 +1,5 @@
+{
+  "projects": {
+    "default": "%sys.env.SUBLIN_ANDROID_FIREBASE_PROJECT_ID%"
+  }
+}
