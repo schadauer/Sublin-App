@@ -10,7 +10,7 @@ void main() {
 }
 
 class ConfigGenerator {
-  ConfigGenerator({this.rootDir, this.templatesDir});
+  ConfigGenerator({required this.rootDir, required this.templatesDir});
 
   final Directory rootDir;
   final Directory templatesDir;
@@ -33,7 +33,7 @@ class ConfigGenerator {
           print(
               'ERROR: No such environment variable ${match.group(1)} in $entry');
         } else {
-          content = content.replaceAll(replace, replacement);
+          content = content.replaceAll(replace!, replacement);
         }
       });
 
