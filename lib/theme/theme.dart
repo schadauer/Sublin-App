@@ -75,6 +75,11 @@ ThemeData themeData(context) {
     ),
     backgroundColor: Color.fromRGBO(201, 228, 202, 1),
     visualDensity: VisualDensity.adaptivePlatformDensity,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        primary: ThemeConstants.sublinMainColor,
+      ),
+    ),
     // appBarTheme: AppBarTheme(textTheme: TextTh),
     textTheme: TextTheme(
       caption: TextStyle(
