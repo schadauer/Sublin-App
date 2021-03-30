@@ -1,8 +1,8 @@
 {
   "project_info": {
     "project_number": "%sys.env.SUBLIN_ANDROID_FIREBASE_PROJECT_NUMBER%",
-    "project_id": "%sys.env.UBLIN_ANDROID_FIREBASE_PROJECT_ID%",
-    "storage_bucket": "%sys.env.UBLIN_ANDROID_FIREBASE_STORAGE_BUCKET%"
+    "project_id": "%sys.env.SUBLIN_ANDROID_FIREBASE_PROJECT_ID%",
+    "storage_bucket": "%sys.env.SUBLIN_ANDROID_FIREBASE_STORAGE_BUCKET%"
   },
   "client": [
     {
@@ -29,6 +29,13 @@
             {
               "client_id": "%sys.env.SUBLIN_ANDROID_FIREBASE_CLIENT_ID%",
               "client_type": 3
+            },
+            {
+              "client_id": "%sys.env.SUBLIN_IOS_FIREBASE_CLIENT_ID%",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "%sys.env.SUBLIN_IOS_FIREBASE_BUNDLE_ID%"
+              }
             }
           ]
         }
