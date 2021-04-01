@@ -103,7 +103,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
                               height: 20,
                             ),
                             AutoSizeText(
-                              'Diese App soll dir in der Zukunft ermöglichen, bequem ohne eigenes Auto überall hinzukommen. Wir sind in der Testphase mit einer ausgewählten Testgruppe. Du kannst dich jedoch jetzt schon anmelden. Wir informieren dich dann, sobald das Service für dich verfügbar ist.',
+                              'Sublin ist ein Open-Source Projekt. Wir gestalten die Mobilität der Zukunft. Sublin verbindet dabei Mobilitätsdienstleister für eine lückenlose Tür-zu-Tür-Verbindung ohne eigenes Auto - in der Stadt und am Land. Melde dich an und werde Teil unseres Projekts.',
                               style: Theme.of(context).textTheme.bodyText1,
                               maxLines: 8,
                             ),
