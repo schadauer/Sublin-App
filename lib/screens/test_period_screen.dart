@@ -34,7 +34,7 @@ class _TestPeriodScreenState extends State<TestPeriodScreen> {
                     width: MediaQuery.of(context).size.width,
                     height: 90.0,
                     child: Image.asset(
-                      'assets/images/logo_white_background.png',
+                      'assets/images/sublin-logo.png',
                       alignment: Alignment.center,
                     ),
                   ),
@@ -43,23 +43,24 @@ class _TestPeriodScreenState extends State<TestPeriodScreen> {
                   ),
                   if (user.userType == UserType.user)
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         AutoSizeText(
-                          'Vielen Dank für deine Registrierung ${user.firstName}!',
+                          'Wir freuen uns, dass du dabei bist ${user.firstName}!',
                           style: Theme.of(context).textTheme.headline1,
                         ),
                         SizedBox(
                           height: 20,
                         ),
                         AutoSizeText(
-                          'Wir bitten dich um etwas Geduld. Wir befinden uns derzeit in der Textphase mit einer eingeschränkten Benutzergruppe.',
+                          'Wir haben große Ziele, sind jedoch erst am Anfang unserer Reise. Daher bitten wir dich jetzt noch um Geduld.',
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
                         SizedBox(
                           height: 20,
                         ),
                         AutoSizeText(
-                          'Wir werden dich über die weiteren Entwicklungen informieren. Sobald wir die Benutzergruppe erweitern werden wir dich informieren.',
+                          'Wir werden dich über die weiteren Entwicklungen rund um das Projekt in regelmäßigen Abständen informieren.',
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
                         SizedBox(
