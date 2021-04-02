@@ -108,6 +108,7 @@ class UserMySublinEndWidget extends StatelessWidget {
                       if (addressInfo.transportationType ==
                           TransportationType.sublin)
                         Expanded(
+                          flex: 2,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -118,7 +119,7 @@ class UserMySublinEndWidget extends StatelessWidget {
                               AutoSizeText(
                                 'Gesponsert von',
                                 style: Theme.of(context).textTheme.caption,
-                                maxLines: 2,
+                                maxLines: 1,
                               ),
                               AutoSizeText(
                                 addressInfo.sponsor,
