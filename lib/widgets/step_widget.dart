@@ -109,7 +109,7 @@ class _StepWidgetState extends State<StepWidget> {
                                           style: Theme.of(context)
                                               .textTheme
                                               .caption,
-                                          maxLines: 2,
+                                          maxLines: 1,
                                         ),
                                       ),
                                     ],
