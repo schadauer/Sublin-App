@@ -51,6 +51,7 @@ class ConfigGenerator {
     var result = value;
     if (value == null) {
       print('ERROR: No such environment variable $name in $reference');
+      return '';
     } else {
       envPattern.allMatches(value).forEach((match) {
         result = result!.replaceFirst(match.group(0) ?? "",
