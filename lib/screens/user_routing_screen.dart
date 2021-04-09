@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:provider/provider.dart';
 import 'package:Sublin/screens/user_show_routing_screen.dart';
 import 'package:Sublin/screens/waiting_screen.dart';
 import 'package:Sublin/utils/is_route_confirmed.dart';
@@ -7,14 +10,11 @@ import 'package:Sublin/models/user_type_enum.dart';
 import 'package:Sublin/screens/user_my_sublin_screen.dart';
 import 'package:Sublin/services/routing_service.dart';
 import 'package:Sublin/services/shared_preferences_service.dart';
-import 'package:Sublin/theme/theme.dart';
 import 'package:Sublin/utils/is_route_completed.dart';
 import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:Sublin/models/routing_class.dart';
+import 'user_routing_no_route_screen.dart';
 
 class UserRoutingScreen extends StatefulWidget {
   const UserRoutingScreen({Key key, this.setNavigationIndex}) : super(key: key);
@@ -33,6 +33,9 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
     final Routing routingService = Provider.of<Routing>(context);
     final User user = Provider.of<User>(context);
     double heightBookingBottomSheet = 70.0;
+
+    final Routing screenArguments =
+        ModalRoute.of(context).settings.arguments as Routing;
 
     bool _isRouteAvailable() {
       bool startAddressIsAvailable =
@@ -79,41 +82,15 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
               if (!_isRouteAvailable()) {
                 return Scaffold(
                     appBar: AppbarWidget(title: 'Meine Fahrt'),
-                    body: Center(
-                      child: Padding(
-                        padding: ThemeConstants.largePadding,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.sentiment_dissatisfied,
-                              size: 50,
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              'Für Start- und Endaddresse gibt es derzeit leider noch kein Sublin-Service.',
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            ElevatedButton(
-                              onPressed: () async {
-                                try {
-                                  await Navigator.pushReplacementNamed(
-                                      context, UserMySublinScreen.routeName);
-                                } catch (e) {
-                                  print(e);
-                                }
-                              },
-                              child: Text('Andere Route suchen'),
-                            )
-                          ],
-                        ),
+                    body: UserRoutingNoRouteScreen(
+                      user: user,
+                      icon: Icon(
+                        Icons.sentiment_dissatisfied,
+                        size: 50,
                       ),
+                      title: 'Nicht verfügbar',
+                      text: 'Leider ist deine Route nicht verfügbar.',
+                      buttonText: 'Zu meinen Shuttles',
                     ));
               } else if (_isRouteExpired()) {
                 return Scaffold(
@@ -211,10 +188,21 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                     routingService: routingService,
                     heightBookingBottomSheet: heightBookingBottomSheet);
               }
-            } else
+            } else if (screenArguments is Routing)
               return WaitingScreen(user: user, title: 'Wir suchen deine Fahrt');
+            else
+              return UserRoutingNoRouteScreen(
+                user: user,
+                icon: Icon(
+                  Icons.help_outline,
+                  size: 50,
+                ),
+                title: 'Keine Route',
+                text: 'Bitte wähle eine Route aus',
+                buttonText: 'Zu meinen Shuttles',
+              );
           } else
-            return WaitingScreen(user: user, title: 'Wir suchen deine Fahrtt');
+            return WaitingScreen(user: user, title: 'Wir suchen deine Fahrt');
         });
   }
 }
