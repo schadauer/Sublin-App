@@ -142,7 +142,8 @@ class UserMySublinEndWidget extends StatelessWidget {
                                                 TransportationType.sublin
                                             ? ThemeConstants.sublinMainColor
                                             : Colors.black)),
-                                onPressed: (isRouteBooked)
+                                onPressed: (isRouteBooked ||
+                                        localRequest.startAddress == '')
                                     ? null
                                     : () async {
                                         String _startAddress =
