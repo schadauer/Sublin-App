@@ -29,14 +29,10 @@ class ConfigGenerator {
       var content = await (entry as File).readAsString();
       sysEnvPattern.allMatches(content).forEach((match) {
         var replace = match.group(0);
-        var replacement = Platform.environment[match.group(1)];
+        var replacement =
+            resolveSystemEnvironment(match.group(1)!, entry.toString());
 
-        if (replacement == null) {
-          print(
-              'ERROR: No such environment variable ${match.group(1)} in $entry');
-        } else {
-          content = content.replaceAll(replace!, replacement);
-        }
+        content = content.replaceAll(replace!, replacement);
       });
 
       var file = File.fromUri(Uri.parse(requestedFileUri));
@@ -47,5 +43,20 @@ class ConfigGenerator {
 
       await file.writeAsString(content);
     });
+  }
+
+  String resolveSystemEnvironment(String name, String reference) {
+    var envPattern = RegExp(r'\$([a-zA-Z0-9]*)');
+    var value = Platform.environment[name];
+    var result = value;
+    if (value == null) {
+      print('ERROR: No such environment variable $name in $reference');
+    } else {
+      envPattern.allMatches(value).forEach((match) {
+        result = result!.replaceFirst(match.group(0) ?? "",
+            resolveSystemEnvironment(match.group(1) ?? "", reference));
+      });
+    }
+    return result!;
   }
 }
