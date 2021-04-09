@@ -46,7 +46,7 @@ class ConfigGenerator {
   }
 
   String resolveSystemEnvironment(String name, String reference) {
-    var envPattern = RegExp(r'\$([a-zA-Z0-9]*)');
+    var envPattern = RegExp(r'[\$%]([a-zA-Z0-9]*)%?');
     var value = Platform.environment[name];
     var result = value;
     if (value == null) {
