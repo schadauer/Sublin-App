@@ -81,17 +81,16 @@ class _UserRoutingScreenState extends State<UserRoutingScreen> {
                 snapshot.data[1] == routingService.endAddress) {
               if (!_isRouteAvailable()) {
                 return Scaffold(
-                    appBar: AppbarWidget(title: 'Meine Fahrt'),
                     body: UserRoutingNoRouteScreen(
-                      user: user,
-                      icon: Icon(
-                        Icons.sentiment_dissatisfied,
-                        size: 50,
-                      ),
-                      title: 'Nicht verfügbar',
-                      text: 'Leider ist deine Route nicht verfügbar.',
-                      buttonText: 'Zu meinen Shuttles',
-                    ));
+                  user: user,
+                  icon: Icon(
+                    Icons.sentiment_dissatisfied,
+                    size: 50,
+                  ),
+                  title: 'Nicht verfügbar',
+                  text: 'Leider ist deine Route nicht verfügbar.',
+                  buttonText: 'Zu meinen Shuttles',
+                ));
               } else if (_isRouteExpired()) {
                 return Scaffold(
                     // appBar: AppbarWidget(title: 'Abgelaufene Fahrt'),
