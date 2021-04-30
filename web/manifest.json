@@ -1,6 +1,6 @@
 {
-    "name": "sublin",
-    "short_name": "sublin",
+    "name": "sublinapp",
+    "short_name": "sublinapp",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
