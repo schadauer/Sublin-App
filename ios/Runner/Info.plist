@@ -22,6 +22,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Uses location services to notifiy the user where the operator is currently located.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Uses location service to notifiy the user where the operator is currently located.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Uses location services to determine the currenty location of the user.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
