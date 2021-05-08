@@ -34,6 +34,11 @@ import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/user_my_sublin_end_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 
+main() async {
+
+  runApp(MaterialApp(home: UserMySublinScreen()));
+}
+
 enum Filter { taxisOnly, excludeTaxis, excludeIfNotPartner }
 
 enum AddressAvailablilty {

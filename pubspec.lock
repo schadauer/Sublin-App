@@ -359,6 +359,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.1"
   launch_review:
     dependency: "direct main"
     description:
@@ -560,6 +567,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  sublin_tomp_model:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "35bc1130720786328f3d930257b081ec417630e3"
+      resolved-ref: "35bc1130720786328f3d930257b081ec417630e3"
+      url: "git@github.com:sublin-maas/Sublin-TOMP-model.git"
+    source: git
+    version: "1.0.0"
   term_glyph:
     dependency: transitive
     description:
