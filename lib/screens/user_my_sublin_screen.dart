@@ -34,11 +34,6 @@ import 'package:Sublin/widgets/appbar_widget.dart';
 import 'package:Sublin/widgets/user_my_sublin_end_widget.dart';
 import 'package:Sublin/widgets/navigation_bar_widget.dart';
 
-main() async {
-
-  runApp(MaterialApp(home: UserMySublinScreen()));
-}
-
 enum Filter { taxisOnly, excludeTaxis, excludeIfNotPartner }
 
 enum AddressAvailablilty {
@@ -92,6 +87,8 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
     final Routing routingService = Provider.of<Routing>(context);
+    final providerUserService = Provider.of<ProviderUserService>(context);
+    final addressInfoProvider = Provider.of<AddressInfoProvider>(context);
     var size = MediaQuery.of(context).size;
     /*24 is for notification bar on Android*/
     final double itemHeight =
@@ -108,11 +105,10 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
           child: FutureBuilder<List<List<ProviderUser>>>(
               // future: ProviderService().getProviders(communes: user.communes),
               future: Future.wait([
-                ProviderUserService()
-                    .getProvidersFromCommunesWithProviderPlanAll(
-                        communes: user.communes),
-                ProviderUserService()
-                    .getProvidersWithProviderPlanEmailOnly(email: user.email),
+                providerUserService.getProvidersFromCommunesWithProviderPlanAll(
+                    communes: user.communes),
+                providerUserService.getProvidersWithProviderPlanEmailOnly(
+                    email: user.email),
               ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done &&
@@ -136,18 +132,27 @@ class _UserMySublinScreenState extends State<UserMySublinScreen>
 
                   //* We convert the list to a list of Addressinfo instances
                   //* We need it for the address search as suggestions
-                  _addressInfoList =
-                      getListOfAddressInfoFromListOfProviderUsersAndUser(
+                  _addressInfoList = addressInfoProvider
+                      .getListOfAddressInfoFromListOfProviderUsersAndUser(
                     providerUserList: _providerUsersList,
                     user: user,
                   );
+                  _addressInfoList = [
+                    AddressInfo(
+                        title: 'AddressInfo',
+                        sponsor: 'Sergey',
+                        formattedAddress: 'Berlin',
+                        transportationType: TransportationType.public,
+                        byProvider: true)
+                  ];
                   //* This is for the end address selection which should only show addresses
                   //* that are not within the bounds of the start address
                   _addressInfoListWithCurrentPositionFilter =
-                      getListOfAddressInfoFromListOfProviderUsersAndUser(
-                          providerUserList: _providerUsersList,
-                          user: user,
-                          localRequest: _localRequest);
+                      addressInfoProvider
+                          .getListOfAddressInfoFromListOfProviderUsersAndUser(
+                              providerUserList: _providerUsersList,
+                              user: user,
+                              localRequest: _localRequest);
 
                   return Stack(
                     children: [
