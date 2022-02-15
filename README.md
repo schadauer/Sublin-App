@@ -2,7 +2,7 @@
 <img width="200" src="doc/img/sublin-logo-black.png">
 </p></br>
 
-# Sublin App
+# Sublin App Prototype
 Sublin is a MaaS (Mobility-as-a-Service) app for end users, transport operators (that do not run any other dispositon solutions) and sponsors. Sponsors provide transport services that are carried out by transport operators so that end users are not being charged for. Transport operators can specifiy their services (like areas they serve) and manage bookings. 
 
 The goal of Sublin is to provide seamless intermodal routes between A and B without one's own car combining public transport with on demand transportation services. 
